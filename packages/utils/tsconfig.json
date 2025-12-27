@@ -1,6 +1,6 @@
 {
   "//": "Utils TypeScript Configuration",
-  "extends": "../../tsconfig.base.json",
+  "extends": "./src/config/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "src",
     "declaration": true,

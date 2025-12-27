@@ -1,6 +1,6 @@
 {
   "//": "Product Service TypeScript Configuration",
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../packages/utils/src/config/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",
