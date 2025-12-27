@@ -1,4 +1,5 @@
-const theme = require('../../../ui-library/src/theme/theme.json');
+import theme from '../../../ui-library/src/theme/theme.json' assert { type: 'json' };
+import daisyui from 'daisyui';
 
 /** @type {import('tailwindcss').Config} */
 const baseConfig = {
@@ -32,7 +33,7 @@ const baseConfig = {
       },
     },
   },
-  plugins: [require('daisyui')],
+  plugins: [daisyui],
   daisyui: {
     themes: [
       {
@@ -67,4 +68,4 @@ const baseConfig = {
   },
 };
 
-module.exports = baseConfig;
+export default baseConfig;
