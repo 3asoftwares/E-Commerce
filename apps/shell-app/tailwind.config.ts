@@ -1,7 +1,8 @@
-const baseConfig = require('../../packages/ui-library/tailwind.config.base');
+import type { Config } from 'tailwindcss';
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+const baseConfig = require('../../packages/utils/src/config/tailwind.config');
+
+const config: Config = {
   ...baseConfig,
   content: [
     './src/**/*.{js,ts,jsx,tsx}',
@@ -9,3 +10,5 @@ module.exports = {
     '../../packages/ui-library/src/**/*.{js,ts,jsx,tsx}',
   ],
 };
+
+export default config;

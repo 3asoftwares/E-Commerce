@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-const baseConfig = require('../../packages/ui-library/tailwind.config.base');
+const baseConfig = require('../../packages/utils/src/config/tailwind.config');
 
 const config: Config = {
   ...baseConfig,
