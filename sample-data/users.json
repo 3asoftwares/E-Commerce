@@ -1,0 +1,38 @@
+[
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4d1" },
+    "email": "admin@example.com",
+    "password": "$2a$10$sZUEfrCrfT.3BnzeLDSYNeOmTTISBWz01ExGhjh5giofVKjM658Yi",
+    "role": "admin",
+    "name": "Admin",
+    "isActive": true,
+    "emailVerified": true
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4d2" },
+    "email": "seller@example.com",
+    "password": "$2b$10$samplehashedpasswordseller",
+    "role": "seller",
+    "name": "Seller",
+    "isActive": true,
+    "emailVerified": true
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4d3" },
+    "email": "customer@example.com",
+    "password": "$2b$10$samplehashedpasswordcustomer",
+    "role": "customer",
+    "name": "Customer",
+    "isActive": true,
+    "emailVerified": true
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4d4" },
+    "email": "support@example.com",
+    "password": "$2b$10$samplehashedpasswordsupport",
+    "role": "support",
+    "name": "Support",
+    "isActive": true,
+    "emailVerified": true
+  }
+]

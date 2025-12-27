@@ -1,0 +1,49 @@
+{
+  "name": "ecommerce-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise 3a Softwares with multiple independent applications",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev:all": "concurrently \"yarn dev:backend\" \"yarn dev:frontend\" --names \"BACKEND,FRONTEND\" --prefix-colors \"magenta,cyan\"",
+    "dev:platform": "yarn dev:all",
+    "dev:frontend": "concurrently \"yarn dev:shell\" \"yarn dev:admin\" \"yarn dev:seller\" \"yarn dev:storefront\" --names \"shell,admin,seller,store\" --prefix-colors \"cyan,green,yellow,blue\"",
+    "dev:backend": "concurrently \"yarn service:auth\" \"yarn service:product\" \"yarn service:order\" \"yarn service:gateway\" --names \"auth,product,order,gateway\" --prefix-colors \"magenta,green,yellow,cyan\"",
+    "dev:shell": "yarn workspace @ecommerce/shell-app run dev",
+    "dev:admin": "yarn workspace @ecommerce/admin-app run dev",
+    "dev:seller": "yarn workspace @ecommerce/seller-app run dev",
+    "dev:storefront": "yarn workspace @ecommerce/storefront-app run dev",
+    "service:auth": "cd services/auth-service && yarn dev",
+    "service:product": "cd services/product-service && yarn dev",
+    "service:order": "cd services/order-service && yarn dev",
+    "service:gateway": "cd services/graphql-gateway && yarn dev",
+    "build:all": "yarn build:shell && yarn build:admin && yarn build:seller && yarn build:storefront",
+    "build:shell": "yarn workspace @ecommerce/shell-app run build",
+    "build:admin": "yarn workspace @ecommerce/admin-app run build",
+    "build:seller": "yarn workspace @ecommerce/seller-app run build",
+    "build:storefront": "yarn workspace @ecommerce/storefront-app run build",
+    "services:start": "yarn dev:backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "npm-run-all": "^4.1.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "e-commerce",
+    "monorepo",
+    "react",
+    "nextjs",
+    "vite",
+    "webpack"
+  ],
+  "author": "",
+  "license": "ISC"
+}

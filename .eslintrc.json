@@ -1,0 +1,45 @@
+{
+  "//": "Ensures consistent code quality across all applications and packages",
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "extends": [
+    "// Standard ESLint recommended rules",
+    "eslint:recommended",
+    "// TypeScript-specific rules",
+    "plugin:@typescript-eslint/recommended",
+    "// React best practices",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "// Accessibility checks",
+    "plugin:jsx-a11y/recommended",
+    "// Prettier integration (must be last)",
+    "prettier",
+    "plugin:storybook/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "react-hooks",
+    "jsx-a11y"
+  ],
+  "rules": {
+    "// Custom rules can be added here": ""
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "env": {
+    "browser": true,
+    "es2020": true,
+    "node": true
+  }
+}

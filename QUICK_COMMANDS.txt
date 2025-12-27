@@ -1,0 +1,83 @@
+===============================================
+🚀 QUICK COMMAND REFERENCE - 3a SoftwaresPlatform
+===============================================
+
+📦 INSTALLATION
+---------------
+yarn install                    # Install all dependencies (frontend + backend)
+npm install -g yarn            # Install yarn globally (if needed)
+
+🎯 RUN EVERYTHING FROM ROOT
+----------------------------
+yarn dev:all                   # Start EVERYTHING (frontend + backend) ⭐ RECOMMENDED
+yarn dev:platform              # Same as dev:all
+yarn dev:frontend              # Start only frontend apps (4 apps)
+yarn dev:backend               # Start only backend services (4 services)
+
+🎨 RUN INDIVIDUAL FRONTEND APPS
+-------------------------------
+yarn dev:shell                 # Shell App (Port 3000)
+yarn dev:admin                 # Admin App (Port 3001)
+yarn dev:seller                # Seller App (Port 3002)
+yarn dev:storefront            # Storefront App (Port 3003)
+
+🔧 RUN INDIVIDUAL BACKEND SERVICES
+----------------------------------
+yarn service:auth              # Auth Service (Port 3010)
+yarn service:product           # Product Service (Port 3011)
+yarn service:order             # Order Service (Port 3012)
+yarn service:gateway           # GraphQL Gateway (Port 4000)
+
+🏗️ BUILD FOR PRODUCTION
+------------------------
+yarn build:all                 # Build all frontend apps
+yarn build:shell               # Build Shell app only
+yarn build:admin               # Build Admin app only
+yarn build:seller              # Build Seller app only
+yarn build:storefront          # Build Storefront app only
+
+🐳 SETUP DEPENDENCIES (Docker)
+------------------------------
+docker run -d --name mongodb -p 27017:27017 mongo:latest
+docker run -d --name redis -p 6379:6379 redis:latest
+docker ps                      # Verify containers are running
+
+🔍 ACCESS APPLICATIONS
+----------------------
+Shell:       http://localhost:3000
+Admin:       http://localhost:3001
+Seller:      http://localhost:3002
+Storefront:  http://localhost:3003
+GraphQL:     http://localhost:4000/graphql
+
+🧪 REDIS COMMANDS
+-----------------
+redis-cli                      # Connect to Redis
+MONITOR                        # Monitor all Redis operations
+KEYS *                         # List all keys
+GET product:123                # Get specific key
+TTL product:123                # Check time-to-live
+FLUSHALL                       # Clear all cache (use carefully!)
+
+🐛 TROUBLESHOOTING
+------------------
+# Kill process on port (PowerShell)
+Get-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess | Stop-Process
+
+# Clean install
+rm -rf node_modules
+rm yarn.lock
+yarn install
+
+# Check what's running
+netstat -ano | findstr :3000
+
+===============================================
+⚠️ IMPORTANT NOTE
+===============================================
+All documentation is in README.md only.
+Do NOT create separate .md files.
+Update README.md for any documentation changes.
+===============================================
+
+Last Updated: December 26, 2024

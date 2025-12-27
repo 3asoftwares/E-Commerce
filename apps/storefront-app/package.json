@@ -1,0 +1,36 @@
+{
+  "name": "@ecommerce/storefront-app",
+  "version": "1.0.0",
+  "description": "Customer-facing 3a Softwaresstorefront with product browsing, cart, and checkout",
+  "scripts": {
+    "dev": "next dev -p 3003",
+    "build": "next build",
+    "start": "next start -p 3003",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next": "^14.0.4",
+    "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-query-devtools": "^5.90.12",
+    "axios": "^1.6.2",
+    "recoil": "^0.7.7",
+    "zustand": "^4.4.7",
+    "@ecommerce/ui-library": "^1.0.0",
+    "@ecommerce/types": "^1.0.0",
+    "@ecommerce/utils": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16",
+    "daisyui": "^4.4.19",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^14.0.4"
+  }
+}

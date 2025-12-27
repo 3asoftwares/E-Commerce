@@ -1,0 +1,202 @@
+[
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4e1" },
+    "name": "Wireless Headphones",
+    "description": "High-quality wireless headphones with noise cancellation.",
+    "price": 99.99,
+    "category": "Electronics",
+    "stock": 50,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4e2" },
+    "name": "Smart Watch",
+    "description": "Feature-rich smart watch with health tracking.",
+    "price": 149.99,
+    "category": "Electronics",
+    "stock": 30,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4e3" },
+    "name": "Bluetooth Speaker",
+    "description": "Portable Bluetooth speaker with deep bass.",
+    "price": 39.99,
+    "category": "Electronics",
+    "stock": 100,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4e4" },
+    "name": "Running Shoes",
+    "description": "Comfortable running shoes for all terrains.",
+    "price": 59.99,
+    "category": "Footwear",
+    "stock": 80,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4e5" },
+    "name": "Yoga Mat",
+    "description": "Eco-friendly yoga mat with non-slip surface.",
+    "price": 24.99,
+    "category": "Fitness",
+    "stock": 120,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4e6" },
+    "name": "Stainless Steel Water Bottle",
+    "description": "Insulated water bottle keeps drinks cold for 24 hours.",
+    "price": 19.99,
+    "category": "Fitness",
+    "stock": 200,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4e7" },
+    "name": "Laptop Backpack",
+    "description": "Durable backpack fits up to 17-inch laptops.",
+    "price": 49.99,
+    "category": "Accessories",
+    "stock": 60,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4e8" },
+    "name": "Desk Lamp",
+    "description": "LED desk lamp with adjustable brightness.",
+    "price": 29.99,
+    "category": "Home",
+    "stock": 90,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4e9" },
+    "name": "Coffee Maker",
+    "description": "Automatic coffee maker with timer.",
+    "price": 79.99,
+    "category": "Home Appliances",
+    "stock": 40,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4ea" },
+    "name": "Electric Toothbrush",
+    "description": "Rechargeable electric toothbrush with 5 modes.",
+    "price": 34.99,
+    "category": "Personal Care",
+    "stock": 110,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4eb" },
+    "name": "Gaming Mouse",
+    "description": "High-precision gaming mouse with RGB lighting.",
+    "price": 44.99,
+    "category": "Electronics",
+    "stock": 70,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4ec" },
+    "name": "Wireless Keyboard",
+    "description": "Slim wireless keyboard with long battery life.",
+    "price": 32.99,
+    "category": "Electronics",
+    "stock": 85,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4ed" },
+    "name": "Sunglasses",
+    "description": "UV-protection sunglasses with polarized lenses.",
+    "price": 22.99,
+    "category": "Accessories",
+    "stock": 150,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4ee" },
+    "name": "Leather Wallet",
+    "description": "Genuine leather wallet with RFID protection.",
+    "price": 27.99,
+    "category": "Accessories",
+    "stock": 95,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4ef" },
+    "name": "Bluetooth Earbuds",
+    "description": "True wireless earbuds with charging case.",
+    "price": 59.99,
+    "category": "Electronics",
+    "stock": 130,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4f0" },
+    "name": "Fitness Tracker",
+    "description": "Waterproof fitness tracker with heart rate monitor.",
+    "price": 49.99,
+    "category": "Fitness",
+    "stock": 75,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4f1" },
+    "name": "Portable Charger",
+    "description": "10000mAh portable charger for phones and tablets.",
+    "price": 25.99,
+    "category": "Electronics",
+    "stock": 140,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4f2" },
+    "name": "Travel Mug",
+    "description": "Spill-proof travel mug keeps drinks hot for 6 hours.",
+    "price": 18.99,
+    "category": "Home",
+    "stock": 160,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4f3" },
+    "name": "Desk Organizer",
+    "description": "Multi-compartment desk organizer for office supplies.",
+    "price": 15.99,
+    "category": "Home",
+    "stock": 180,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  },
+  {
+    "_id": { "$oid": "694e50d5fa409e9d8708a4f4" },
+    "name": "Electric Kettle",
+    "description": "Fast-boil electric kettle with auto shut-off.",
+    "price": 36.99,
+    "category": "Home Appliances",
+    "stock": 55,
+    "images": ["https://via.placeholder.com/150"],
+    "sellerId": "694e50d5fa409e9d8708a4d2"
+  }
+]

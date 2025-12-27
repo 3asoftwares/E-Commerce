@@ -1,0 +1,34 @@
+{
+  "name": "@ecommerce/seller-app",
+  "version": "1.0.0",
+  "description": "Seller portal for product management, inventory, and order fulfillment",
+  "scripts": {
+    "dev": "vite --port 3002",
+    "build": "tsc && vite build",
+    "preview": "vite preview --port 3002"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-query-devtools": "^5.90.12",
+    "axios": "^1.6.2",
+    "@reduxjs/toolkit": "^2.0.1",
+    "react-redux": "^9.0.4",
+    "@ecommerce/ui-library": "^1.0.0",
+    "@ecommerce/types": "^1.0.0",
+    "@ecommerce/utils": "^1.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.0",
+    "typescript": "^5.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16",
+    "daisyui": "^4.4.19"
+  }
+}
