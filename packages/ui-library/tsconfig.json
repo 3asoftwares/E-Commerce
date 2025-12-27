@@ -6,8 +6,8 @@
     "declaration": true,
     "declarationMap": true,
     "outDir": "dist",
-    "moduleResolution": "bundler",
+    "moduleResolution": "bundler"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.test.tsx"]
+  "exclude": ["node_modules", "dist", "**/*.test.tsx"]
 }

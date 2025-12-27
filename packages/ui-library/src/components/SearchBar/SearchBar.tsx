@@ -3,7 +3,7 @@
  * Used for product search with autocomplete
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import  { useState, useEffect, useRef } from 'react';
 
 export interface SearchBarProps {
   value: string;

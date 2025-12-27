@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { CartItem } from './CartItem';
+import type { Meta, StoryObj } from '@storybook/react';
+import { CartItem } from '../components/CartItem';
 
 const meta = {
   title: 'Components/CartItem',
@@ -12,6 +12,10 @@ type Story = StoryObj<typeof meta>;
 
 const mockItem = {
   id: '1',
+  cartId: 'cart-1',
+  productId: 'prod-1',
+  sku: 'SKU-001',
+  sellerId: 'seller-1',
   productName: 'Test Product',
   productImage: 'https://via.placeholder.com/150',
   sellerName: 'Demo Seller',
