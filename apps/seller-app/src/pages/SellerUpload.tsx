@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button, Input } from '@e-commerce/ui-library';
-import { ProductCategory } from '@e-commerce/types';
+import { ProductCategory } from '@ecommerce/types';
 
 export const SellerUpload: React.FC = () => {
   const [formData, setFormData] = useState({

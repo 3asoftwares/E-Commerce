@@ -741,7 +741,6 @@ Complete implementation of a multi-application e-commerce platform with Storefro
 - `ProductCard` - Display products in grid/list with variant support, wishlist, quick view
 - `CartItem` - Cart item display with quantity controls, variant options, availability status
 - `OrderCard` - Order history display with status tracking, actions (view, track, cancel)
-- `ProductFilters` - Advanced filtering (categories, price range, rating, availability, sales)
 - `SearchBar` - Product search with autocomplete suggestions
 
 **Base Components:**

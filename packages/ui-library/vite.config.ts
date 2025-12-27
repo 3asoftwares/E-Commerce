@@ -21,9 +21,27 @@ export default defineConfig(async () => {
     resolve: {
       alias: {
         '@e-commerce/ui-library': path.resolve(__dirname, '../../packages/ui-library/src'),
-        '@e-commerce/types': path.resolve(__dirname, '../../packages/types/src'),
+        '@ecommerce/types': path.resolve(__dirname, '../../packages/types/src'),
         '@e-commerce/utils': path.resolve(__dirname, '../../packages/utils/src'),
       },
+    },
+  };
+
+  // When building the library for production, output as a library bundle
+  // so Vite doesn't expect an `index.html` entry file.
+  config.build = config.build || {};
+  config.build.lib = {
+    entry: path.resolve(__dirname, 'src/index.ts'),
+    name: 'ui-library',
+    formats: ['es', 'cjs', 'umd'],
+    fileName: (format: string) => `ui-library.${format}.js`,
+  };
+  config.build.rollupOptions = config.build.rollupOptions || {};
+  config.build.rollupOptions.external = ['react', 'react-dom'];
+  config.build.rollupOptions.output = {
+    globals: {
+      react: 'React',
+      'react-dom': 'ReactDOM',
     },
   };
 

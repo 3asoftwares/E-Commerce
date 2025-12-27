@@ -1,4 +1,3 @@
-// Theme configuration for UI Library
 export const theme = {
   colors: {
     primary: {

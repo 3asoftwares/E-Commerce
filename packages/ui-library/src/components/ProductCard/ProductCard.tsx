@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Product } from '@e-commerce/types';
+import { Product } from '@ecommerce/types';
 
 export interface ProductCardProps {
   product: Product;

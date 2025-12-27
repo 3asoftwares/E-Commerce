@@ -1,5 +1,6 @@
 {
   "name": "@ecommerce/shell-app",
+  "license": "MIT",
   "version": "1.0.0",
   "description": "Central launcher/dashboard for navigating to all other applications",
   "scripts": {
@@ -25,6 +26,7 @@
     "css-loader": "^6.8.1",
     "daisyui": "^4.4.19",
     "html-webpack-plugin": "^5.5.3",
+    "mini-css-extract-plugin": "2.7.6",
     "postcss": "^8.4.32",
     "postcss-loader": "^7.3.3",
     "style-loader": "^3.3.3",

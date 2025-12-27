@@ -56,7 +56,7 @@ async function startApolloServer() {
   });
 
   await new Promise<void>((resolve) => httpServer.listen({ port: PORT }, resolve));
-  console.log(`HTTP Port: ${PORT.toString().padEnd(30)}`);
+  console.log(`GraphQL services started: ${PORT.toString()}`);
 }
 
 startApolloServer().catch((error) => {

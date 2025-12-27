@@ -21,12 +21,12 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@e-commerce/types": ["../../packages/types/src"],
-      "@e-commerce/types/*": ["../../packages/types/src/*"],
-      "@e-commerce/ui-library": ["../../packages/ui-library/src"],
-      "@e-commerce/ui-library/*": ["../../packages/ui-library/src/*"],
-      "@e-commerce/utils": ["../../packages/utils/src"],
-      "@e-commerce/utils/*": ["../../packages/utils/src/*"]
+  "@ecommerce/types": ["../../packages/types/src"],
+  "@ecommerce/types/*": ["../../packages/types/src/*"],
+  "@ecommerce/ui-library": ["../../packages/ui-library/src"],
+  "@ecommerce/ui-library/*": ["../../packages/ui-library/src/*"],
+  "@ecommerce/utils": ["../../packages/utils/src"],
+  "@ecommerce/utils/*": ["../../packages/utils/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

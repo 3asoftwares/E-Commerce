@@ -25,8 +25,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@e-commerce/types": ["./packages/types/src"],
-      "@e-commerce/types/*": ["./packages/types/src/*"],
+      "@ecommerce/types": ["./packages/types/src"],
+      "@ecommerce/types/*": ["./packages/types/src/*"],
       "@e-commerce/ui-library": ["./packages/ui-library/src"],
       "@e-commerce/ui-library/*": ["./packages/ui-library/src/*"],
       "@e-commerce/utils": ["./packages/utils/src"],

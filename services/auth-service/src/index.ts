@@ -71,8 +71,7 @@ const startServer = async () => {
     // Start listening
     app.listen(PORT, () => {
       console.log(
-        `HTTP Port: ${PORT.toString().padEnd(30)}`,
-        `Database: ${process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce-auth'}`
+        `Auth services started: ${PORT.toString()}`
       );
     });
   } catch (error) {

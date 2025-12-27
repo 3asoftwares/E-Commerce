@@ -1,16 +1,8 @@
-/**
- * Tailwind CSS Base Configuration
- * Enterprise 3a SoftwaresPlatform
- *
- * Modern design system with light/dark mode support
- * All apps extend this configuration
- */
-
-const { theme } = require('./src/theme/theme');
+const theme = require('./src/theme/theme.json');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: 'class', // Enable dark mode via class strategy
+  darkMode: 'class',
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {

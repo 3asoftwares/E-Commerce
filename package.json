@@ -9,8 +9,7 @@
     "services/*"
   ],
   "scripts": {
-    "dev:all": "concurrently \"yarn dev:backend\" \"yarn dev:frontend\" --names \"BACKEND,FRONTEND\" --prefix-colors \"magenta,cyan\"",
-    "dev:platform": "yarn dev:all",
+    "dev:all": "concurrently \"yarn dev:backend\" \"yarn dev:frontend\" \"yarn workspace @ecommerce/ui-library run storybook\" --names \"BACKEND,FRONTEND,UI\" --prefix-colors \"magenta,cyan,cyan\"",
     "dev:frontend": "concurrently \"yarn dev:shell\" \"yarn dev:admin\" \"yarn dev:seller\" \"yarn dev:storefront\" --names \"shell,admin,seller,store\" --prefix-colors \"cyan,green,yellow,blue\"",
     "dev:backend": "concurrently \"yarn service:auth\" \"yarn service:product\" \"yarn service:order\" \"yarn service:gateway\" --names \"auth,product,order,gateway\" --prefix-colors \"magenta,green,yellow,cyan\"",
     "dev:shell": "yarn workspace @ecommerce/shell-app run dev",
@@ -21,16 +20,27 @@
     "service:product": "cd services/product-service && yarn dev",
     "service:order": "cd services/order-service && yarn dev",
     "service:gateway": "cd services/graphql-gateway && yarn dev",
-    "build:all": "yarn build:shell && yarn build:admin && yarn build:seller && yarn build:storefront",
     "build:shell": "yarn workspace @ecommerce/shell-app run build",
     "build:admin": "yarn workspace @ecommerce/admin-app run build",
     "build:seller": "yarn workspace @ecommerce/seller-app run build",
     "build:storefront": "yarn workspace @ecommerce/storefront-app run build",
-    "services:start": "yarn dev:backend"
+    "build:storybook": "yarn workspace @ecommerce/ui-library run build",
+    "build:utils": "yarn workspace @ecommerce/utils run build",
+    "build:auth": "cd services/auth-service && yarn build",
+    "build:product": "cd services/product-service && yarn build",
+    "build:order": "cd services/order-service && yarn build",
+    "build:gateway": "cd services/graphql-gateway && yarn build",
+    "build:all": "yarn build:shell && yarn build:admin && yarn build:seller && yarn build:storefront && yarn build:auth && yarn build:product && yarn build:order && yarn build:gateway",
+    "build:frontend": "yarn build:shell && yarn build:admin && yarn build:seller && yarn build:storefront",
+    "build:backend": "yarn build:auth && yarn build:product && yarn build:order && yarn build:gateway"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
     "npm-run-all": "^4.1.5"
+  },
+  "resolutions": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "engines": {
     "node": ">=18.0.0",

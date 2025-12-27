@@ -1,5 +1,6 @@
 {
   "name": "@ecommerce/seller-app",
+  "license": "MIT",
   "version": "1.0.0",
   "description": "Seller portal for product management, inventory, and order fulfillment",
   "scripts": {

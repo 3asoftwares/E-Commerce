@@ -4,7 +4,7 @@
 
 import express from 'express';
 import { body } from 'express-validator';
-import * as productController from '../controllers/productController';
+import * as productController from '../controllers/ProductController';
 import { validate } from '../middleware/validator';
 
 const router = express.Router();

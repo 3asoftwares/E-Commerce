@@ -63,10 +63,7 @@ const startServer = async () => {
   try {
     await connectDatabase();
     app.listen(PORT, () => {
-      console.log(
-        `HTTP Port: ${PORT.toString().padEnd(30)}`,
-        `Database: ${process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce-products'}`
-      );
+      console.log(`Product services started: ${PORT.toString()}`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

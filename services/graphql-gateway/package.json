@@ -1,5 +1,6 @@
 {
   "name": "@ecommerce/graphql-gateway",
+  "license": "ISC",
   "version": "1.0.0",
   "description": "GraphQL Gateway aggregating all backend services",
   "main": "dist/index.js",

@@ -12,7 +12,6 @@ export const connectDatabase = async (): Promise<void> => {
   try {
     await mongoose.connect(MONGODB_URI);
     console.log('✅ MongoDB connected successfully');
-    console.log(`📊 Database: ${mongoose.connection.name}`);
 
     mongoose.connection.on('error', (err) => {
       console.error('❌ MongoDB connection error:', err);

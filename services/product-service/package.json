@@ -1,5 +1,6 @@
 {
   "name": "@ecommerce/product-service",
+  "license": "ISC",
   "version": "1.0.0",
   "description": "Product service with CRUD operations",
   "main": "dist/index.js",

@@ -16,6 +16,9 @@ yarn dev:backend               # Start only backend services (4 services)
 
 🎨 RUN INDIVIDUAL FRONTEND APPS
 -------------------------------
+yarn dev:all                   # Run all apps
+yarn dev:frontend              # Run all frontend apps
+yarn dev:frontend              # Run all backend apps
 yarn dev:shell                 # Shell App (Port 3000)
 yarn dev:admin                 # Admin App (Port 3001)
 yarn dev:seller                # Seller App (Port 3002)
@@ -28,13 +31,24 @@ yarn service:product           # Product Service (Port 3011)
 yarn service:order             # Order Service (Port 3012)
 yarn service:gateway           # GraphQL Gateway (Port 4000)
 
+🔧 RUN INDIVIDUAL BACKEND SERVICES
+----------------------------------
+yarn workspace @ecommerce/ui-library run storybook  # Storybook (Port 6006)
+
 🏗️ BUILD FOR PRODUCTION
 ------------------------
 yarn build:all                 # Build all frontend apps
-yarn build:shell               # Build Shell app only
-yarn build:admin               # Build Admin app only
-yarn build:seller              # Build Seller app only
+yarn build:frontend            # Build all frontend apps
+yarn build:backend             # Build all frontend apps
+yarn build:shell               # Build Shell app only - done
+yarn build:admin               # Build Admin app only - done
+yarn build:seller              # Build Seller app only - done
 yarn build:storefront          # Build Storefront app only
+yarn build:storybook           # Build storybook app only
+yarn build:auth                # Build Auth Services
+yarn build:product             # Build Product Services
+yarn build:orders              # Build Orders Services
+yarn build:gateway             # Build GraphQL Services
 
 🐳 SETUP DEPENDENCIES (Docker)
 ------------------------------

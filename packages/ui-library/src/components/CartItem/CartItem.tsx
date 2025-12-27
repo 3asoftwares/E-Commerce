@@ -3,8 +3,7 @@
  * Used in cart page and cart drawer
  */
 
-import React from 'react';
-import { CartItem as CartItemType } from '@e-commerce/types';
+import { CartItem as CartItemType } from '@ecommerce/types';
 
 export interface CartItemProps {
   item: CartItemType;

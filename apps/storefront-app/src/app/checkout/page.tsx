@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Button, Badge, Spinner } from '@e-commerce/ui-library';
-import { Address, CartItem, ShippingMethod, PaymentMethod } from '@e-commerce/types';
+import { Button, Badge, Spinner } from '@ecommerce/ui-library';
+import { Address, CartItem, ShippingMethod, PaymentMethod } from '@ecommerce/types';
 
 export default function CheckoutPage() {
   const [step, setStep] = useState<'address' | 'shipping' | 'payment' | 'review'>('address');

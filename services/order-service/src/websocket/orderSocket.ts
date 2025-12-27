@@ -51,7 +51,6 @@ export const emitOrderUpdate = (customerId: string, order: any) => {
       paymentStatus: order.paymentStatus,
       timestamp: new Date().toISOString(),
     });
-    console.log(`📤 Order update sent to user ${customerId}`);
   }
 };
 

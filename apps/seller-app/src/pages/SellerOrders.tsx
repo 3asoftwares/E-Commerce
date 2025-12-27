@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Table, Badge, Button, Spinner } from '@e-commerce/ui-library';
-import { Order, OrderStatus } from '@e-commerce/types';
+import { Order, OrderStatus } from '@ecommerce/types';
 
 export const SellerOrders: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');

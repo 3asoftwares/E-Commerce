@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Order, OrderStatus } from '@e-commerce/types';
+import { Order, OrderStatus } from '@ecommerce/types';
 
 export interface OrderCardProps {
   order: Order;
