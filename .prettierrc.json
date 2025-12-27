@@ -1,6 +1,4 @@
 {
-  "//": "Prettier configuration for consistent code formatting",
-  "//": "Applied automatically across all files in the monorepo",
   "semi": true,
   "trailingComma": "es5",
   "singleQuote": true,

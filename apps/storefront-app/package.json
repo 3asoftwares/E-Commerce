@@ -1,5 +1,5 @@
 {
-  "name": "@ecommerce/storefront-app",
+  "name": "@e-commerce/storefront-app",
   "license": "MIT",
   "type": "module",
   "version": "1.0.0",
@@ -11,9 +11,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ecommerce/types": "^1.0.0",
-    "@ecommerce/ui-library": "^1.0.0",
-    "@ecommerce/utils": "^1.0.0",
+    "@e-commerce/types": "^1.0.0",
+    "@e-commerce/ui-library": "^1.0.0",
+    "@e-commerce/utils": "^1.0.0",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.90.12",
     "axios": "^1.6.2",

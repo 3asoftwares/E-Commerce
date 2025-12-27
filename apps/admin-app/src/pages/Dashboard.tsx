@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDashboardStats } from '../api/queries';
 
 export const Dashboard: React.FC = () => {

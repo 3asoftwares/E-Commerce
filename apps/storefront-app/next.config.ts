@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@ecommerce/ui-library', '@ecommerce/types', '@ecommerce/utils'],
+  transpilePackages: ['@e-commerce/ui-library', '@e-commerce/types', '@e-commerce/utils'],
   images: {
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost' },
