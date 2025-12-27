@@ -18,4 +18,61 @@ export function createBaseViteConfig(rootDir: string): UserConfig {
   });
 }
 
-export default createBaseViteConfig;
+export async function createLibraryViteConfig(rootDir: string): Promise<UserConfig> {
+  const base = createBaseViteConfig(rootDir) as UserConfig;
+
+  const config: any = Object.assign({}, base);
+
+  config.build = config.build || {};
+  config.build.lib = {
+    entry: path.resolve(rootDir, 'src/index.ts'),
+    name: 'ui-library',
+    formats: ['es', 'cjs', 'umd'],
+    fileName: (format: string) => `ui-library.${format}.js`,
+  };
+  config.build.rollupOptions = config.build.rollupOptions || {};
+  config.build.rollupOptions.external = ['react', 'react-dom'];
+  config.build.rollupOptions.output = {
+    globals: {
+      react: 'React',
+      'react-dom': 'ReactDOM',
+    },
+  };
+
+  const isVitest =
+    Boolean(process.env.VITEST) ||
+    Boolean(process.env.npm_lifecycle_event && process.env.npm_lifecycle_event.includes('vitest')) ||
+    process.argv.join(' ').includes('vitest');
+
+  if (isVitest) {
+    const { storybookTest } = await import('@storybook/addon-vitest/vitest-plugin').catch(() => ({ storybookTest: undefined }));
+    const { playwright } = await import('@vitest/browser-playwright').catch(() => ({ playwright: undefined }));
+
+    if (storybookTest) {
+      config.test = {
+        projects: [
+          {
+            extends: true,
+            plugins: [
+              storybookTest({
+                configDir: path.join(rootDir, '.storybook'),
+              }),
+            ],
+            test: {
+              name: 'storybook',
+              browser: {
+                enabled: true,
+                headless: true,
+                provider: playwright ? playwright({}) : undefined,
+                instances: [{ browser: 'chromium' }],
+              },
+              setupFiles: ['.storybook/vitest.setup.ts'],
+            },
+          },
+        ],
+      };
+    }
+  }
+
+  return config;
+}
