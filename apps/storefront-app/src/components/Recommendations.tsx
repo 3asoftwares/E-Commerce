@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export const Recommendations: React.FC<{ products: any[] }> = ({ products }) => (
   <div>

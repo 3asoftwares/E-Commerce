@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export const PromoBanner: React.FC = () => (
   <div className="w-full bg-gradient-to-r from-primary-500 to-primary-700 text-white py-6 px-4 rounded-lg mb-8 flex items-center justify-between">

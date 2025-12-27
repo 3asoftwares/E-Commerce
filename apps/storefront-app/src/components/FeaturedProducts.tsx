@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export const FeaturedProducts: React.FC<{ products: any[] }> = ({ products }) => (
   <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import '../../styles/globals.css';
 
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {

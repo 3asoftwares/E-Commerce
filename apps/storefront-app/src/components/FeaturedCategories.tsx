@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 const categories = [
   { name: 'Electronics', image: '/images/electronics.jpg' },

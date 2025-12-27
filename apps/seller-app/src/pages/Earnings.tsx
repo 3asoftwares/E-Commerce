@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSellerStats } from '../api/queries';
 
 export const Earnings: React.FC = () => {

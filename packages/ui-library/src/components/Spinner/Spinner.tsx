@@ -2,7 +2,7 @@
  * Loading Spinner Component
  */
 
-import React from 'react';
+
 
 export interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { useQuery } from '@tanstack/react-query';
 import { OrderCard, Spinner } from '@e-commerce/ui-library';
 import { Order } from '@e-commerce/types';

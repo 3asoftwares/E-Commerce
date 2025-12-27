@@ -3,7 +3,7 @@
  * Used to display orders in order history
  */
 
-import React from 'react';
+
 import { Order, OrderStatus } from '@e-commerce/types';
 
 export interface OrderCardProps {

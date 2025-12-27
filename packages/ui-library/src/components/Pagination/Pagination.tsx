@@ -2,7 +2,7 @@
  * Pagination Component
  */
 
-import React from 'react';
+
 
 export interface PaginationProps {
   currentPage: number;

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@e-commerce/ui-library';
 import { SellerPayout, SellerStats } from '@e-commerce/types';
