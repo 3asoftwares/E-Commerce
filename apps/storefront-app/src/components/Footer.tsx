@@ -103,7 +103,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-neutral-200 dark:border-neutral-700 mt-8 pt-8 text-center text-sm text-neutral-600 dark:text-neutral-400">
-          <p>© 2025 3a SoftwaresStore. All rights reserved.</p>
+          <p>© 2025 3A SoftwaresStore. All rights reserved.</p>
           <div className="mt-2 space-x-4">
             <Link href="/privacy" className="hover:text-primary-600">
               Privacy Policy

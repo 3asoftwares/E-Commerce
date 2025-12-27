@@ -49,7 +49,7 @@ Provides type safety and consistency across all applications by defining:
 All apps import types from this package:
 
 ```
-import type { Product, Order, UserRole } from '@ecommerce/types';
+import type { Product, Order, UserRole } from '@e-commerce/types';
 ```
 
 ## Benefits

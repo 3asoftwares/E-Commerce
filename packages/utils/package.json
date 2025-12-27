@@ -1,5 +1,5 @@
 {
-  "name": "@ecommerce/utils",
+  "name": "@e-commerce/utils",
   "license": "ISC",
   "version": "1.0.0",
   "main": "src/index.ts",

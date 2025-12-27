@@ -32,7 +32,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      title: '3a SoftwaresPlatform - Shell',
+      title: '3A Softwares - Shell',
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',

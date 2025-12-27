@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { OrderCard, Spinner } from '@ecommerce/ui-library';
-import { Order } from '@ecommerce/types';
+import { OrderCard, Spinner } from '@e-commerce/ui-library';
+import { Order } from '@e-commerce/types';
 
 export default function OrdersPage() {
   const [filter, setFilter] = React.useState<string>('all');

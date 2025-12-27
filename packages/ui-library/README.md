@@ -79,7 +79,7 @@ Provides a consistent design system and reusable components across all micro-fro
 All apps import components from this package:
 
 ```
-import { Button, Card, Input } from '@ecommerce/ui-library';
+import { Button, Card, Input } from '@e-commerce/ui-library';
 ```
 
 ## Development

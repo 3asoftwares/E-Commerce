@@ -1,7 +1,7 @@
 /**
  * Seller Entity Types
  *
- * This file defines all seller-related types for the 3a Softwaresplatform.
+ * This file defines all seller-related types for the 3A Softwares.
  */
 
 export interface SellerAddress {

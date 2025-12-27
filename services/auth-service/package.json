@@ -1,5 +1,5 @@
 {
-  "name": "@ecommerce/auth-service",
+  "name": "@e-commerce/auth-service",
   "license": "ISC",
   "version": "1.0.0",
   "description": "Authentication service with JWT and role-based access control",

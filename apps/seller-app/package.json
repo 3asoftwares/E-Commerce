@@ -1,5 +1,5 @@
 {
-  "name": "@ecommerce/seller-app",
+  "name": "@e-commerce/seller-app",
   "license": "MIT",
   "version": "1.0.0",
   "description": "Seller portal for product management, inventory, and order fulfillment",
@@ -17,9 +17,9 @@
     "axios": "^1.6.2",
     "@reduxjs/toolkit": "^2.0.1",
     "react-redux": "^9.0.4",
-    "@ecommerce/ui-library": "^1.0.0",
-    "@ecommerce/types": "^1.0.0",
-    "@ecommerce/utils": "^1.0.0"
+    "@e-commerce/ui-library": "^1.0.0",
+    "@e-commerce/types": "^1.0.0",
+    "@e-commerce/utils": "^1.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",

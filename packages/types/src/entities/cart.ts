@@ -1,31 +1,5 @@
 /**
  * Cart Entity Types
- *
- * This file defines all cart-related types for the 3a Softwaresplatform.
- *
- * Interfaces:
- * - Cart: Shopping cart
- * - CartItem: Cart item
- * - CartSummary: Cart totals summary
- *
- * Properties:
- * - id: Cart identifier
- * - userId: User ID (null for guest)
- * - items: Cart items
- * - subtotal: Items subtotal
- * - tax: Estimated tax
- * - shipping: Estimated shipping
- * - discount: Discount amount
- * - discountCode: Applied promo code
- * - total: Total amount
- * - itemCount: Total item count
- * - createdAt: Cart creation
- * - updatedAt: Last update
- * - expiresAt: Cart expiration (for guests)
- */
-
-/**
- * Cart Entity Types
  */
 
 export interface Cart {

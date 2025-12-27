@@ -6,7 +6,7 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: '3a SoftwaresStorefront - Shop Quality Products',
+  title: '3A SoftwaresStorefront - Shop Quality Products',
   description: 'Shop the best products at competitive prices. Free shipping on orders over $50.',
   keywords: 'ecommerce, online shopping, products, deals',
 };

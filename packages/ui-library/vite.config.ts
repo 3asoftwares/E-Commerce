@@ -21,7 +21,7 @@ export default defineConfig(async () => {
     resolve: {
       alias: {
         '@e-commerce/ui-library': path.resolve(__dirname, '../../packages/ui-library/src'),
-        '@ecommerce/types': path.resolve(__dirname, '../../packages/types/src'),
+        '@e-commerce/types': path.resolve(__dirname, '../../packages/types/src'),
         '@e-commerce/utils': path.resolve(__dirname, '../../packages/utils/src'),
       },
     },

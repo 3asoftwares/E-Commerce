@@ -3,8 +3,7 @@
  * Used to display products in grids/lists
  */
 
-import React from 'react';
-import { Product } from '@ecommerce/types';
+import { Product } from '@e-commerce/types';
 
 export interface ProductCardProps {
   product: Product;

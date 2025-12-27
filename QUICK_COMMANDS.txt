@@ -1,5 +1,5 @@
 ===============================================
-🚀 QUICK COMMAND REFERENCE - 3a SoftwaresPlatform
+🚀 QUICK COMMAND REFERENCE - 3A Softwares
 ===============================================
 
 📦 INSTALLATION
@@ -33,7 +33,7 @@ yarn service:gateway           # GraphQL Gateway (Port 4000)
 
 🔧 RUN INDIVIDUAL BACKEND SERVICES
 ----------------------------------
-yarn workspace @ecommerce/ui-library run storybook  # Storybook (Port 6006)
+yarn workspace @e-commerce/ui-library run storybook  # Storybook (Port 6006)
 
 🏗️ BUILD FOR PRODUCTION
 ------------------------
@@ -44,11 +44,13 @@ yarn build:shell               # Build Shell app only - done
 yarn build:admin               # Build Admin app only - done
 yarn build:seller              # Build Seller app only - done
 yarn build:storefront          # Build Storefront app only
-yarn build:storybook           # Build storybook app only
 yarn build:auth                # Build Auth Services
 yarn build:product             # Build Product Services
 yarn build:orders              # Build Orders Services
 yarn build:gateway             # Build GraphQL Services
+yarn build:storybook           # Build storybook app only
+yarn build:types               # Build types app only
+yarn build:utils               # Build utils app only
 
 🐳 SETUP DEPENDENCIES (Docker)
 ------------------------------

@@ -3,8 +3,8 @@
 import React from 'react';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { Badge, Spinner } from '@ecommerce/ui-library';
-import { Order, OrderStatus, TrackingEvent } from '@ecommerce/types';
+import { Badge, Spinner } from '@e-commerce/ui-library';
+import { Order, OrderStatus, TrackingEvent } from '@e-commerce/types';
 
 export default function OrderTrackingPage() {
   const params = useParams();

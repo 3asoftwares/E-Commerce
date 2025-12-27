@@ -3,7 +3,7 @@
  * Used in cart page and cart drawer
  */
 
-import { CartItem as CartItemType } from '@ecommerce/types';
+import { CartItem as CartItemType } from '@e-commerce/types';
 
 export interface CartItemProps {
   item: CartItemType;
