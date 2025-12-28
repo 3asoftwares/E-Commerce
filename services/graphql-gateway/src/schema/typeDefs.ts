@@ -29,7 +29,7 @@ export const typeDefs = `#graphql
   # Order Types
   type Order {
     id: ID!
-    orderNumber: String!
+    orderNumber: String
     customerId: String!
     customerEmail: String!
     items: [OrderItem!]!
@@ -37,13 +37,13 @@ export const typeDefs = `#graphql
     tax: Float!
     shipping: Float!
     total: Float!
-    orderStatus: OrderStatus!
-    paymentStatus: PaymentStatus!
+    orderStatus: String!
+    paymentStatus: String!
     paymentMethod: String!
     shippingAddress: Address!
     notes: String
-    createdAt: String!
-    updatedAt: String!
+    createdAt: String
+    updatedAt: String
   }
 
   type OrderItem {
@@ -91,7 +91,7 @@ export const typeDefs = `#graphql
     role: String!
     isActive: Boolean!
     emailVerified: Boolean!
-    createdAt: String!
+    createdAt: String
     lastLogin: String
   }
 

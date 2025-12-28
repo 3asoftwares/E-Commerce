@@ -1,156 +1,135 @@
-
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { Spinner } from '@e-commerce/ui-library';
-import { SellerPayout, SellerStats } from '@e-commerce/types';
+import { orderApi, handleApiError } from '../api/client';
+
+interface Earning {
+  period: string;
+  revenue: number;
+  orders: number;
+  commission: number;
+  payout: number;
+}
 
 export const SellerEarnings: React.FC = () => {
-  const { data: statsData, isLoading: statsLoading } = useQuery<{ stats: SellerStats }>({
-    queryKey: ['seller-stats'],
-    queryFn: async () => {
-      const response = await fetch('/api/seller/stats');
-      return response.json();
-    },
-  });
+  const [earnings, setEarnings] = useState<Earning[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalRevenue, setTotalRevenue] = useState(0);
 
-  const { data: payoutsData, isLoading: payoutsLoading } = useQuery<{ payouts: SellerPayout[] }>({
-    queryKey: ['seller-payouts'],
-    queryFn: async () => {
-      const response = await fetch('/api/seller/payouts');
-      return response.json();
-    },
-  });
+  useEffect(() => {
+    const fetchEarnings = async () => {
+      try {
+        setLoading(true);
+        const response = await orderApi.getAll(1, 100);
+        const orders = response.data.data.orders || [];
 
-  if (statsLoading || payoutsLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
+        // Calculate earnings from orders
+        const totalRev = orders.reduce((sum: number, order: any) => sum + (order.total || 0), 0);
+        setTotalRevenue(totalRev);
 
-  const stats = statsData?.stats;
-  const payouts = payoutsData?.payouts || [];
+        // Group by month
+        const earningsByMonth: { [key: string]: Earning } = {};
+        orders.forEach((order: any) => {
+          const date = new Date(order.createdAt);
+          const period = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+
+          if (!earningsByMonth[period]) {
+            earningsByMonth[period] = {
+              period,
+              revenue: 0,
+              orders: 0,
+              commission: 0,
+              payout: 0,
+            };
+          }
+
+          earningsByMonth[period].revenue += order.total || 0;
+          earningsByMonth[period].orders += 1;
+          earningsByMonth[period].commission = earningsByMonth[period].revenue * 0.1; // 10% commission
+          earningsByMonth[period].payout = earningsByMonth[period].revenue - earningsByMonth[period].commission;
+        });
+
+        setEarnings(Object.values(earningsByMonth).reverse());
+      } catch (err) {
+        setError(handleApiError(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEarnings();
+  }, []);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Earnings & Payouts</h1>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold text-gray-900 mb-8">Sales & Earnings</h1>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Total Revenue</div>
-          <div className="text-3xl font-bold text-green-600">
-            ${stats?.totalRevenue.toFixed(2) || '0.00'}
-          </div>
-          <div className="text-xs text-gray-500 mt-1">All time</div>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">This Month</div>
-          <div className="text-3xl font-bold text-primary-600">
-            ${(stats?.totalRevenue || 0).toFixed(2)}
-          </div>
-          <div className="text-xs text-gray-500 mt-1">Current month</div>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Total Orders</div>
-          <div className="text-3xl font-bold text-blue-600">{stats?.totalOrders || 0}</div>
-          <div className="text-xs text-gray-500 mt-1">All time</div>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Avg Order Value</div>
-          <div className="text-3xl font-bold text-purple-600">
-            ${stats?.averageOrderValue.toFixed(2) || '0.00'}
-          </div>
-          <div className="text-xs text-gray-500 mt-1">Per order</div>
-        </div>
-      </div>
-
-      {/* Top Products */}
-      {stats?.topProducts && stats.topProducts.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-bold mb-4">Top Selling Products</h2>
-          <div className="space-y-4">
-            {stats.topProducts.map((product, index) => (
-              <div
-                key={product.productId}
-                className="flex items-center justify-between border-b pb-4"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="text-2xl font-bold text-gray-400">#{index + 1}</div>
-                  <div>
-                    <div className="font-semibold">{product.productName}</div>
-                    <div className="text-sm text-gray-600">{product.sales} sales</div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-lg text-green-600">
-                    ${product.revenue.toFixed(2)}
-                  </div>
-                  <div className="text-sm text-gray-600">Revenue</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          {error}
         </div>
       )}
 
-      {/* Payout History */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold mb-4">Payout History</h2>
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <Spinner />
+        </div>
+      ) : (
+        <>
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white rounded-lg shadow p-6">
+              <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">${totalRevenue.toFixed(2)}</p>
+            </div>
 
-        {payouts.length === 0 ? (
-          <div className="text-center py-12 text-gray-600">
-            <p>No payouts yet</p>
-            <p className="text-sm mt-2">Payouts are processed monthly</p>
+            <div className="bg-white rounded-lg shadow p-6">
+              <p className="text-gray-600 text-sm font-medium">Total Orders</p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">{earnings.reduce((sum, e) => sum + e.orders, 0)}</p>
+            </div>
+
+            <div className="bg-white rounded-lg shadow p-6">
+              <p className="text-gray-600 text-sm font-medium">Commission (10%)</p>
+              <p className="text-3xl font-bold text-orange-600 mt-2">
+                ${(totalRevenue * 0.1).toFixed(2)}
+              </p>
+            </div>
+
+            <div className="bg-white rounded-lg shadow p-6">
+              <p className="text-gray-600 text-sm font-medium">Payout</p>
+              <p className="text-3xl font-bold text-green-600 mt-2">
+                ${(totalRevenue * 0.9).toFixed(2)}
+              </p>
+            </div>
           </div>
-        ) : (
-          <div className="space-y-4">
-            {payouts.map((payout) => (
-              <div
-                key={payout.id}
-                className="flex items-center justify-between border rounded-lg p-4"
-              >
-                <div>
-                  <div className="font-semibold">
-                    {new Date(payout.period.start).toLocaleDateString()} -{' '}
-                    {new Date(payout.period.end).toLocaleDateString()}
-                  </div>
-                  <div className="text-sm text-gray-600 mt-1">{payout.orders.length} orders</div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {payout.status === 'completed' && payout.completedAt && (
-                      <>Paid on {new Date(payout.completedAt).toLocaleDateString()}</>
-                    )}
-                    {payout.status === 'pending' && <>Pending payment</>}
-                    {payout.status === 'processing' && <>Processing</>}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-green-600">
-                    ${payout.amount.toFixed(2)}
-                  </div>
-                  <div className="mt-1">
-                    {payout.status === 'completed' && (
-                      <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-semibold rounded-full">
-                        Paid
-                      </span>
-                    )}
-                    {payout.status === 'pending' && (
-                      <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
-                        Pending
-                      </span>
-                    )}
-                    {payout.status === 'processing' && (
-                      <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-semibold rounded-full">
-                        Processing
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+
+          {/* Earnings Table */}
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Period</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Revenue</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Orders</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commission</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payout</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {earnings.map((earning, idx) => (
+                  <tr key={idx}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{earning.period}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${earning.revenue.toFixed(2)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{earning.orders}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-orange-600">${earning.commission.toFixed(2)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">${earning.payout.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };

@@ -11,13 +11,13 @@ import { Coupons } from './pages/Coupons';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { useUIStore } from './store/uiStore';
+import { isTokenExpired, validateUserRole, clearAuth } from '@e-commerce/utils';
 
 const AppContent: React.FC = () => {
   const dispatch = useAppDispatch();
   const { theme } = useUIStore();
 
   useEffect(() => {
-    // Apply theme to document
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -26,15 +26,50 @@ const AppContent: React.FC = () => {
   }, [theme]);
 
   useEffect(() => {
+    // Extract auth data from query parameters and store in localStorage
+    const params = new URLSearchParams(window.location.search);
+    const accessToken = params.get('accessToken');
+    const refreshToken = params.get('refreshToken');
+    const tokenExpiry = params.get('tokenExpiry');
+    const user = params.get('user');
+    
+    // If auth data is in URL params, store it in localStorage
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
+      if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+      if (tokenExpiry) localStorage.setItem('tokenExpiry', tokenExpiry);
+      if (user) localStorage.setItem('user', user);
+    }
+
+    // Check if token has expired
+    if (isTokenExpired()) {
+      clearAuth();
+      window.location.href = 'http://localhost:3000';
+      return;
+    }
+    
+    // Validate user has admin role
+    if (!validateUserRole('admin')) {
+      clearAuth();
+      window.location.href = 'http://localhost:3000';
+      return;
+    }
+    
+    // Load user data into Redux store
     const userStr = localStorage.getItem('user');
     const token = localStorage.getItem('accessToken');
+    
     if (userStr && token) {
       try {
         const user = JSON.parse(userStr);
         dispatch(setUser({ user, token }));
-      } catch {}
-    } else{
-      window.location.href = 'http://localhost:3000?logout=true';
+      } catch (error) {
+        console.error('Failed to parse user:', error);
+        clearAuth();
+        window.location.href = 'http://localhost:3000';
+      }
+    } else {
+      window.location.href = 'http://localhost:3000';
     }
   }, [dispatch]);
 

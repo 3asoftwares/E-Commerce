@@ -6430,7 +6430,7 @@ function prefix3(value, length2) {
         // stic(k)y
         case 107:
           return replace(value, ":", ":" + WEBKIT) + value;
-        // (inline-)?fl(e)x
+        // (inline-)?fl(e:any)x
         case 101:
           return replace(value, /(.+:)([^;!]+)(;|!.+)?/, "$1" + WEBKIT + (charat(value, 14) === 45 ? "inline-" : "") + "box$3$1" + WEBKIT + "$2$3$1" + MS + "$2box$3") + value;
       }

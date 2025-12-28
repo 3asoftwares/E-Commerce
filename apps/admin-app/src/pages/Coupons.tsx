@@ -196,7 +196,7 @@ export const Coupons: React.FC = () => {
             <Input
               label="Coupon Code"
               value={formData.code}
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setFormData({ ...formData, code: e.target.value.toUpperCase() })
               }
               placeholder="e.g., SUMMER2024"
@@ -208,7 +208,7 @@ export const Coupons: React.FC = () => {
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e:any) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 rows={2}
                 required
@@ -221,7 +221,7 @@ export const Coupons: React.FC = () => {
                 </label>
                 <select
                   value={formData.discountType}
-                  onChange={(e) =>
+                  onChange={(e:any) =>
                     setFormData({
                       ...formData,
                       discountType: e.target.value as 'percentage' | 'fixed',
@@ -238,7 +238,7 @@ export const Coupons: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={formData.discountValue}
-                onChange={(e) =>
+                onChange={(e:any) =>
                   setFormData({ ...formData, discountValue: parseFloat(e.target.value) })
                 }
                 required
@@ -250,7 +250,7 @@ export const Coupons: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={formData.minOrderValue || ''}
-                onChange={(e) =>
+                onChange={(e:any) =>
                   setFormData({
                     ...formData,
                     minOrderValue: e.target.value ? parseFloat(e.target.value) : undefined,
@@ -263,7 +263,7 @@ export const Coupons: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={formData.maxDiscount || ''}
-                onChange={(e) =>
+                onChange={(e:any) =>
                   setFormData({
                     ...formData,
                     maxDiscount: e.target.value ? parseFloat(e.target.value) : undefined,
@@ -277,14 +277,14 @@ export const Coupons: React.FC = () => {
                 label="Valid From"
                 type="date"
                 value={formData.validFrom}
-                onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
+                onChange={(e:any) => setFormData({ ...formData, validFrom: e.target.value })}
                 required
               />
               <Input
                 label="Valid To"
                 type="date"
                 value={formData.validTo}
-                onChange={(e) => setFormData({ ...formData, validTo: e.target.value })}
+                onChange={(e:any) => setFormData({ ...formData, validTo: e.target.value })}
                 required
               />
             </div>
@@ -292,7 +292,7 @@ export const Coupons: React.FC = () => {
               label="Usage Limit"
               type="number"
               value={formData.usageLimit || ''}
-              onChange={(e) =>
+              onChange={(e:any) =>
                 setFormData({
                   ...formData,
                   usageLimit: e.target.value ? parseInt(e.target.value) : undefined,

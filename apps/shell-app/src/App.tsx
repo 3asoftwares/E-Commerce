@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Suspense } from 'react';
+import { clearAuth } from '@e-commerce/utils';
 const Header = React.lazy(() => import('./components/Header').then((m) => ({ default: (m as any).Header ?? (m as any).default }))) as React.LazyExoticComponent<React.ComponentType<{ onLoginClick: () => void; onSignupClick: () => void;}>>;
 const Footer = React.lazy(() => import('./components/Footer').then((m) => ({ default: (m as any).Footer ?? (m as any).default })));
 const WelcomePage = React.lazy(() => import('./components/WelcomePage').then((m) => ({ default: (m as any).WelcomePage ?? (m as any).default }))) as React.LazyExoticComponent<React.ComponentType<{
@@ -27,7 +28,7 @@ const App: React.FC = () => {
           renderApp(user.role);
           return true;
         }
-      } catch (e) {
+      } catch (e:any) {
         localStorage.removeItem('user');
         return true;
       }
@@ -58,9 +59,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('logout') === 'true') {
-      localStorage.removeItem('user');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      clearAuth();
     }
   }, []);
 

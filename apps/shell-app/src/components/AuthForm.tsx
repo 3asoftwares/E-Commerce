@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input, Select } from '@e-commerce/ui-library';
 import { login as loginService, register as registerService } from '../services/authService';
+import { storeAuth } from '@e-commerce/utils';
 import { renderApp } from '../utils';
 
 interface AuthFormProps {
@@ -132,8 +133,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = 'login', setAu
         data = await registerService(email, password, role, name);
       }
       if (!data || !data.user) throw new Error(data.message || 'Authentication failed');
-      localStorage.setItem('user', JSON.stringify(data.user));
-      localStorage.setItem('accessToken', data.accessToken);
+      
+      // Store auth data with token expiration
+      storeAuth({
+        user: data.user,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        expiresIn: data.expiresIn,
+      });
+      
       onSuccess?.();
       renderApp(data.user.role);
     } catch (err: any) {
@@ -164,7 +172,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = 'login', setAu
             type="text"
             placeholder="Your Name"
             value={name}
-            onChange={(e) => {
+            onChange={(e:any) => {
               setName(e.target.value);
               if (fieldErrors.name) {
                 setFieldErrors((prev) => ({ ...prev, name: undefined }));
@@ -181,7 +189,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = 'login', setAu
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => {
+          onChange={(e:any) => {
             setEmail(e.target.value);
             if (fieldErrors.email) {
               setFieldErrors((prev) => ({ ...prev, email: undefined }));
@@ -198,7 +206,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = 'login', setAu
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => {
+            onChange={(e:any) => {
               setPassword(e.target.value);
               if (fieldErrors.password) {
                 setFieldErrors((prev) => ({ ...prev, password: undefined }));
@@ -222,7 +230,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = 'login', setAu
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
-              onChange={(e) => {
+              onChange={(e:any) => {
                 setConfirmPassword(e.target.value);
                 if (fieldErrors.confirmPassword) {
                   setFieldErrors((prev) => ({ ...prev, confirmPassword: undefined }));

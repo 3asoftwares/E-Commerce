@@ -3,7 +3,30 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+function AuthLoader({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    // Extract auth data from query parameters and store in localStorage
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const accessToken = params.get('accessToken');
+      const refreshToken = params.get('refreshToken');
+      const tokenExpiry = params.get('tokenExpiry');
+      const user = params.get('user');
+      
+      // If auth data is in URL params, store it in localStorage
+      if (accessToken) {
+        localStorage.setItem('accessToken', accessToken);
+        if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+        if (tokenExpiry) localStorage.setItem('tokenExpiry', tokenExpiry);
+        if (user) localStorage.setItem('user', user);
+      }
+    }
+  }, []);
+
+  return <>{children}</>;
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -21,7 +44,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RecoilRoot>{children}</RecoilRoot>
+      <RecoilRoot>
+        <AuthLoader>{children}</AuthLoader>
+      </RecoilRoot>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

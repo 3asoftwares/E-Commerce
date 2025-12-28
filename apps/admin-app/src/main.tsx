@@ -24,7 +24,7 @@ if (savedTheme) {
     if (store.state?.theme === 'dark') {
       document.documentElement.classList.add('dark');
     }
-  } catch (e) {
+  } catch (e:any) {
     // Ignore parse errors
   }
 }

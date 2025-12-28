@@ -117,12 +117,31 @@ export const resolvers = {
 
   Order: {
     id: (parent: any) => parent._id || parent.id,
+    orderNumber: (parent: any) => parent.orderNumber || null,
     orderStatus: (parent: any) => (parent.orderStatus || parent.status || 'pending').toUpperCase(),
     paymentStatus: (parent: any) => (parent.paymentStatus || 'pending').toUpperCase(),
+    createdAt: (parent: any) => {
+      if (parent.createdAt) {
+        return new Date(parent.createdAt).toISOString();
+      }
+      return null;
+    },
+    updatedAt: (parent: any) => {
+      if (parent.updatedAt) {
+        return new Date(parent.updatedAt).toISOString();
+      }
+      return null;
+    },
   },
 
   User: {
     id: (parent: any) => parent._id || parent.id,
+    createdAt: (parent: any) => {
+      if (parent.createdAt) {
+        return new Date(parent.createdAt).toISOString();
+      }
+      return null;
+    },
   },
 
   Mutation: {

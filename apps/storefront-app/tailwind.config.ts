@@ -1,9 +1,11 @@
 import type { Config } from 'tailwindcss';
-const baseConfig = require('../../packages/utils/src/config/tailwind.config');
+import baseConfig from '../../packages/utils/src/config/tailwind.config';
 
 const config: Config = {
   ...baseConfig,
+  darkMode: baseConfig.darkMode || 'class',
   content: [
+    ...(Array.isArray(baseConfig.content) ? baseConfig.content : []),
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',

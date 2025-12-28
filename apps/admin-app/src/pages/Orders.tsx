@@ -82,7 +82,7 @@ export const Orders: React.FC = () => {
       render: (order: Order) => (
         <select
           value={order.orderStatus}
-          onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
+          onChange={(e:any) => handleStatusChange(order.id, e.target.value as OrderStatus)}
           className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
         >
           <option value="PENDING">Pending</option>
@@ -283,7 +283,7 @@ export const Orders: React.FC = () => {
                 <div className="flex gap-2 mt-3">
                   <select
                     value={orderDetail.order.paymentStatus}
-                    onChange={(e) =>
+                    onChange={(e:any) =>
                       handlePaymentStatusChange(orderDetail.order.id, e.target.value as PaymentStatus)
                     }
                     className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"

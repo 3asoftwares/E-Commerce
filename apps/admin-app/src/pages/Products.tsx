@@ -170,7 +170,7 @@ export const Products: React.FC = () => {
         <Input
           placeholder="Search products..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e:any) => setSearchTerm(e.target.value)}
           className="flex-1"
         />
       </div>
@@ -201,7 +201,7 @@ export const Products: React.FC = () => {
             <Input
               label="Product Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e:any) => setFormData({ ...formData, name: e.target.value })}
               required
             />
             <div>
@@ -210,7 +210,7 @@ export const Products: React.FC = () => {
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e:any) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 rows={3}
                 required
@@ -222,14 +222,14 @@ export const Products: React.FC = () => {
                 type="number"
                 step="0.01"
                 value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                onChange={(e:any) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
                 required
               />
               <Input
                 label="Stock"
                 type="number"
                 value={formData.stock}
-                onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
+                onChange={(e:any) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
                 required
               />
             </div>
@@ -239,7 +239,7 @@ export const Products: React.FC = () => {
               </label>
               <select
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                onChange={(e:any) => setFormData({ ...formData, category: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 required
               >
@@ -254,7 +254,7 @@ export const Products: React.FC = () => {
             <Input
               label="Image URL"
               value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+              onChange={(e:any) => setFormData({ ...formData, imageUrl: e.target.value })}
             />
             <div className="flex justify-end gap-3 mt-6">
               <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>

@@ -1,23 +1,95 @@
 import axios from 'axios';
 
-const GRAPHQL_URL = import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:4000/graphql';
+const AUTH_API = 'http://localhost:3010';
+const PRODUCT_API = 'http://localhost:3011';
+const ORDER_API = 'http://localhost:3012';
 
-export const graphqlClient = axios.create({
-  baseURL: GRAPHQL_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const createApiClient = (baseURL: string) => {
+  const client = axios.create({
+    baseURL,
+    headers: { 'Content-Type': 'application/json' },
+  });
 
-graphqlClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('seller_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  client.interceptors.request.use((config) => {
+    // Use global accessToken from shell-app
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+
+  return client;
+};
+
+const authClient = createApiClient(AUTH_API);
+const productClient = createApiClient(PRODUCT_API);
+const orderClient = createApiClient(ORDER_API);
+
+// ==================== AUTH ENDPOINTS ====================
+export const authApi = {
+  register: (data: {
+    email: string;
+    password: string;
+    name: string;
+    businessName?: string;
+  }) => authClient.post('/api/auth/register', data),
+
+  login: (email: string, password: string) =>
+    authClient.post('/api/auth/login', { email, password }),
+
+  logout: () => authClient.post('/api/auth/logout'),
+
+  getProfile: () => authClient.get('/api/auth/profile'),
+
+  updateProfile: (data: any) => authClient.put('/api/auth/profile', data),
+
+  getStats: () => authClient.get('/api/auth/stats'),
+};
+
+// ==================== PRODUCT ENDPOINTS ====================
+export const productApi = {
+  getAll: (page = 1, limit = 10) =>
+    productClient.get('/api/products', { params: { page, limit } }),
+
+  getById: (id: string) => productClient.get(`/api/products/${id}`),
+
+  create: (data: any) => productClient.post('/api/products', data),
+
+  update: (id: string, data: any) => productClient.put(`/api/products/${id}`, data),
+
+  delete: (id: string) => productClient.delete(`/api/products/${id}`),
+
+  search: (query: string, page = 1, limit = 10) =>
+    productClient.get('/api/products', {
+      params: { search: query, page, limit },
+    }),
+
+  getCategories: () => productClient.get('/api/products/categories'),
+};
+
+// ==================== ORDER ENDPOINTS ====================
+export const orderApi = {
+  getAll: (page = 1, limit = 10) =>
+    orderClient.get('/api/orders', { params: { page, limit } }),
+
+  getById: (id: string) => orderClient.get(`/api/orders/${id}`),
+
+  create: (data: any) => orderClient.post('/api/orders', data),
+
+  updateStatus: (id: string, status: string) =>
+    orderClient.put(`/api/orders/${id}/status`, { orderStatus: status }),
+
+  updatePaymentStatus: (id: string, status: string) =>
+    orderClient.put(`/api/orders/${id}/payment`, { paymentStatus: status }),
+
+  cancel: (id: string) => orderClient.post(`/api/orders/${id}/cancel`, {}),
+};
+
+// ==================== ERROR HANDLING ====================
+export const handleApiError = (error: any): string => {
+  if (axios.isAxiosError(error)) {
+    return error.response?.data?.message || error.message;
   }
-  return config;
-});
-
-export const graphqlRequest = async (query: string, variables?: any) => {
-  const response = await graphqlClient.post('', { query, variables });
-  return response.data.data;
+  return 'An error occurred';
 };

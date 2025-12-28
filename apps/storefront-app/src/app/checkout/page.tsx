@@ -1,141 +1,144 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { Button, Badge, Spinner } from '@e-commerce/ui-library';
-import { Address, CartItem, ShippingMethod, PaymentMethod } from '@e-commerce/types';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCartStore } from '@/store/cartStore';
+import { apiService } from '@/lib/api/service';
+import { Button, Input } from '@repo/ui-library';
+
+interface Address {
+  id: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  isDefault?: boolean;
+}
 
 export default function CheckoutPage() {
-  const [step, setStep] = useState<'address' | 'shipping' | 'payment' | 'review'>('address');
+  const router = useRouter();
+  const { items, userProfile } = useCartStore();
+  const [loading, setLoading] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
-  const [selectedShipping, setSelectedShipping] = useState<ShippingMethod>(ShippingMethod.STANDARD);
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(PaymentMethod.CREDIT_CARD);
-  const [customerNotes, setCustomerNotes] = useState('');
+  const [useNewAddress, setUseNewAddress] = useState(false);
+  const [deliveryMethod, setDeliveryMethod] = useState('standard');
+  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [orderNotes, setOrderNotes] = useState('');
 
-  // Fetch cart
-  const { data: cartData, isLoading: cartLoading } = useQuery({
-    queryKey: ['cart'],
-    queryFn: async () => {
-      const response = await fetch('/api/cart');
-      return response.json();
-    },
+  // Form state for new address
+  const [newAddress, setNewAddress] = useState({
+    street: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: '',
   });
 
-  // Fetch user addresses
-  const { data: addressesData } = useQuery({
-    queryKey: ['addresses'],
-    queryFn: async () => {
-      const response = await fetch('/api/user/addresses');
-      return response.json();
-    },
-  });
+  // Calculate totals
+  const subtotal = items.reduce((sum:number, item:{price:number, quantity:number}) => sum + item.price * item.quantity, 0);
+  const tax = subtotal * 0.08;
+  const shipping = deliveryMethod === 'express' ? 25 : subtotal > 100 ? 0 : 10;
+  const total = subtotal + tax + shipping;
 
-  // Place order mutation
-  const placeOrderMutation = useMutation({
-    mutationFn: async (orderData: any) => {
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData),
-      });
-      return response.json();
-    },
-    onSuccess: (data) => {
-      // Redirect to order confirmation
-      window.location.href = `/orders/${data.orderId}`;
-    },
-  });
-
-  const handlePlaceOrder = () => {
-    if (!selectedAddressId) {
-      alert('Please select a delivery address');
+  const handleSubmitOrder = async () => {
+    // Validation
+    if (!userProfile) {
+      alert('Please log in to place an order');
+      router.push('/login');
       return;
     }
 
-    const orderData = {
-      items: cartData.cart.items.map((item: CartItem) => ({
-        productId: item.productId,
-        variantId: item.variantId,
-        quantity: item.quantity,
-      })),
-      shippingAddressId: selectedAddressId,
-      billingAddressId: selectedAddressId,
-      shippingMethod: selectedShipping,
-      paymentMethod: selectedPayment,
-      customerNotes,
-    };
+    const shippingAddressId = useNewAddress ? null : selectedAddressId;
+    if (!shippingAddressId && !useNewAddress) {
+      alert('Please select or add a shipping address');
+      return;
+    }
 
-    placeOrderMutation.mutate(orderData);
+    if (!paymentMethod) {
+      alert('Please select a payment method');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const orderData = {
+        customerId: userProfile.id,
+        customerEmail: userProfile.email,
+        items: items.map((item:any) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.price,
+          sellerId: item.sellerId,
+        })),
+        subtotal,
+        tax,
+        shipping,
+        total,
+        shippingAddress: useNewAddress
+          ? newAddress
+          : userProfile.addresses?.find((a: Address) => a.id === shippingAddressId),
+        deliveryMethod,
+        paymentMethod,
+        notes: orderNotes,
+      };
+
+      const response = await apiService.createOrder(orderData);
+
+      if (response.success) {
+        // TODO: Handle payment processing
+        // Redirect to payment or order confirmation
+        router.push(`/orders/${response.orderId}`);
+      } else {
+        alert('Failed to create order. Please try again.');
+      }
+    } catch (error) {
+      console.error('Order creation failed:', error);
+      alert('Error creating order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const shippingOptions = [
-    { value: ShippingMethod.STANDARD, label: 'Standard Shipping', time: '5-7 days', price: 5.99 },
-    { value: ShippingMethod.EXPRESS, label: 'Express Shipping', time: '2-3 days', price: 12.99 },
-    { value: ShippingMethod.NEXT_DAY, label: 'Next Day Delivery', time: '1 day', price: 19.99 },
-  ];
-
-  const paymentOptions = [
-    { value: PaymentMethod.CREDIT_CARD, label: 'Credit/Debit Card', icon: '💳' },
-    { value: PaymentMethod.PAYPAL, label: 'PayPal', icon: 'P' },
-    { value: PaymentMethod.CASH_ON_DELIVERY, label: 'Cash on Delivery', icon: '💵' },
-    { value: PaymentMethod.UPI, label: 'UPI', icon: '📱' },
-  ];
-
-  if (cartLoading) {
+  if (items.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spinner size="lg" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white rounded-lg shadow-md p-8 max-w-md text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Cart is Empty</h1>
+          <p className="text-gray-600 mb-6">Add items to your cart before checking out.</p>
+          <Button onClick={() => router.push('/products')}>Continue Shopping</Button>
+        </div>
       </div>
     );
   }
 
-  const cart = cartData?.cart;
-  const addresses = addressesData?.addresses || [];
-  const shippingCost = shippingOptions.find((opt) => opt.value === selectedShipping)?.price || 0;
-  const total = cart ? cart.subtotal + cart.tax + shippingCost - cart.discount : 0;
-
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
+        </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
+          {/* Checkout Form */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Step Indicator */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center justify-between">
-                {['address', 'shipping', 'payment', 'review'].map((s, index) => (
-                  <React.Fragment key={s}>
-                    <div className="flex items-center">
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                          step === s ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-600'
-                        }`}
-                      >
-                        {index + 1}
-                      </div>
-                      <span className="ml-2 hidden sm:inline capitalize">{s}</span>
-                    </div>
-                    {index < 3 && <div className="flex-1 h-1 bg-gray-200 mx-4" />}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
+            {/* Shipping Address */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Shipping Address</h2>
 
-            {/* Address Selection */}
-            {step === 'address' && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-bold mb-4">Delivery Address</h2>
-                <div className="space-y-4">
-                  {addresses.map((address: Address) => (
+              {userProfile?.addresses && userProfile.addresses.length > 0 && !useNewAddress && (
+                <div className="space-y-3 mb-4">
+                  {userProfile.addresses.map((address: Address) => (
                     <label
                       key={address.id}
-                      className={`block p-4 border-2 rounded-lg cursor-pointer ${
-                        selectedAddressId === address.id
-                          ? 'border-primary-600 bg-primary-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
+                      className="flex items-start p-4 border-2 rounded-lg cursor-pointer transition hover:bg-blue-50"
+                      style={{
+                        borderColor: selectedAddressId === address.id ? '#3b82f6' : '#e5e7eb',
+                      }}
                     >
                       <input
                         type="radio"
@@ -143,230 +146,215 @@ export default function CheckoutPage() {
                         value={address.id}
                         checked={selectedAddressId === address.id}
                         onChange={() => setSelectedAddressId(address.id)}
-                        className="mr-3"
+                        className="mt-1"
                       />
-                      <div className="inline-block">
-                        <div className="font-semibold">{address.fullName}</div>
-                        <div className="text-sm text-gray-600">
-                          {address.addressLine1},{' '}
-                          {address.addressLine2 && `${address.addressLine2}, `}
-                          {address.city}, {address.state} {address.postalCode}
-                        </div>
-                        <div className="text-sm text-gray-600">Phone: {address.phone}</div>
+                      <div className="ml-3">
+                        <p className="font-medium text-gray-900">
+                          {address.street}, {address.city}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {address.state}, {address.zip}, {address.country}
+                        </p>
                         {address.isDefault && (
-                          <Badge variant="primary" size="sm" className="mt-2">
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded mt-1 inline-block">
                             Default
-                          </Badge>
+                          </span>
                         )}
                       </div>
                     </label>
                   ))}
-                  <button className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-primary-600 hover:bg-gray-50">
-                    + Add New Address
-                  </button>
                 </div>
-                <div className="mt-6">
-                  <Button
-                    onClick={() => setStep('shipping')}
-                    disabled={!selectedAddressId}
-                    className="w-full"
-                  >
-                    Continue to Shipping
-                  </Button>
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* Shipping Method */}
-            {step === 'shipping' && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-bold mb-4">Shipping Method</h2>
-                <div className="space-y-4">
-                  {shippingOptions.map((option) => (
-                    <label
-                      key={option.value}
-                      className={`block p-4 border-2 rounded-lg cursor-pointer ${
-                        selectedShipping === option.value
-                          ? 'border-primary-600 bg-primary-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="shipping"
-                        value={option.value}
-                        checked={selectedShipping === option.value}
-                        onChange={() => setSelectedShipping(option.value)}
-                        className="mr-3"
-                      />
-                      <div className="inline-block flex-1">
-                        <div className="font-semibold">{option.label}</div>
-                        <div className="text-sm text-gray-600">{option.time}</div>
-                      </div>
-                      <div className="inline-block float-right font-semibold">
-                        ${option.price.toFixed(2)}
-                      </div>
-                    </label>
-                  ))}
+              <button
+                onClick={() => setUseNewAddress(!useNewAddress)}
+                className="text-blue-600 hover:text-blue-700 font-medium text-sm mb-4"
+              >
+                {useNewAddress ? '← Use saved address' : '+ Add new address'}
+              </button>
+
+              {useNewAddress && (
+                <div className="space-y-4 pt-4 border-t">
+                  <Input
+                    type="text"
+                    placeholder="Street Address"
+                    value={newAddress.street}
+                    onChange={(e: any) => setNewAddress({ ...newAddress, street: e.target.value })}
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      type="text"
+                      placeholder="City"
+                      value={newAddress.city}
+                      onChange={(e: any) => setNewAddress({ ...newAddress, city: e.target.value })}
+                    />
+                    <Input
+                      type="text"
+                      placeholder="State"
+                      value={newAddress.state}
+                      onChange={(e: any) => setNewAddress({ ...newAddress, state: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      type="text"
+                      placeholder="ZIP Code"
+                      value={newAddress.zip}
+                      onChange={(e: any) => setNewAddress({ ...newAddress, zip: e.target.value })}
+                    />
+                    <Input
+                      type="text"
+                      placeholder="Country"
+                      value={newAddress.country}
+                      onChange={(e: any) =>
+                        setNewAddress({ ...newAddress, country: e.target.value })
+                      }
+                    />
+                  </div>
                 </div>
-                <div className="mt-6 flex gap-4">
-                  <Button variant="outline" onClick={() => setStep('address')} className="flex-1">
-                    Back
-                  </Button>
-                  <Button onClick={() => setStep('payment')} className="flex-1">
-                    Continue to Payment
-                  </Button>
-                </div>
+              )}
+            </div>
+
+            {/* Delivery Method */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Delivery Method</h2>
+              <div className="space-y-3">
+                <label className="flex items-center p-4 border-2 border-blue-300 rounded-lg cursor-pointer bg-blue-50">
+                  <input
+                    type="radio"
+                    name="delivery"
+                    value="standard"
+                    checked={deliveryMethod === 'standard'}
+                    onChange={(e: any) => setDeliveryMethod(e.target.value)}
+                  />
+                  <div className="ml-3">
+                    <p className="font-medium text-gray-900">Standard Delivery</p>
+                    <p className="text-sm text-gray-600">5-7 business days</p>
+                  </div>
+                  <span className="ml-auto font-semibold text-gray-900">
+                    {subtotal > 100 ? 'FREE' : '$10.00'}
+                  </span>
+                </label>
+                <label className="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                  <input
+                    type="radio"
+                    name="delivery"
+                    value="express"
+                    checked={deliveryMethod === 'express'}
+                    onChange={(e: any) => setDeliveryMethod(e.target.value)}
+                  />
+                  <div className="ml-3">
+                    <p className="font-medium text-gray-900">Express Delivery</p>
+                    <p className="text-sm text-gray-600">2-3 business days</p>
+                  </div>
+                  <span className="ml-auto font-semibold text-gray-900">$25.00</span>
+                </label>
               </div>
-            )}
+            </div>
 
             {/* Payment Method */}
-            {step === 'payment' && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-bold mb-4">Payment Method</h2>
-                <div className="space-y-4">
-                  {paymentOptions.map((option) => (
-                    <label
-                      key={option.value}
-                      className={`block p-4 border-2 rounded-lg cursor-pointer ${
-                        selectedPayment === option.value
-                          ? 'border-primary-600 bg-primary-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="payment"
-                        value={option.value}
-                        checked={selectedPayment === option.value}
-                        onChange={() => setSelectedPayment(option.value)}
-                        className="mr-3"
-                      />
-                      <span className="text-2xl mr-3">{option.icon}</span>
-                      <span className="font-semibold">{option.label}</span>
-                    </label>
-                  ))}
-                </div>
-                <div className="mt-6 flex gap-4">
-                  <Button variant="outline" onClick={() => setStep('shipping')} className="flex-1">
-                    Back
-                  </Button>
-                  <Button onClick={() => setStep('review')} className="flex-1">
-                    Continue to Review
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Order Review */}
-            {step === 'review' && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-bold mb-4">Review Order</h2>
-
-                {/* Order Items */}
-                <div className="mb-6">
-                  <h3 className="font-semibold mb-3">Items ({cart.items.length})</h3>
-                  <div className="space-y-3">
-                    {cart.items.map((item: CartItem) => (
-                      <div key={item.id} className="flex gap-4">
-                        <img
-                          src={item.productImage}
-                          alt={item.productName}
-                          className="w-20 h-20 object-cover rounded"
-                        />
-                        <div className="flex-1">
-                          <div className="font-semibold">{item.productName}</div>
-                          <div className="text-sm text-gray-600">Qty: {item.quantity}</div>
-                          <div className="font-semibold">${item.total.toFixed(2)}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Order Notes */}
-                <div className="mb-6">
-                  <label className="block font-semibold mb-2">Order Notes (Optional)</label>
-                  <textarea
-                    value={customerNotes}
-                    onChange={(e) => setCustomerNotes(e.target.value)}
-                    placeholder="Any special instructions..."
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="mt-6 flex gap-4">
-                  <Button variant="outline" onClick={() => setStep('payment')} className="flex-1">
-                    Back
-                  </Button>
-                  <Button
-                    onClick={handlePlaceOrder}
-                    disabled={placeOrderMutation.isPending}
-                    className="flex-1"
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Payment Method</h2>
+              <div className="space-y-3">
+                {[
+                  { value: 'card', label: 'Credit/Debit Card', icon: '💳' },
+                  { value: 'bank', label: 'Bank Transfer', icon: '🏦' },
+                  { value: 'upi', label: 'UPI', icon: '📱' },
+                ].map((method) => (
+                  <label
+                    key={method.value}
+                    className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition ${
+                      paymentMethod === method.value
+                        ? 'border-blue-300 bg-blue-50'
+                        : 'border-gray-300 hover:bg-gray-50'
+                    }`}
                   >
-                    {placeOrderMutation.isPending ? 'Placing Order...' : 'Place Order'}
-                  </Button>
-                </div>
+                    <input
+                      type="radio"
+                      name="payment"
+                      value={method.value}
+                      checked={paymentMethod === method.value}
+                      onChange={(e: any) => setPaymentMethod(e.target.value)}
+                    />
+                    <span className="ml-3 text-xl">{method.icon}</span>
+                    <span className="ml-2 font-medium text-gray-900">{method.label}</span>
+                  </label>
+                ))}
               </div>
-            )}
+            </div>
+
+            {/* Order Notes */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Notes</h2>
+              <textarea
+                value={orderNotes}
+                onChange={(e: any) => setOrderNotes(e.target.value)}
+                placeholder="Add any special instructions for delivery..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows={3}
+              />
+            </div>
           </div>
 
-          {/* Order Summary */}
+          {/* Order Summary Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6 sticky top-4">
-              <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Order Summary</h2>
 
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold">${cart?.subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Tax</span>
-                  <span className="font-semibold">${cart?.tax.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
-                  <span className="font-semibold">${shippingCost.toFixed(2)}</span>
-                </div>
-                {cart?.discount > 0 && (
-                  <div className="flex justify-between text-green-600">
-                    <span>Discount</span>
-                    <span className="font-semibold">-${cart.discount.toFixed(2)}</span>
+              {/* Items Summary */}
+              <div className="space-y-2 mb-6 pb-6 border-b max-h-48 overflow-y-auto">
+                {items.map((item: any) => (
+                  <div key={item.id} className="flex justify-between text-sm text-gray-700">
+                    <span>
+                      {item.name} x {item.quantity}
+                    </span>
+                    <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
-                )}
+                ))}
               </div>
 
-              <div className="border-t pt-4 mb-4">
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span className="text-primary-600">${total.toFixed(2)}</span>
+              {/* Pricing Breakdown */}
+              <div className="space-y-3 mb-6 pb-6 border-b text-sm">
+                <div className="flex justify-between text-gray-700">
+                  <span>Subtotal</span>
+                  <span>${subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-gray-700">
+                  <span>Shipping</span>
+                  {shipping === 0 ? (
+                    <span className="text-green-600 font-semibold">Free</span>
+                  ) : (
+                    <span>${shipping.toFixed(2)}</span>
+                  )}
+                </div>
+                <div className="flex justify-between text-gray-700">
+                  <span>Tax (8%)</span>
+                  <span>${tax.toFixed(2)}</span>
                 </div>
               </div>
 
-              <div className="text-sm text-gray-600 space-y-2">
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Secure Checkout</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Free Returns</span>
-                </div>
+              {/* Total */}
+              <div className="flex justify-between items-baseline mb-6">
+                <span className="font-semibold text-gray-700">Total</span>
+                <span className="text-3xl font-bold text-gray-900">${total.toFixed(2)}</span>
               </div>
+
+              {/* Place Order Button */}
+              <Button
+                onClick={handleSubmitOrder}
+                disabled={loading}
+                className="w-full mb-3"
+                size="lg"
+              >
+                {loading ? 'Processing...' : 'Place Order'}
+              </Button>
+
+              <button
+                onClick={() => router.push('/cart')}
+                className="w-full text-blue-600 hover:text-blue-700 font-medium text-sm py-2"
+              >
+                ← Back to Cart
+              </button>
             </div>
           </div>
         </div>

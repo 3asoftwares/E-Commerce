@@ -90,7 +90,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             >
               {label}
               <button
-                onClick={(e) => handleRemove(value[index], e)}
+                onClick={(e:any) => handleRemove(value[index], e)}
                 className="ml-1 hover:text-blue-700 font-bold"
               >
                 ×

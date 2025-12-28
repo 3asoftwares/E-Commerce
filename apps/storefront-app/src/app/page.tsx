@@ -14,6 +14,7 @@ export default function HomePage() {
 
   const handleAddToCart = (product: any) => {
     addItem({
+      productId: product.id,
       id: product.id,
       name: product.name,
       price: product.price,

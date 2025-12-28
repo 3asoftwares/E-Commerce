@@ -1,159 +1,114 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Table, Badge, Button, Spinner } from '@e-commerce/ui-library';
-import { Order, OrderStatus } from '@e-commerce/types';
+import { useState, useEffect } from 'react';
+import { Button, Spinner } from '@e-commerce/ui-library';
+import { orderApi, handleApiError } from '../api/client';
+
+interface Order {
+  id: string;
+  orderNumber: string;
+  total: number;
+  orderStatus: string;
+  createdAt: string;
+}
 
 export const SellerOrders: React.FC = () => {
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['seller-orders', statusFilter],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (statusFilter !== 'all') params.append('status', statusFilter);
-      const response = await fetch(`/api/seller/orders?${params}`);
-      return response.json();
-    },
-  });
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const response = await orderApi.getAll(1, 20);
+        setOrders(response.data.data.orders || []);
+      } catch (err) {
+        setError(handleApiError(err));
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleConfirmShipment = async (orderId: string) => {
-    try {
-      await fetch(`/api/seller/orders/${orderId}/ship`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ trackingNumber: prompt('Enter tracking number:') }),
-      });
-      refetch();
-    } catch (error) {
-      console.error('Failed to confirm shipment:', error);
+    fetchOrders();
+  }, []);
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'confirmed':
+        return 'bg-blue-100 text-blue-800';
+      case 'shipped':
+        return 'bg-purple-100 text-purple-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const handleUpdateStatus = async (orderId: string, status: OrderStatus) => {
+  const handleUpdateStatus = async (orderId: string, newStatus: string) => {
     try {
-      await fetch(`/api/seller/orders/${orderId}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
-      });
-      refetch();
-    } catch (error) {
-      console.error('Failed to update status:', error);
+      await orderApi.updateStatus(orderId, newStatus);
+      setOrders(orders.map((o) => (o.id === orderId ? { ...o, orderStatus: newStatus } : o)));
+    } catch (err) {
+      setError(handleApiError(err));
     }
   };
-
-  const statusColors: Record<OrderStatus, any> = {
-    [OrderStatus.PENDING]: 'warning',
-    [OrderStatus.CONFIRMED]: 'info',
-    [OrderStatus.PROCESSING]: 'info',
-    [OrderStatus.SHIPPED]: 'primary',
-    [OrderStatus.OUT_FOR_DELIVERY]: 'primary',
-    [OrderStatus.DELIVERED]: 'success',
-    [OrderStatus.CANCELLED]: 'error',
-    [OrderStatus.RETURNED]: 'warning',
-    [OrderStatus.REFUNDED]: 'secondary',
-  };
-
-  const columns = [
-    { key: 'orderNumber', label: 'Order #' },
-    { key: 'customerName', label: 'Customer' },
-    { key: 'items', label: 'Items', render: (order: Order) => order.items.length },
-    { key: 'total', label: 'Total', render: (order: Order) => `$${order.total.toFixed(2)}` },
-    {
-      key: 'status',
-      label: 'Status',
-      render: (order: Order) => <Badge variant={statusColors[order.status]}>{order.status}</Badge>,
-    },
-    {
-      key: 'createdAt',
-      label: 'Date',
-      render: (order: Order) => new Date(order.createdAt).toLocaleDateString(),
-    },
-    {
-      key: 'actions',
-      label: 'Actions',
-      render: (order: Order) => (
-        <div className="flex gap-2">
-          {order.status === OrderStatus.CONFIRMED && (
-            <Button size="sm" onClick={() => handleUpdateStatus(order.id, OrderStatus.PROCESSING)}>
-              Start Processing
-            </Button>
-          )}
-          {order.status === OrderStatus.PROCESSING && (
-            <Button size="sm" onClick={() => handleConfirmShipment(order.id)}>
-              Ship Order
-            </Button>
-          )}
-          {order.status === OrderStatus.SHIPPED && (
-            <Button
-              size="sm"
-              onClick={() => handleUpdateStatus(order.id, OrderStatus.OUT_FOR_DELIVERY)}
-            >
-              Out for Delivery
-            </Button>
-          )}
-        </div>
-      ),
-    },
-  ];
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
-  const orders = data?.orders || [];
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Order Management</h1>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border rounded-lg"
-        >
-          <option value="all">All Orders</option>
-          <option value="confirmed">New Orders</option>
-          <option value="processing">Processing</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-        </select>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold text-gray-900 mb-8">Order Fulfillment</h1>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">New Orders</div>
-          <div className="text-3xl font-bold text-yellow-600">{data?.newCount || 0}</div>
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          {error}
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Processing</div>
-          <div className="text-3xl font-bold text-blue-600">{data?.processingCount || 0}</div>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Shipped</div>
-          <div className="text-3xl font-bold text-purple-600">{data?.shippedCount || 0}</div>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-sm text-gray-600">Completed</div>
-          <div className="text-3xl font-bold text-green-600">{data?.completedCount || 0}</div>
-        </div>
-      </div>
+      )}
 
-      {/* Orders Table */}
-      <div className="bg-white rounded-lg shadow">
-        {orders.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-600">No orders found</p>
-          </div>
-        ) : (
-          <Table columns={columns} data={orders} />
-        )}
-      </div>
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <Spinner />
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-lg">
+          <p className="text-gray-600">No orders yet</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <div key={order.id} className="bg-white rounded-lg shadow p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Order #{order.orderNumber}</h3>
+                  <p className="text-sm text-gray-600">{new Date(order.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-gray-900">${order.total.toFixed(2)}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(order.orderStatus)}`}>
+                  {order.orderStatus}
+                </span>
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => handleUpdateStatus(order.id, 'CONFIRMED')}>
+                    Confirm
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => handleUpdateStatus(order.id, 'SHIPPED')}>
+                    Ship
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => handleUpdateStatus(order.id, 'DELIVERED')}>
+                    Deliver
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
