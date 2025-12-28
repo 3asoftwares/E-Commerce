@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '../Button/Button';
+import { Select } from '../Select/Select';
 
 type User = {
   name: string;
@@ -13,6 +14,12 @@ export interface HeaderProps {
   extraContent?: React.ReactNode;
   logoUrl?: string;
   appName?: string;
+  theme?: 'light' | 'dark';
+  onToggleTheme?: () => void;
+  language?: string;
+  onLanguageChange?: (lang: string) => void;
+  showThemeToggle?: boolean;
+  showLanguageSelector?: boolean;
 }
 
 export const Header = ({ 
@@ -22,11 +29,17 @@ export const Header = ({
   onCreateAccount,
   extraContent,
   logoUrl,
-  appName = "3A Softwares"
+  appName = "3A Softwares",
+  theme = 'light',
+  onToggleTheme,
+  language = 'en',
+  onLanguageChange,
+  showThemeToggle = true,
+  showLanguageSelector = true
 }: HeaderProps) => (
   <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-200">
     <div className="flex items-center justify-between px-5 py-4">
-      <div className="flex items-center gap-3d">
+      <div className="flex items-center gap-3">
         {logoUrl ? (
           <img src={logoUrl} alt={appName} width={32} height={32} className="object-contain" />
         ) : (
@@ -37,6 +50,31 @@ export const Header = ({
         <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-none m-0">{appName}</h1>
       </div>
       <div className="flex items-center gap-3">
+        {showThemeToggle && onToggleTheme && (
+          <Button
+            onClick={onToggleTheme}
+            variant="ghost"
+            size="sm"
+            className="text-xl px-3"
+            aria-label="Toggle theme"
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </Button>
+        )}
+        {showLanguageSelector && onLanguageChange && (
+          <Select
+            value={language}
+            onChange={onLanguageChange}
+            size="sm"
+            variant="outline"
+            options={[
+              { value: 'en', label: 'EN' },
+              { value: 'hi', label: 'HI' },
+              { value: 'ca', label: 'CA' }
+            ]}
+            className="min-w-[80px]"
+          />
+        )}
         {extraContent}
         {user ? (
           <>

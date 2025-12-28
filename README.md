@@ -825,7 +825,7 @@ Complete implementation of a multi-application e-commerce platform with Storefro
 
 ### Pages Created:
 
-#### 1. Admin Products (`/pages/AdminProducts.tsx`)
+#### 1. Admin Products (`/pages/Products.tsx`)
 
 **Features:**
 
@@ -839,7 +839,7 @@ Complete implementation of a multi-application e-commerce platform with Storefro
 - Image preview
 - Seller information
 
-#### 2. Admin Orders (`/pages/AdminOrders.tsx`)
+#### 2. Admin Orders (`/pages/Orders.tsx`)
 
 **Features:**
 

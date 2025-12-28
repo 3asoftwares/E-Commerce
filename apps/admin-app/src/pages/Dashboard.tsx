@@ -1,70 +1,175 @@
-import { useDashboardStats } from '../api/queries';
+import React, { useState, useEffect } from 'react';
+import { useDashboardStats, useOrders } from '../api/queries';
+import { Badge, Spinner, Button } from '@e-commerce/ui-library';
+import { OrderStatus } from '@e-commerce/types';
 
 export const Dashboard: React.FC = () => {
-  const { data, isLoading, error } = useDashboardStats();
+  const { data, isLoading, error, refetch } = useDashboardStats();
+  const { data: recentOrders } = useOrders(1, 5);
+  const [alerts, setAlerts] = useState<string[]>([]);
 
-  if (isLoading) return <div className="flex justify-center p-8">Loading...</div>;
-  if (error) return <div className="alert alert-error">Error loading dashboard</div>;
+  const stats = data?.dashboardStats || {
+    totalUsers: 0,
+    totalOrders: 0,
+    totalRevenue: 0,
+    pendingOrders: 0,
+  };
 
-  const stats = data?.dashboardStats || {};
+  useEffect(() => {
+    // Generate alerts based on stats
+    const newAlerts: string[] = [];
+    if (stats.pendingOrders > 10) {
+      newAlerts.push(`⚠️ ${stats.pendingOrders} pending orders require attention`);
+    }
+    if (recentOrders?.orders.orders.some((o: any) => o.orderStatus === OrderStatus.PENDING)) {
+      newAlerts.push('🔔 New orders received');
+    }
+    setAlerts(newAlerts);
+  }, [stats, recentOrders]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-12">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <h3 className="text-red-800 dark:text-red-200 font-semibold">Error loading dashboard</h3>
+        <p className="text-red-600 dark:text-red-300 text-sm mt-1">
+          {error instanceof Error ? error.message : 'Failed to fetch data'}
+        </p>
+        <Button onClick={() => refetch()} variant="outline" size="sm" className="mt-3">
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6 dark:text-white">Dashboard</h1>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <Button onClick={() => refetch()} variant="outline" size="sm">
+          Refresh
+        </Button>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="card bg-white dark:bg-neutral-800 shadow">
-          <div className="card-body">
-            <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-              Total Users
-            </h3>
-            <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
-              {stats.totalUsers || 0}
-            </p>
-            <p className="text-sm text-neutral-500">↗︎ 12% increase</p>
+      {/* Real-time Alerts */}
+      {alerts.length > 0 && (
+        <div className="space-y-2">
+          {alerts.map((alert, index) => (
+            <div
+              key={index}
+              className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 flex items-center justify-between"
+            >
+              <span className="text-yellow-800 dark:text-yellow-200">{alert}</span>
+              <button
+                onClick={() => setAlerts(alerts.filter((_, i) => i !== index))}
+                className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-200"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Users</h3>
+            <span className="text-2xl">👥</span>
           </div>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalUsers}</p>
+          <p className="text-sm text-green-600 dark:text-green-400 mt-2">↗︎ 12% from last month</p>
         </div>
 
-        <div className="card bg-white dark:bg-neutral-800 shadow">
-          <div className="card-body">
-            <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-              Total Orders
-            </h3>
-            <p className="text-3xl font-bold text-secondary-600 dark:text-secondary-400">
-              {stats.totalOrders || 0}
-            </p>
-            <p className="text-sm text-neutral-500">↗︎ 8% increase</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Orders</h3>
+            <span className="text-2xl">🛒</span>
           </div>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalOrders}</p>
+          <p className="text-sm text-green-600 dark:text-green-400 mt-2">↗︎ 8% from last month</p>
         </div>
 
-        <div className="card bg-white dark:bg-neutral-800 shadow">
-          <div className="card-body">
-            <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Revenue</h3>
-            <p className="text-3xl font-bold text-accent-600 dark:text-accent-400">
-              ${stats.totalRevenue || 0}
-            </p>
-            <p className="text-sm text-neutral-500">↗︎ 15% increase</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Revenue</h3>
+            <span className="text-2xl">💰</span>
           </div>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            ${stats.totalRevenue.toLocaleString()}
+          </p>
+          <p className="text-sm text-green-600 dark:text-green-400 mt-2">↗︎ 15% from last month</p>
         </div>
 
-        <div className="card bg-white dark:bg-neutral-800 shadow">
-          <div className="card-body">
-            <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Pending Orders
             </h3>
-            <p className="text-3xl font-bold text-warning dark:text-warning">
-              {stats.pendingOrders || 0}
-            </p>
-            <p className="text-sm text-neutral-500">Requires attention</p>
+            <span className="text-2xl">⏳</span>
           </div>
+          <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+            {stats.pendingOrders}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Requires attention</p>
         </div>
       </div>
 
-      <div className="card bg-white dark:bg-neutral-800 shadow">
-        <div className="card-body">
-          <h3 className="card-title dark:text-white">Recent Activity</h3>
-          <div className="divider"></div>
-          <p className="text-neutral-500 dark:text-neutral-400">Loading recent activity...</p>
+      {/* Recent Activity */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Orders</h3>
+        </div>
+        <div className="p-6">
+          {recentOrders && recentOrders.orders.orders.length > 0 ? (
+            <div className="space-y-4">
+              {recentOrders.orders.orders.map((order: any) => (
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                >
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      Order #{order.orderNumber || order.id.substring(0, 8)}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-900 dark:text-white">
+                      ${order.total?.toFixed(2)}
+                    </p>
+                    <Badge
+                      variant={
+                        order.orderStatus === OrderStatus.DELIVERED
+                          ? 'success'
+                          : order.orderStatus === OrderStatus.CANCELLED
+                          ? 'error'
+                          : order.orderStatus === OrderStatus.PENDING
+                          ? 'warning'
+                          : 'info'
+                      }
+                    >
+                      {order.orderStatus}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+              No recent orders
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@
     "axios": "^1.6.2",
     "@reduxjs/toolkit": "^2.0.1",
     "react-redux": "^9.0.4",
+    "zustand": "^4.4.7",
     "@e-commerce/ui-library": "^1.0.0",
     "@e-commerce/types": "^1.0.0",
     "@e-commerce/utils": "^1.0.0"

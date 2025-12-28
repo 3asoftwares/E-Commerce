@@ -1,13 +1,20 @@
-/**
- * Product API Types
- */
+import { ProductGraphQL, ProductFilter } from '../types/product.types';
 
-import { Product, ProductFilter } from '../entities/product';
+export type {
+  ProductGraphQL,
+  ProductConnection,
+  CreateProductInput,
+  UpdateProductInput,
+  ProductQueryVariables,
+  ProductFilter,
+  CreateProductRequest,
+  UpdateProductRequest,
+} from '../types/product.types';
 
 export interface GetProductsRequest extends ProductFilter {}
 
 export interface GetProductsResponse {
-  products: Product[];
+  products: ProductGraphQL[];
   total: number;
   page: number;
   limit: number;
@@ -17,19 +24,4 @@ export interface GetProductsResponse {
 export interface GetProductRequest {
   id?: string;
   slug?: string;
-}
-
-export interface CreateProductRequest {
-  name: string;
-  description: string;
-  price: number;
-  categoryId: string;
-  images: string[];
-  sku: string;
-  inventory: number;
-  tags?: string[];
-}
-
-export interface UpdateProductRequest extends Partial<CreateProductRequest> {
-  id: string;
 }

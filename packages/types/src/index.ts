@@ -4,7 +4,13 @@
  * Exports all types, interfaces, and enums.
  */
 
-// Domain Entities
+// Consolidated Types (NEW - organized by domain)
+export * from './types';
+
+// GraphQL Queries (NEW - organized by service)
+export * from './queries';
+
+// Domain Entities (Legacy - keeping for backward compatibility)
 export type {
   User,
   UserProfile,
@@ -48,7 +54,8 @@ export { PaymentStatus } from './enums/paymentStatus';
 export { PaymentMethod } from './enums/paymentMethod';
 export { ShippingMethod } from './enums/shippingMethod';
 
-// API Types
+// ⚠️ DEPRECATED: Legacy API types - use types from './types' instead
+// Kept for backward compatibility, will be removed in future versions
 export type { ApiResponse, ApiError, PaginatedResponse } from './api/response';
 export type {
   GetProductsRequest,

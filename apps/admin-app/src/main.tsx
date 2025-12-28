@@ -16,6 +16,19 @@ const queryClient = new QueryClient({
   },
 });
 
+// Initialize theme from localStorage
+const savedTheme = localStorage.getItem('admin-ui-store');
+if (savedTheme) {
+  try {
+    const store = JSON.parse(savedTheme);
+    if (store.state?.theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  } catch (e) {
+    // Ignore parse errors
+  }
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>

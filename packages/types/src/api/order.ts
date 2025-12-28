@@ -1,10 +1,28 @@
 /**
- * Order API Types
+ * @deprecated This file has been moved to ../types/order.types.ts
+ * 
+ * Use OrderGraphQL, CreateOrderInput, etc.
+ * from '@e-commerce/types' instead
+ * 
+ * @see packages/types/ORGANIZATION.md
  */
 
-// import type { Order, OrderItem } from '../entities/order';
 import { PaymentMethod, ShippingMethod } from '../enums';
+import { OrderStatus } from '../enums';
 
+// Re-export from consolidated types
+export type {
+  OrderGraphQL,
+  OrderConnection,
+  CreateOrderInput,
+  OrderQueryVariables,
+  Address,
+  OrderItem,
+  OrderItemGraphQL,
+  AddressGraphQL,
+} from '../types/order.types';
+
+// Legacy types kept for backward compatibility
 export interface CreateOrderRequest {
   items: {
     productId: string;
@@ -21,13 +39,13 @@ export interface CreateOrderRequest {
 
 export interface UpdateOrderStatusRequest {
   orderId: string;
-  status: string;
+  status: OrderStatus;
   comment?: string;
 }
 
 export interface GetOrdersRequest {
   userId?: string;
-  status?: string;
+  status?: OrderStatus;
   page?: number;
   limit?: number;
   startDate?: Date;

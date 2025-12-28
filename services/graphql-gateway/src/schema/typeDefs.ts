@@ -101,6 +101,19 @@ export const typeDefs = `#graphql
     refreshToken: String!
   }
 
+  type UserConnection {
+    users: [User!]!
+    pagination: Pagination!
+  }
+
+  # Analytics Types
+  type DashboardStats {
+    totalUsers: Int!
+    totalOrders: Int!
+    totalRevenue: Float!
+    pendingOrders: Int!
+  }
+
   # Common Types
   type Pagination {
     page: Int!
@@ -164,6 +177,9 @@ export const typeDefs = `#graphql
 
   # Queries
   type Query {
+    # Analytics
+    dashboardStats: DashboardStats!
+
     # Products
     products(
       page: Int
@@ -189,6 +205,9 @@ export const typeDefs = `#graphql
 
     # Auth
     me: User
+    
+    # Users
+    users(page: Int, limit: Int, search: String): UserConnection!
   }
 
   # Mutations
@@ -205,6 +224,10 @@ export const typeDefs = `#graphql
 
     # Orders
     createOrder(input: CreateOrderInput!): Order!
+    
+    # Users
+    updateUserRole(id: ID!, role: String!): User!
+    deleteUser(id: ID!): Boolean!
     updateOrderStatus(id: ID!, status: OrderStatus!): Order!
     updatePaymentStatus(id: ID!, status: PaymentStatus!): Order!
     cancelOrder(id: ID!): Order!

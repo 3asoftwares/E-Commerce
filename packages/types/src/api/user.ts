@@ -1,31 +1,16 @@
-/**
- * User API Types
- */
+export type {
+  UserGraphQL,
+  UserConnection,
+  LoginInput,
+  RegisterInput,
+  UserQueryVariables,
+  AuthPayload,
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  UpdateProfileRequest,
+} from '../types/user.types';
 
-import { User, Address } from '../entities/user';
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  name: string;
-  phone?: string;
-}
-
-export interface AuthResponse {
-  user: User;
-  token: string;
-  refreshToken: string;
-}
-
-export interface UpdateProfileRequest {
-  name?: string;
-  phone?: string;
-  avatar?: string;
-}
-
+// Legacy type kept for backward compatibility
+import { Address } from '../types/order.types';
 export interface CreateAddressRequest extends Omit<Address, 'id' | 'userId'> {}
