@@ -33,7 +33,8 @@
     "build:backend": "yarn build:auth && yarn build:product && yarn build:order && yarn build:gateway",
     "build:utils": "yarn workspace @e-commerce/utils run build",
     "build:storybook": "yarn workspace @e-commerce/ui-library run build",
-    "build:all": "yarn build:shell && yarn build:admin && yarn build:seller && yarn build:storefront && yarn build:auth && yarn build:product && yarn build:order && yarn build:gateway"
+    "build:all": "yarn build:shell && yarn build:admin && yarn build:seller && yarn build:storefront && yarn build:auth && yarn build:product && yarn build:order && yarn build:gateway",
+    "dev:custom": "concurrently \"yarn dev:storybook\" \"yarn dev:shell\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button, Input, Select } from '@e-commerce/ui-library';
 import { login as loginService, register as registerService } from '../services/authService';
 import { renderApp } from '../utils';
 
@@ -32,45 +33,44 @@ export const AuthForm: React.FC = () => {
     <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded shadow">
       <h2 className="text-2xl font-bold mb-6">{isLogin ? 'Login' : 'Sign Up'}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
+        <Input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-2 border rounded"
           required
+          error=""
+          size="md"
         />
-        <input
+        <Input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-2 border rounded"
           required
+          error=""
+          size="md"
         />
         {!isLogin && (
-          <select
+          <Select
             value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="w-full px-4 py-2 border rounded"
-          >
-            <option value="customer">Customer</option>
-            <option value="seller">Seller</option>
-            <option value="admin">Admin</option>
-          </select>
+            onChange={(e: any) => setRole(e.target.value)}
+            options={[
+              { value: 'customer', label: 'Customer' },
+              { value: 'seller', label: 'Seller' },
+              { value: 'admin', label: 'Admin' },
+            ]}
+          />
         )}
         {error && <div className="text-red-600">{error}</div>}
-        <button
-          type="submit"
-          className="w-full py-2 bg-primary-600 text-white rounded font-semibold"
-        >
+        <Button type="submit" variant="primary" className="w-full">
           {isLogin ? 'Login' : 'Sign Up'}
-        </button>
+        </Button>
       </form>
       <div className="mt-4 text-center">
-        <button className="text-primary-600 underline" onClick={() => setIsLogin(!isLogin)}>
+        <Button variant="primary" onClick={() => setIsLogin(!isLogin)}>
           {isLogin ? 'Create an account' : 'Already have an account? Login'}
-        </button>
+        </Button>
       </div>
     </div>
   );

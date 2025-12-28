@@ -16,8 +16,18 @@ module.exports = {
     rules: [
       {
         test: /\.(ts|tsx)$/,
-        use: 'babel-loader',
-        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                '@babel/preset-react',
+                ['@babel/preset-typescript', { onlyRemoveTypeImports: true }]
+              ]
+            }
+          }
+        ],
+        exclude: /node_modules\/(?!@e-commerce)/,
       },
       {
         test: /\.css$/,
@@ -45,15 +55,24 @@ module.exports = {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
-          chunks: 'all',
+          priority: 10,
+        },
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom)[\\/]/,
+          name: 'react-vendor',
+          priority: 20,
+        },
+        uiLibrary: {
+          test: /[\\/]packages[\\/]ui-library[\\/]/,
+          name: 'ui-library',
+          priority: 15,
         },
       },
     },
+    runtimeChunk: 'single',
   },
   performance: {
-    hints: 'warning', // 'warning' | 'error' | false
-    maxEntrypointSize: 512000, // 500 KiB
-    maxAssetSize: 512000, // 500 KiB per asset
+    hints: false,
   },
   devServer: {
     port: 3000,

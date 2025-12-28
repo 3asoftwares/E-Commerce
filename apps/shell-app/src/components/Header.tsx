@@ -1,4 +1,6 @@
 
+import React from 'react';
+import { Button, Select } from '@e-commerce/ui-library';
 import { useUIStore } from '../store/uiStore';
 
 export const Header: React.FC = () => {
@@ -14,22 +16,24 @@ export const Header: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <button
+          <Button
             onClick={toggleTheme}
-            className="btn btn-ghost btn-sm btn-circle"
+            variant="ghost"
+            size="sm"
             aria-label="Toggle theme"
           >
             {theme === 'light' ? '🌙' : '☀️'}
-          </button>
-          <select
+          </Button>
+          <Select
             value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="select select-bordered select-sm dark:bg-neutral-800 dark:border-neutral-600"
-          >
-            <option value="en">EN</option>
-            <option value="es">HI</option>
-            <option value="es">CA</option>
-          </select>
+            onChange={(e:any) => setLanguage(e.target.value)}
+            size="sm"
+            options={[
+              { value: 'en', label: 'EN' },
+              { value: 'hi', label: 'HI' },
+              { value: 'ca', label: 'CA' }
+            ]}
+          />
         </div>
       </div>
     </header>
