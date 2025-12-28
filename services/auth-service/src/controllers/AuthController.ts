@@ -100,7 +100,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     if (!isPasswordValid) {
       res.status(401).json({
         success: false,
-        message: 'Invalid email or password',
+        message: 'Email and password does not match.',
       });
       return;
     }
@@ -345,6 +345,38 @@ export const changePassword = async (req: Request, res: Response): Promise<void>
     res.status(500).json({
       success: false,
       message: 'Failed to change password',
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get user statistics
+ * GET /api/auth/stats
+ */
+export const getStats = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const activeUsers = await User.countDocuments({ isActive: true });
+    const adminUsers = await User.countDocuments({ role: 'admin' });
+    const sellerUsers = await User.countDocuments({ role: 'seller' });
+    const customerUsers = await User.countDocuments({ role: 'customer' });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalUsers,
+        activeUsers,
+        adminUsers,
+        sellerUsers,
+        customerUsers,
+      },
+    });
+  } catch (error: any) {
+    console.error('Get stats error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get stats',
       error: error.message,
     });
   }

@@ -44,7 +44,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={`${widthClass} ${className}`}>
         {label && (
-          <label className="block text-sm font-semibold text-gray-900 mb-1.5">{label}</label>
+          <label className="block text-[16px] font-semibold text-gray-900 mb-1.5">{label}</label>
         )}
 
         <div className="relative">

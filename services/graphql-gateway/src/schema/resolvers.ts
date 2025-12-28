@@ -17,6 +17,8 @@ export const resolvers = {
 
         const ordersData = ordersRes.data.data;
         const orders = ordersData.orders || [];
+
+        console.log('Orders Data:', ordersData);
         
         // Calculate stats
         const totalOrders = ordersData.pagination?.total || 0;
@@ -52,12 +54,12 @@ export const resolvers = {
 
     product: async (_: any, { id }: any) => {
       const response = await productClient.get(`/api/products/${id}`);
-      return response.data.data.product;
+      return response.data.data;
     },
 
     productsBySeller: async (_: any, { sellerId }: any) => {
       const response = await productClient.get(`/api/products/seller/${sellerId}`);
-      return response.data.data.products;
+      return response.data.data.products || [];
     },
 
     categories: async () => {
@@ -65,7 +67,6 @@ export const resolvers = {
       return response.data.data.categories;
     },
 
-    // Order Queries
     orders: async (_: any, args: any) => {
       const { page, limit } = args;
       const response = await orderClient.get('/api/orders', {
@@ -76,12 +77,12 @@ export const resolvers = {
 
     order: async (_: any, { id }: any) => {
       const response = await orderClient.get(`/api/orders/${id}`);
-      return response.data.data.order;
+      return response.data.data.order || response.data.data;
     },
 
     ordersByCustomer: async (_: any, { customerId }: any) => {
       const response = await orderClient.get(`/api/orders/customer/${customerId}`);
-      return response.data.data.orders;
+      return response.data.data.orders || [];
     },
 
     // Auth Query
@@ -89,7 +90,8 @@ export const resolvers = {
       if (!context.token) {
         throw new Error('Not authenticated');
       }
-      const response = await authClient.get('/api/auth/me', addAuthHeader(context.token));
+      const authHeader = addAuthHeader(context.token);
+      const response = await authClient.get('/api/auth/me', { headers: authHeader.headers });
       return response.data.data.user;
     },
 
@@ -99,12 +101,28 @@ export const resolvers = {
         throw new Error('Not authenticated');
       }
       const { page, limit, search } = args;
+      const authHeader = addAuthHeader(context.token);
       const response = await authClient.get('/api/users', {
         params: { page, limit, search },
-        ...addAuthHeader(context.token)
+        headers: authHeader.headers,
       });
       return response.data.data;
     },
+  },
+
+  // Field resolvers to map MongoDB _id to GraphQL id
+  Product: {
+    id: (parent: any) => parent._id || parent.id,
+  },
+
+  Order: {
+    id: (parent: any) => parent._id || parent.id,
+    orderStatus: (parent: any) => (parent.orderStatus || parent.status || 'pending').toUpperCase(),
+    paymentStatus: (parent: any) => (parent.paymentStatus || 'pending').toUpperCase(),
+  },
+
+  User: {
+    id: (parent: any) => parent._id || parent.id,
   },
 
   Mutation: {
@@ -143,22 +161,21 @@ export const resolvers = {
       return true;
     },
 
-    // Order Mutations
     createOrder: async (_: any, { input }: any) => {
       const response = await orderClient.post('/api/orders', input);
-      return response.data.data.order;
+      return response.data.data.order || response.data.data;
     },
 
     updateOrderStatus: async (_: any, { id, status }: any) => {
       const response = await orderClient.patch(`/api/orders/${id}/status`, {
-        orderStatus: status,
+        orderStatus: status.toLowerCase(),
       });
       return response.data.data.order;
     },
 
     updatePaymentStatus: async (_: any, { id, status }: any) => {
       const response = await orderClient.patch(`/api/orders/${id}/payment`, {
-        paymentStatus: status,
+        paymentStatus: status.toLowerCase(),
       });
       return response.data.data.order;
     },
@@ -173,10 +190,11 @@ export const resolvers = {
       if (!context.token) {
         throw new Error('Not authenticated');
       }
+      const authHeader = addAuthHeader(context.token);
       const response = await authClient.patch(
         `/api/users/${id}/role`, 
         { role },
-        addAuthHeader(context.token)
+        { headers: authHeader.headers }
       );
       return response.data.data.user;
     },
@@ -185,7 +203,8 @@ export const resolvers = {
       if (!context.token) {
         throw new Error('Not authenticated');
       }
-      await authClient.delete(`/api/users/${id}`, addAuthHeader(context.token));
+      const authHeader = addAuthHeader(context.token);
+      await authClient.delete(`/api/users/${id}`, { headers: authHeader.headers });
       return true;
     },
   },

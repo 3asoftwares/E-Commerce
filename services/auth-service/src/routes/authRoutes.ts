@@ -86,4 +86,11 @@ router.post(
   authController.changePassword
 );
 
+/**
+ * @route   GET /api/auth/stats
+ * @desc    Get user statistics for dashboard
+ * @access  Private
+ */
+router.get('/stats', authenticate, authController.getStats);
+
 export default router;

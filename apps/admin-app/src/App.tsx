@@ -33,6 +33,8 @@ const AppContent: React.FC = () => {
         const user = JSON.parse(userStr);
         dispatch(setUser({ user, token }));
       } catch {}
+    } else{
+      window.location.href = 'http://localhost:3000?logout=true';
     }
   }, [dispatch]);
 
