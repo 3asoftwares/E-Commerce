@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { apiService } from '@/lib/api/service';
-import { Button, Input } from '@repo/ui-library';
+import { Button, Input } from '@e-commerce/ui-library';
 
 interface Address {
   id: string;

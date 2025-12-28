@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { apiService } from '@/lib/api/service';
-import { Button } from '@repo/ui-library';
+import { Button } from '@e-commerce/ui-library';
 
 interface Order {
   id: string;

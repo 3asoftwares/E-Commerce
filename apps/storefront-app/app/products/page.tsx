@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useCartStore } from '@/store/cartStore';
 import { apiService } from '@/lib/api/service';
-import { Button, Input, Select } from '@repo/ui-library';
+import { Button, Input } from '@e-commerce/ui-library';
 
 interface Product {
   id: string;
@@ -114,7 +114,7 @@ export default function ProductsPage() {
         name: product.name,
         price: product.price,
         image: product.image || '/placeholder.png',
-        addedAt: new Date().toISOString(),
+        addedAt: Date.now(),
       });
     }
   };
@@ -125,14 +125,14 @@ export default function ProductsPage() {
       <div className="sticky top-0 z-10 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Products</h1>
-          
+
           {/* Search Bar */}
           <div className="mb-4">
             <Input
               type="text"
               placeholder="Search products..."
               value={search}
-              onChange={(e:any) => {
+              onChange={(e: any) => {
                 setSearch(e.target.value);
                 setPage(1);
               }}
@@ -151,36 +151,33 @@ export default function ProductsPage() {
 
               {/* Category Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category
-                </label>
-                <Select
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <select
                   value={category}
-                  onChange={(e:any) => {
+                  onChange={(e: any) => {
                     setCategory(e.target.value);
                     setPage(1);
                   }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>
                   ))}
-                </Select>
+                </select>
               </div>
 
               {/* Price Range Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Price Range
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="number"
                     min="0"
                     max="1000"
                     value={priceRange.min}
-                    onChange={(e:any) => {
+                    onChange={(e: any) => {
                       setPriceRange({
                         ...priceRange,
                         min: parseInt(e.target.value),
@@ -195,7 +192,7 @@ export default function ProductsPage() {
                     min="0"
                     max="1000"
                     value={priceRange.max}
-                    onChange={(e:any) => {
+                    onChange={(e: any) => {
                       setPriceRange({
                         ...priceRange,
                         max: parseInt(e.target.value),
@@ -213,16 +210,14 @@ export default function ProductsPage() {
 
               {/* Sort */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sort By
-                </label>
-                <Select value={sortBy} onChange={(e:any) => setSortBy(e.target.value)}>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+                <select value={sortBy} onChange={(e: any) => setSortBy(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                   {SORT_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
                     </option>
                   ))}
-                </Select>
+                </select>
               </div>
 
               {/* Reset Filters */}
@@ -291,9 +286,7 @@ export default function ProductsPage() {
                         <div className="flex items-center mt-2 mb-2">
                           <div className="flex text-yellow-400">
                             {[...Array(5)].map((_, i) => (
-                              <span key={i}>
-                                {i < Math.floor(product.rating || 0) ? '★' : '☆'}
-                              </span>
+                              <span key={i}>{i < Math.floor(product.rating || 0) ? '★' : '☆'}</span>
                             ))}
                           </div>
                           <span className="text-sm text-gray-600 ml-2">

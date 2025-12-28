@@ -8,10 +8,6 @@ const nextConfig = {
       { protocol: 'https', hostname: 'your-cdn-domain.com' },
     ],
   },
-  output: 'standalone',
-  experimental: {
-    externalDir: true,
-  },
 };
 
 module.exports = nextConfig;

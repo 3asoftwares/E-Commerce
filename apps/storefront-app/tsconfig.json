@@ -9,19 +9,18 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@repo/ui-library": ["../../packages/ui-library/src"],
-      "@repo/ui-library/*": ["../../packages/ui-library/src/*"],
-      "@repo/types": ["../../packages/types/src"],
-      "@repo/types/*": ["../../packages/types/src/*"],
-      "@repo/utils": ["../../packages/utils/src"],
-      "@repo/utils/*": ["../../packages/utils/src/*"]
+      "@/*": ["./*"],
+      "@e-commerce/ui-library": ["../../packages/ui-library/src"],
+      "@e-commerce/ui-library/*": ["../../packages/ui-library/src/*"],
+      "@e-commerce/types": ["../../packages/types/src"],
+      "@e-commerce/types/*": ["../../packages/types/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -2,7 +2,6 @@
 
 import axios, { AxiosInstance } from 'axios';
 
-const GATEWAY_URL = 'http://localhost:4000/graphql';
 const API_URL = 'http://localhost:3011';
 
 class APIService {

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useCartStore } from '@/store/cartStore';
 import { apiService } from '@/lib/api/service';
-import { Button } from '@repo/ui-library';
+import { Button } from '@e-commerce/ui-library';
 
 interface Product {
   id: string;
@@ -103,7 +103,7 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
         name: product.name,
         price: product.price,
         image: (product.images || [product.image])?.[0] || '/placeholder.png',
-        addedAt: new Date().toISOString(),
+        addedAt: Date.now(),
       });
     }
   };

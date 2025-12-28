@@ -47,7 +47,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <RecoilRoot>
         <AuthLoader>{children}</AuthLoader>
       </RecoilRoot>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 }

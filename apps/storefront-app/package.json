@@ -1,9 +1,8 @@
 {
   "name": "@e-commerce/storefront-app",
   "license": "MIT",
-  "type": "module",
   "version": "1.0.0",
-  "description": "Customer-facing 3a Softwaresstorefront with product browsing, cart, and checkout",
+  "description": "Customer-facing 3a Softwares storefront with product browsing, cart, and checkout",
   "scripts": {
     "dev": "next dev -p 3003",
     "build": "next build",
