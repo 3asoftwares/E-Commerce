@@ -30,42 +30,42 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   if (variant === 'list') {
     return (
-      <div className="flex gap-4 p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+      <div className="flex gap-4 p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200">
         <img
           src={primaryImage?.url}
           alt={primaryImage?.alt || product.name}
           className="w-32 h-32 object-cover rounded"
         />
         <div className="flex-1">
-          <h3 className="text-lg font-semibold hover:text-primary-600 cursor-pointer">
+          <h3 className="text-lg font-bold text-gray-900 hover:text-blue-700 cursor-pointer">
             {product.name}
           </h3>
-          <p className="text-sm text-gray-600 line-clamp-2 mt-1">{product.shortDescription}</p>
+          <p className="text-sm text-gray-700 line-clamp-2 mt-1">{product.shortDescription}</p>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex items-center">
-              <span className="text-yellow-400">★</span>
-              <span className="ml-1 text-sm">{product.rating.toFixed(1)}</span>
-              <span className="ml-1 text-sm text-gray-500">({product.reviewCount})</span>
+              <span className="text-yellow-500">★</span>
+              <span className="ml-1 text-sm font-semibold text-gray-900">{product.rating.toFixed(1)}</span>
+              <span className="ml-1 text-sm text-gray-600">({product.reviewCount})</span>
             </div>
           </div>
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-primary-600">
+              <span className="text-2xl font-bold text-blue-700">
                 ${product.price.toFixed(2)}
               </span>
               {hasDiscount && (
                 <>
-                  <span className="text-sm text-gray-500 line-through">
+                  <span className="text-sm text-gray-600 line-through">
                     ${product.compareAtPrice!.toFixed(2)}
                   </span>
-                  <span className="text-sm text-green-600 font-semibold">-{discountPercent}%</span>
+                  <span className="text-sm text-green-700 font-bold">-{discountPercent}%</span>
                 </>
               )}
             </div>
             {showActions && (
               <button
                 onClick={() => onAddToCart?.(product)}
-                className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700"
+                className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
                 disabled={product.inventory === 0}
               >
                 {product.inventory === 0 ? 'Out of Stock' : 'Add to Cart'}
@@ -78,21 +78,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   }
 
   return (
-    <div className="group relative bg-white rounded-lg shadow hover:shadow-lg transition-all duration-300">
+    <div className="group relative bg-white rounded-lg shadow hover:shadow-lg transition-all duration-300 border border-gray-200">
       {/* Badges */}
       <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
         {hasDiscount && (
-          <span className="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded">
+          <span className="px-2 py-1 bg-red-600 text-white text-xs font-bold rounded">
             -{discountPercent}%
           </span>
         )}
         {product.isFeatured && (
-          <span className="px-2 py-1 bg-yellow-500 text-white text-xs font-bold rounded">
+          <span className="px-2 py-1 bg-yellow-600 text-white text-xs font-bold rounded">
             Featured
           </span>
         )}
         {product.inventory === 0 && (
-          <span className="px-2 py-1 bg-gray-500 text-white text-xs font-bold rounded">
+          <span className="px-2 py-1 bg-gray-700 text-white text-xs font-bold rounded">
             Out of Stock
           </span>
         )}
@@ -129,10 +129,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         />
         {/* Quick View on Hover */}
         {showActions && (
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
             <button
               onClick={() => onQuickView?.(product)}
-              className="opacity-0 group-hover:opacity-100 px-4 py-2 bg-white text-primary-600 rounded font-semibold hover:bg-primary-600 hover:text-white transition-all"
+              className="opacity-0 group-hover:opacity-100 px-4 py-2 bg-white text-blue-700 font-bold rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-lg"
             >
               Quick View
             </button>
@@ -142,26 +142,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Content */}
       <div className="p-4">
-        <p className="text-xs text-gray-500 mb-1">{product.category.name}</p>
-        <h3 className="text-base font-semibold line-clamp-2 hover:text-primary-600 cursor-pointer mb-2">
+        <p className="text-xs text-gray-600 font-semibold mb-1 uppercase">{product.category.name}</p>
+        <h3 className="text-base font-bold text-gray-900 line-clamp-2 hover:text-blue-700 cursor-pointer mb-2">
           {product.name}
         </h3>
 
         {/* Rating */}
         <div className="flex items-center gap-1 mb-2">
           <div className="flex items-center">
-            <span className="text-yellow-400 text-sm">★</span>
-            <span className="ml-1 text-sm">{product.rating.toFixed(1)}</span>
+            <span className="text-yellow-500 text-sm">★</span>
+            <span className="ml-1 text-sm font-semibold text-gray-900">{product.rating.toFixed(1)}</span>
           </div>
-          <span className="text-xs text-gray-500">({product.reviewCount})</span>
+          <span className="text-xs text-gray-600">({product.reviewCount})</span>
         </div>
 
         {/* Price */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold text-primary-600">${product.price.toFixed(2)}</span>
+            <span className="text-xl font-bold text-blue-700">${product.price.toFixed(2)}</span>
             {hasDiscount && (
-              <span className="text-sm text-gray-500 line-through">
+              <span className="text-sm text-gray-600 line-through">
                 ${product.compareAtPrice!.toFixed(2)}
               </span>
             )}
@@ -172,7 +172,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {showActions && (
           <button
             onClick={() => onAddToCart?.(product)}
-            className="w-full py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             disabled={product.inventory === 0}
           >
             {product.inventory === 0 ? 'Out of Stock' : 'Add to Cart'}

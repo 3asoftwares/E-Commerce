@@ -1,41 +1,16 @@
 import React from 'react';
 import { forwardRef } from 'react';
-import '../../styles/globals.css';
 
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-  /**
-   * Input label
-   */
   label?: string;
-  /**
-   * Error message
-   */
   error?: string;
-  /**
-   * Helper text
-   */
   helperText?: string;
-  /**
-   * Input size
-   */
   size?: 'sm' | 'md' | 'lg';
-  /**
-   * Full width input
-   */
   fullWidth?: boolean;
-  /**
-   * Input icon (left)
-   */
   leftIcon?: React.ReactNode;
-  /**
-   * Input icon (right)
-   */
   rightIcon?: React.ReactNode;
 }
 
-/**
- * Input component for form fields
- */
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
@@ -60,21 +35,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const widthClass = fullWidth ? 'w-full' : '';
     const errorClasses = error
-      ? 'border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:ring-primary';
-    const disabledClasses = disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white';
+      ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500';
+    const disabledClasses = disabled ? 'bg-gray-100 cursor-not-allowed text-gray-500' : 'bg-white text-gray-900';
     const iconPaddingLeft = leftIcon ? 'pl-10' : '';
     const iconPaddingRight = rightIcon ? 'pr-10' : '';
 
     return (
       <div className={`${widthClass} ${className}`}>
         {label && (
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{label}</label>
+          <label className="block text-sm font-semibold text-gray-900 mb-1.5">{label}</label>
         )}
 
         <div className="relative">
           {leftIcon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
               {leftIcon}
             </div>
           )}
@@ -82,7 +57,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={`
-              block rounded-lg border focus:ring-2 focus:border-transparent transition-all duration-150
+              block rounded-lg border-2 focus:ring-2 focus:ring-offset-1 transition-all duration-150
+              dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:focus:border-blue-400
               ${sizeClasses[size]}
               ${widthClass}
               ${errorClasses}
@@ -95,15 +71,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           />
 
           {rightIcon && (
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
               {rightIcon}
             </div>
           )}
         </div>
 
-        {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm font-semibold text-red-700 dark:text-red-400">{error}</p>}
 
-        {helperText && !error && <p className="mt-1.5 text-sm text-gray-500">{helperText}</p>}
+        {helperText && !error && <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{helperText}</p>}
       </div>
     );
   }

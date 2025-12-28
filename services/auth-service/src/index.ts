@@ -65,19 +65,17 @@ app.use((err: any, _: Request, res: Response, __: any) => {
 // Start server
 const startServer = async () => {
   try {
-    // Connect to database
+    // Try to connect to database (non-blocking)
     await connectDatabase();
-
-    // Start listening
-    app.listen(PORT, () => {
-      console.log(
-        `Auth services started: ${PORT.toString()}`
-      );
-    });
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
-    process.exit(1);
+    console.warn('⚠️  Starting server without database connection');
   }
+
+  // Start listening
+  app.listen(PORT, () => {
+    console.log(`🚀 Auth service running on port ${PORT}`);
+    console.log(`📡 Health check: http://localhost:${PORT}/health`);
+  });
 };
 
 // Handle shutdown gracefully

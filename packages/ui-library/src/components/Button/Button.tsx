@@ -1,48 +1,17 @@
 import React from 'react';
-import '../../styles/globals.css';
 
 export interface ButtonProps {
-  /**
-   * Button contents
-   */
   children: React.ReactNode;
-  /**
-   * Button variant
-   */
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  /**
-   * Button size
-   */
   size?: 'sm' | 'md' | 'lg';
-  /**
-   * Is button disabled?
-   */
   disabled?: boolean;
-  /**
-   * Is button loading?
-   */
   loading?: boolean;
-  /**
-   * Optional click handler
-   */
   onClick?: (e: React.MouseEvent) => void;
-  /**
-   * Button type
-   */
   type?: 'button' | 'submit' | 'reset';
-  /**
-   * Full width button
-   */
   fullWidth?: boolean;
-  /**
-   * Additional CSS classes
-   */
   className?: string;
 }
 
-/**
- * Primary UI component for user interaction
- */
 export const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
@@ -55,14 +24,14 @@ export const Button: React.FC<ButtonProps> = ({
   className = '',
 }) => {
   const baseClasses =
-    'font-semibold rounded-lg transition-all duration-150 inline-flex items-center justify-center gap-2';
+    'font-semibold rounded-lg transition-all duration-150 inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2';
 
   const variantClasses = {
-    primary: 'bg-primary hover:bg-primary-700 text-white shadow-sm hover:shadow-md',
+    primary: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-sm hover:shadow-md focus:ring-blue-500',
     secondary:
-      'bg-white hover:bg-gray-50 text-primary border border-gray-300 shadow-sm hover:shadow-md',
-    outline: 'bg-transparent hover:bg-primary-50 text-primary border-2 border-primary',
-    ghost: 'bg-transparent hover:bg-gray-100 text-gray-700',
+      'bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-900 border-2 border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md focus:ring-gray-400',
+    outline: 'bg-transparent hover:bg-blue-50 active:bg-blue-100 text-blue-700 border-2 border-blue-600 hover:border-blue-700 focus:ring-blue-500',
+    ghost: 'bg-transparent hover:bg-gray-100 active:bg-gray-200 text-gray-900 focus:ring-gray-400',
   };
 
   const sizeClasses = {

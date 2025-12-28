@@ -64,13 +64,13 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             />
             <div className="flex-1 min-w-0">
               <p className="font-medium text-gray-900 truncate">{item.productName}</p>
-              <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+              <p className="text-sm text-gray-700">Qty: {item.quantity}</p>
               <p className="text-sm font-semibold text-gray-900">${item.total.toFixed(2)}</p>
             </div>
           </div>
         ))}
         {order.items.length > 2 && (
-          <p className="text-sm text-primary-600">+{order.items.length - 2} more items</p>
+          <p className="text-sm font-semibold text-blue-700">+{order.items.length - 2} more items</p>
         )}
       </div>
 
@@ -85,14 +85,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         <div className="flex gap-3 mt-4">
           <button
             onClick={() => onViewDetails?.(order.id)}
-            className="flex-1 px-4 py-2 border border-primary-600 text-primary-600 rounded hover:bg-primary-50"
+            className="flex-1 px-4 py-2 border-2 border-blue-600 text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-all"
           >
             View Details
           </button>
           {canTrack && (
             <button
               onClick={() => onTrackOrder?.(order.id)}
-              className="flex-1 px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700"
+              className="flex-1 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all"
             >
               Track Order
             </button>
@@ -100,7 +100,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
           {canCancel && (
             <button
               onClick={() => onCancelOrder?.(order.id)}
-              className="px-4 py-2 border border-red-600 text-red-600 rounded hover:bg-red-50"
+              className="px-4 py-2 border-2 border-red-600 text-red-700 font-semibold rounded-lg hover:bg-red-50 transition-all"
             >
               Cancel
             </button>

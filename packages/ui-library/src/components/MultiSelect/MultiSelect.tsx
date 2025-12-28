@@ -23,9 +23,9 @@ export interface MultiSelectProps {
 }
 
 const variantClasses = {
-  outline: 'border border-gray-300 bg-white hover:border-gray-400 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-200',
-  filled: 'border-0 bg-gray-100 hover:bg-gray-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-primary-200',
-  underline: 'border-0 border-b-2 border-gray-300 bg-transparent hover:border-gray-400 focus-within:border-primary-500',
+  outline: 'border-2 border-gray-300 bg-white hover:border-gray-400 focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-200',
+  filled: 'border-0 bg-gray-100 hover:bg-gray-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-200',
+  underline: 'border-0 border-b-2 border-gray-400 bg-transparent hover:border-gray-600 focus-within:border-blue-600',
 };
 
 const sizeClasses = {
@@ -81,17 +81,17 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         className={`rounded-lg transition-all duration-200 outline-none ${variantClasses[variant]} ${sizeClasses[size]} ${errorClasses} ${disabledClasses} flex flex-wrap gap-2 items-center min-h-[40px]`}
       >
         {value.length === 0 ? (
-          <span className="text-gray-400">{placeholder}</span>
+          <span className="text-gray-500 font-medium">{placeholder}</span>
         ) : (
           selectedLabels.map((label, index) => (
             <span
               key={index}
-              className="inline-flex items-center px-2 py-1 bg-primary-100 text-primary-800 rounded text-sm"
+              className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-900 border border-blue-200 rounded-lg text-sm font-semibold"
             >
               {label}
               <button
                 onClick={(e) => handleRemove(value[index], e)}
-                className="ml-1 hover:text-primary-600"
+                className="ml-1 hover:text-blue-700 font-bold"
               >
                 ×
               </button>
@@ -110,7 +110,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             {options.map((option) => (
               <label
                 key={option.value}
-                className={`flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer ${
+                className={`flex items-center px-4 py-2 hover:bg-blue-50 cursor-pointer text-gray-900 font-medium ${
                   option.disabled ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
@@ -119,7 +119,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                   checked={value.includes(option.value)}
                   onChange={() => handleToggle(option.value)}
                   disabled={option.disabled}
-                  className="mr-3 h-4 w-4 text-primary-600 rounded focus:ring-primary-500"
+                  className="mr-3 h-4 w-4 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
                 />
                 {option.label}
               </label>

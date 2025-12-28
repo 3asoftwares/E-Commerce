@@ -22,7 +22,6 @@ export const connectDatabase = async (): Promise<void> => {
     await mongoose.connect(MONGODB_URI, options);
 
     console.log('✅ MongoDB connected successfully');
-    // Handle connection events
     mongoose.connection.on('error', (err) => {
       console.error('❌ MongoDB connection error:', err);
     });
@@ -35,9 +34,7 @@ export const connectDatabase = async (): Promise<void> => {
       console.log('✅ MongoDB reconnected');
     });
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error);
-    console.error('💡 Make sure MongoDB is running on your system');
-    process.exit(1);
+    console.warn('⚠️  MongoDB connection failed:', error);
   }
 };
 

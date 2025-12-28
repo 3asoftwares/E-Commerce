@@ -37,8 +37,8 @@ export const CartItem: React.FC<CartItemProps> = ({
       {/* Product Details */}
       <div className="flex-1 min-w-0">
         <h3 className="font-semibold text-gray-900 truncate">{item.productName}</h3>
-        <p className="text-sm text-gray-500 mt-1">
-          Sold by: <span className="text-primary-600">{item.sellerName}</span>
+        <p className="text-sm text-gray-700 mt-1">
+          Sold by: <span className="font-bold text-blue-700">{item.sellerName}</span>
         </p>
 
         {/* Variant Options */}
@@ -86,11 +86,11 @@ export const CartItem: React.FC<CartItemProps> = ({
 
           {/* Subtotal */}
           <div className="text-right">
-            <p className="text-lg font-bold text-primary-600">${item.total.toFixed(2)}</p>
+            <p className="text-lg font-bold text-blue-700">${item.total.toFixed(2)}</p>
             {!readonly && (
               <button
                 onClick={() => onRemove?.(item.id)}
-                className="text-sm text-red-600 hover:text-red-700 mt-1"
+                className="text-sm text-red-700 hover:text-red-900 font-semibold mt-1"
               >
                 Remove
               </button>

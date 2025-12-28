@@ -1,5 +1,3 @@
-import '../../styles/globals.css';
-
 export interface Column<T> {
   /**
    * Column header
@@ -72,30 +70,30 @@ export function Table<T extends Record<string, any>>({
 }: TableProps<T>) {
   if (loading) {
     return (
-      <div className="w-full p-8 text-center">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div>
-        <p className="mt-2 text-gray-500">Loading...</p>
+      <div className="w-full p-8 text-center bg-white rounded-lg shadow-sm">
+        <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
+        <p className="mt-3 text-base font-medium text-gray-700">Loading...</p>
       </div>
     );
   }
 
   if (data.length === 0) {
     return (
-      <div className="w-full p-8 text-center text-gray-500 bg-gray-50 rounded-lg">
+      <div className="w-full p-8 text-center text-gray-700 font-medium bg-gray-50 rounded-lg border-2 border-gray-200">
         {emptyMessage}
       </div>
     );
   }
 
   return (
-    <div className="w-full overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="w-full overflow-x-auto rounded-lg border-2 border-gray-200 shadow-sm">
+      <table className="min-w-full divide-y-2 divide-gray-200">
+        <thead className="bg-gray-100">
           <tr>
             {columns.map((column, index) => (
               <th
                 key={index}
-                className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                className="px-6 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider"
               >
                 {column.header || column.label}
               </th>
@@ -108,7 +106,7 @@ export function Table<T extends Record<string, any>>({
               key={rowIndex}
               onClick={() => onRowClick?.(row)}
               className={`
-                ${hoverable ? 'hover:bg-gray-50' : ''}
+                ${hoverable ? 'hover:bg-blue-50' : ''}
                 ${striped && rowIndex % 2 === 1 ? 'bg-gray-50' : ''}
                 ${onRowClick ? 'cursor-pointer' : ''}
                 transition-colors duration-150
@@ -118,7 +116,7 @@ export function Table<T extends Record<string, any>>({
                 const accessor = column.accessor || column.key;
                 const renderer = column.cell || column.render;
                 return (
-                  <td key={colIndex} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td key={colIndex} className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {renderer ? renderer(row) : accessor ? row[accessor as keyof T] : null}
                   </td>
                 );
