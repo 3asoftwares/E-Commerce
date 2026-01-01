@@ -9,8 +9,3 @@ export { FeaturedProducts } from './FeaturedProducts';
 export { FeaturedCategories } from './FeaturedCategories';
 export { PromoBanner } from './PromoBanner';
 export { Recommendations } from './Recommendations';
-export { Header } from './Header';
-export { HeaderWrapper } from './HeaderWrapper';
-export { Footer } from './Footer';
-export { FooterWrapper } from './FooterWrapper';
-export { ProductReviews } from './ProductReviews';

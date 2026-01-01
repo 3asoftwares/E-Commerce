@@ -41,7 +41,6 @@ interface MeResponse {
  * Hook for user login
  */
 export function useLogin() {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -83,7 +82,6 @@ export function useLogin() {
  * Hook for user registration
  */
 export function useRegister() {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({

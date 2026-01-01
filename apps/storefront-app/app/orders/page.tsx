@@ -9,18 +9,11 @@ import { useCartStore } from '@/store/cartStore';
 import { faClipboardList, faShoppingBag } from '@fortawesome/free-solid-svg-icons';
 import { PageHeader, EmptyState } from '@/components';
 
-interface Order {
-  id: string;
-  orderNumber: string;
-  status?: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  total: number;
-  createdAt: string;
-  items: Array<{
-    productId: string;
-    quantity: number;
-    price: number;
-  }>;
-}
+type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+
+const isValidStatus = (status: string | undefined): status is OrderStatus => {
+  return status !== undefined && ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'].includes(status);
+};
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -95,7 +88,7 @@ export default function OrdersPage() {
           />
         ) : (
           <div className="space-y-4">
-            {orders.map((order: Order) => (
+            {orders.map((order: any) => (
               <div
                 key={order.id}
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
@@ -117,13 +110,13 @@ export default function OrdersPage() {
                       </p>
                     </div>
                     <div className="mt-4 sm:mt-0">
-                      {order.status && (
+                      {isValidStatus(order.status) && (
                         <span
                           className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                            STATUS_COLORS[order.status]
+                            STATUS_COLORS[order.status as OrderStatus]
                           }`}
                         >
-                          {STATUS_ICONS[order.status]}{' '}
+                          {STATUS_ICONS[order.status as OrderStatus]}{' '}
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
                       )}
@@ -135,7 +128,7 @@ export default function OrdersPage() {
                     <div>
                       <p className="text-sm text-gray-600">Items</p>
                       <p className="text-lg font-semibold text-gray-900">
-                        {order.items.reduce((sum, item) => sum + item.quantity, 0)}
+                        {order.items.reduce((sum:number, item:any) => sum + item.quantity, 0)}
                       </p>
                     </div>
                     <div>
@@ -158,7 +151,7 @@ export default function OrdersPage() {
                       Items ({order.items.length})
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {order.items.slice(0, 3).map((item, idx) => (
+                      {order.items.slice(0, 3).map((item:any, idx:number) => (
                         <div
                           key={idx}
                           className="flex items-center gap-2 text-sm text-gray-700 bg-gray-50 p-2 rounded"
@@ -184,7 +177,7 @@ export default function OrdersPage() {
                     >
                       View Details
                     </Button>
-                    {order.status &&
+                    {isValidStatus(order.status) &&
                     (order.status === 'shipped' || order.status === 'processing') ? (
                       <Button
                         onClick={() => router.push(`/orders/${order.id}/track`)}
@@ -195,7 +188,7 @@ export default function OrdersPage() {
                         Track Package
                       </Button>
                     ) : null}
-                    {order.status && order.status === 'delivered' ? (
+                    {isValidStatus(order.status) && order.status === 'delivered' ? (
                       <Button
                         onClick={() => router.push(`/products?reorder=${order.id}`)}
                         variant="outline"

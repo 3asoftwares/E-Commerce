@@ -20,7 +20,7 @@ export const Button: React.FC<ButtonProps> = ({
   loading = false,
   onClick,
   type = 'button',
-  fullWidth = false,
+  fullWidth = true,
   className = '',
 }) => {
   const baseClasses =

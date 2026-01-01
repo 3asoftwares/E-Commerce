@@ -96,6 +96,8 @@ export interface OrderQueryVariables {
 
 // GraphQL Response Type (matches GraphQL schema exactly)
 export interface OrderGraphQL {
+  estimatedDelivery: string | number | Date;
+  status: string;
   id: string;
   orderNumber: string;
   customerId: string;
@@ -112,6 +114,7 @@ export interface OrderGraphQL {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+  order:string
 }
 
 export interface OrderConnection {

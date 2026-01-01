@@ -42,7 +42,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const iconPaddingRight = rightIcon ? 'pr-10' : '';
 
     return (
-      <div className={`${widthClass} ${className}`}>
+      <div className={`${widthClass} ${className} mb-6`}>
         {label && (
           <label className="block text-[16px] font-semibold text-gray-900 mb-1.5">{label}</label>
         )}

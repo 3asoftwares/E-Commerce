@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@e-commerce/ui-library';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 
@@ -115,7 +114,6 @@ export default function ProductReviews({ productId, averageRating, totalReviews 
             <button type="submit">Submit Review</button>
             <button
               type="button"
-              variant="outline"
               onClick={() => setShowReviewForm(false)}
             >
               Cancel

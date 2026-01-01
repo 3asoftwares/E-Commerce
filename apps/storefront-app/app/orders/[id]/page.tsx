@@ -1,41 +1,14 @@
 'use client';
 
+import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOrder } from '@/lib/hooks';
-import { Button } from '@e-commerce/ui-library';
 import { formatPrice } from '@/lib/utils/currency';
 
-interface OrderDetail {
-  id: string;
-  orderNumber: string;
-  status: string;
-  total: number;
-  subtotal: number;
-  tax: number;
-  shipping: number;
-  createdAt: string;
-  updatedAt: string;
-  items: Array<{
-    productId: string;
-    productName: string;
-    quantity: number;
-    price: number;
-    total: number;
-  }>;
-  shippingAddress: {
-    street: string;
-    city: string;
-    state: string;
-    zip: string;
-    country: string;
-  };
-  estimatedDelivery?: string;
-}
-
 interface OrderDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const STATUS_STEPS = [
@@ -47,7 +20,7 @@ const STATUS_STEPS = [
 ];
 
 export default function OrderDetailPage({ params }: OrderDetailPageProps) {
-  const { id } = params;
+  const { id } = use(params);
   const router = useRouter();
 
   const { data: order, isLoading, error } = useOrder(id);
@@ -85,9 +58,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
           >
             ← Back to Orders
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Order #{order.orderNumber}
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">Order #{order.orderNumber}</h1>
         </div>
       </div>
 
@@ -168,11 +139,9 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
                     <div className="text-right">
                       <p className="text-lg font-semibold text-gray-900">
-                        {formatPrice(item.total)}
+                        {formatPrice(item.price * item.quantity)}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        {formatPrice(item.price)} each
-                      </p>
+                      <p className="text-sm text-gray-600">{formatPrice(item.price)} each</p>
                     </div>
                   </div>
                 ))}
@@ -217,9 +186,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
               <div className="flex justify-between items-baseline mb-6">
                 <span className="font-semibold text-gray-700">Total</span>
-                <span className="text-2xl font-bold text-gray-900">
-                  {formatPrice(order.total)}
-                </span>
+                <span className="text-2xl font-bold text-gray-900">{formatPrice(order.total)}</span>
               </div>
 
               {/* Order Information */}
@@ -236,7 +203,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 uppercase">Status</p>
-                  <p className="font-medium text-gray-900 capitalize">{order.status}</p>
+                  <p className="font-medium text-gray-900 capitalize">{order.order}</p>
                 </div>
               </div>
 

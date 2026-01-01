@@ -98,12 +98,10 @@ export default function Header() {
             </div>
           </form>
 
-          {/* Right Section */}
-          <div className="flex items-center gap-1 xs:gap-2 sm:gap-3">
-            {/* Wishlist */}
+          <div className="flex items-center gap-1 xs:gap-2.5 sm:gap-4">
             <Link
               href="/wishlist"
-              className="relative p-1.5 xs:p-2 sm:p-2.5 text-gray-600 hover:text-pink-600 transition-all rounded-lg sm:rounded-xl hover:bg-pink-50 group"
+              className="relative pt-2 p-1.5 xs:p-2 sm:pt-5 sm:p-2.5 text-gray-600 hover:text-pink-600 transition-all rounded-lg sm:rounded-xl hover:bg-pink-50 group"
               title="Wishlist"
             >
               <FontAwesomeIcon
@@ -111,7 +109,7 @@ export default function Header() {
                 className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform"
               />
               {wishlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 xs:w-5 xs:h-5 bg-gradient-to-br from-pink-500 to-red-500 text-white text-[10px] xs:text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
+                <span className="absolute top-2 -right-1 w-4 h-4 xs:w-5 xs:h-5 bg-gradient-to-br from-pink-500 to-red-500 text-white text-[10px] xs:text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
                   {wishlist.length}
                 </span>
               )}
@@ -120,7 +118,7 @@ export default function Header() {
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative p-1.5 xs:p-2 sm:p-2.5 text-gray-600 hover:text-indigo-600 transition-all rounded-lg sm:rounded-xl hover:bg-indigo-50 group"
+              className="relative pt-2 p-1.5 xs:p-2 sm:pt-5 sm:p-2.5 text-gray-600 hover:text-indigo-600 transition-all rounded-lg sm:rounded-xl hover:bg-indigo-50 group"
               title="Shopping Cart"
             >
               <FontAwesomeIcon
@@ -128,7 +126,7 @@ export default function Header() {
                 className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform"
               />
               {items.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 xs:w-5 xs:h-5 bg-gray-400 text-white text-[10px] xs:text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
+                <span className="absolute top-2 -right-1 w-4 h-4 xs:w-5 xs:h-5 bg-gray-400 text-white text-[10px] xs:text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
                   {items.length}
                 </span>
               )}
@@ -191,7 +189,7 @@ export default function Header() {
             ) : (
               <Link
                 href="/login"
-                className="hidden sm:inline-block px-4 xs:px-6 py-2 xs:py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-lg xs:rounded-xl hover:shadow-lg transition-all text-xs xs:text-sm"
+                className="hidden sm:inline-block px-4 xs:px-6 py-2 xs:py-2.5 border-2 border-black text-gray-800 font-bold rounded-md hover:shadow-lg transition-all text-xs xs:text-sm"
               >
                 Sign In
               </Link>

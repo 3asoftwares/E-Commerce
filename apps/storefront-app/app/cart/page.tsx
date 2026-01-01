@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faBox } from '@fortawesome/free-solid-svg-icons';
 import { formatPrice } from '@/lib/utils/currency';
 import { PageHeader, EmptyState } from '@/components';
+import { Button } from '@e-commerce/ui-library';
 
 export const dynamic = 'force-dynamic';
 
@@ -184,7 +185,6 @@ export default function CartPage() {
                   </div>
                 )}
 
-                {/* Total */}
                 <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
                   <p className="text-gray-700 text-sm font-medium mb-1">Total Amount</p>
                   <p className="text-4xl font-bold text-gray-900">
@@ -192,15 +192,12 @@ export default function CartPage() {
                   </p>
                 </div>
 
-                {/* Checkout Button */}
-                <button
+                <Button
                   onClick={() => router.push('/checkout')}
-                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all mb-3"
                 >
                   Proceed to Checkout
-                </button>
+                </Button>
 
-                {/* Payment Methods Info */}
                 <div className="bg-gray-50 rounded-lg p-3 mb-4">
                   <p className="font-semibold text-gray-900 text-sm mb-2">We Accept:</p>
                   <div className="flex gap-2 flex-wrap">
@@ -210,7 +207,6 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                {/* Trust Badges */}
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex items-start gap-2">
                     <span className="text-green-600 font-bold mt-0.5">✓</span>

@@ -56,7 +56,7 @@ export const Select: React.FC<SelectProps> = ({
   const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed bg-gray-100' : 'cursor-pointer';
 
   return (
-    <div>
+    <div className="mb-6">
       {label && (
         <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
           {label}

@@ -99,33 +99,35 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       <div className="p-5">
         <Link
           href={`/products/${product.id}`}
-          className="font-bold text-gray-900 hover:text-gray-600 line-clamp-2 block mb-3 text-lg transition-colors"
+          className="font-bold text-gray-900 hover:text-gray-600 line-clamp-2 mb-3 text-lg transition-colors truncate-3 line-clamp-3 min-h-20"
         >
           {product.name}
         </Link>
 
         {/* Rating */}
-        {variant !== 'compact' && (product.rating || product.reviewCount) && (
-          <div className="flex items-center mb-3">
-            <div className="flex text-yellow-500 text-base">
-              {[...Array(5)].map((_, i) => (
-                <span key={i}>{i < Math.floor(product.rating || 0) ? '★' : '☆'}</span>
-              ))}
-            </div>
-            {product.reviewCount !== undefined && (
-              <span className="text-xs text-gray-600 ml-2 font-medium">
-                ({product.reviewCount})
-              </span>
-            )}
-          </div>
-        )}
+        <div className="flex items-center mb-3 h-5">
+          {variant !== 'compact' && (product.rating || product.reviewCount !== 0) && (
+            <>
+              <div className="flex text-yellow-500 text-base">
+                {[...Array(5)].map((_, i) => (
+                  <span key={i}>{i < Math.floor(product.rating || 0) ? '★' : '☆'}</span>
+                ))}
+              </div>
+              {product.reviewCount !== undefined && (
+                <span className="text-xs text-gray-600 ml-2 font-medium">
+                  ({product.reviewCount})
+                </span>
+              )}
+            </>
+          )}
+        </div>
 
         {/* Price */}
         <p className="text-3xl font-extrabold text-gray-900 mb-4">{formatPrice(product.price)}</p>
 
         {/* Action Buttons */}
         {onAddToCart && (
-          <>
+          <div className="flex justify-center">
             {isOutOfStock ? (
               <div className="text-center text-sm text-red-600 font-semibold py-2">
                 Out of Stock
@@ -139,7 +141,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 Add to Cart
               </button>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>

@@ -72,10 +72,9 @@ export default function CheckoutPage() {
         customerEmail: userProfile.email,
         items: items.map((item:any) => ({
           productId: item.productId,
-          productName: item.name,
           quantity: item.quantity,
           price: item.price,
-          subtotal: item.price * item.quantity,
+          sellerId: item.sellerId || '',
         })),
         subtotal,
         tax,
@@ -190,7 +189,7 @@ export default function CheckoutPage() {
               {useNewAddress && (
                 <div className="space-y-4 pt-4 border-t">
                   <Input
-                    size='md'
+                    size="md"
                     type="text"
                     placeholder="Street Address"
                     value={newAddress.street}
@@ -348,27 +347,22 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Total */}
               <div className="flex justify-between items-baseline mb-6">
                 <span className="font-semibold text-gray-700">Total</span>
                 <span className="text-3xl font-bold text-gray-900">{formatPrice(total)}</span>
               </div>
 
-              {/* Place Order Button */}
-              <button
-                onClick={handleSubmitOrder}
-                disabled={loading}
-                className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
-              >
+              <Button onClick={handleSubmitOrder} disabled={loading}>
                 {loading ? 'Processing...' : 'Place Order'}
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant="ghost"
+                className='mt-2'
                 onClick={() => router.push('/cart')}
-                className="w-full text-blue-600 hover:text-blue-700 font-medium text-sm py-2"
               >
                 ← Back to Cart
-              </button>
+              </Button>
             </div>
           </div>
         </div>
