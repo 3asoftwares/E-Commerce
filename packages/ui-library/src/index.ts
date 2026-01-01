@@ -8,6 +8,7 @@ export { Spinner } from './components/Spinner';
 export { Pagination } from './components/Pagination';
 export { Select } from './components/Select';
 export { MultiSelect } from './components/MultiSelect';
+export { Radio } from './components/Radio';
 export { Header } from './components/Header';
 export { Page } from './components/Page';
 
@@ -27,6 +28,7 @@ export type { SpinnerProps } from './components/Spinner';
 export type { PaginationProps } from './components/Pagination';
 export type { SelectProps, SelectOption } from './components/Select';
 export type { MultiSelectProps, MultiSelectOption } from './components/MultiSelect';
+export type { RadioProps, RadioOption } from './components/Radio';
 export type { HeaderProps } from './components/Header';
 export type { ProductCardProps } from './components/ProductCard';
 export type { CartItemProps } from './components/CartItem';

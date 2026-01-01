@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
+import { Button, Input } from '@e-commerce/ui-library';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSearch,
@@ -82,19 +83,21 @@ export default function Header() {
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="hidden md:flex items-center flex-1 mx-8">
             <div className="w-full relative">
-              <input
+              <Input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for products, brands, and more..."
-                className="w-full px-5 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm bg-gray-50 focus:bg-white"
+                className="mb-0"
+                rightIcon={
+                  <button
+                    type="submit"
+                    className="text-gray-400 hover:text-indigo-600 transition-colors"
+                  >
+                    <FontAwesomeIcon icon={faSearch} className="w-5 h-5" />
+                  </button>
+                }
               />
-              <button
-                type="submit"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition-colors"
-              >
-                <FontAwesomeIcon icon={faSearch} className="w-5 h-5" />
-              </button>
             </div>
           </form>
 
@@ -135,19 +138,21 @@ export default function Header() {
             {/* User Menu */}
             {user ? (
               <div className="relative group">
-                <button className="hidden sm:flex items-center gap-2 px-3 xs:px-4 py-2 xs:py-2.5 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-all border border-indigo-200">
+                <Button variant="outline" size="sm" fullWidth={false}>
                   <FontAwesomeIcon icon={faUser} className="w-4 h-4 xs:w-5 xs:h-5" />
                   <span className="text-xs xs:text-sm font-bold text-gray-800 truncate max-w-xs">
                     {user.name || user.email?.split('@')[0]}
                   </span>
                   <FontAwesomeIcon icon={faCaretDown} className="w-4 h-4 xs:w-5 xs:h-5" />
-                </button>
-                <button
-                  className="sm:hidden p-1.5 xs:p-2 text-gray-600 hover:text-indigo-600"
+                </Button>
+                <Button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  variant="outline"
+                  size="sm"
+                  fullWidth={false}
                 >
                   <FontAwesomeIcon icon={faUser} className="w-5 h-5 sm:w-6 sm:h-6" />
-                </button>
+                </Button>
                 <div className="absolute right-0 mt-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                   <Link
                     href="/profile"
@@ -177,13 +182,16 @@ export default function Header() {
                     <FontAwesomeIcon icon={faBox} className="mr-2" />
                     Contact
                   </Link>
-                  <button
+                  <Button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    variant="ghost"
+                    size="sm"
+                    fullWidth={true}
+                    className="text-red-600 hover:bg-red-50 justify-start"
                   >
                     <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
                     Sign Out
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
@@ -196,34 +204,39 @@ export default function Header() {
             )}
 
             {/* Mobile Menu Toggle */}
-            <button
+            <Button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              variant="ghost"
+              size="sm"
+              fullWidth={false}
               className="md:hidden p-1.5 xs:p-2 text-gray-600 hover:text-indigo-600 transition-colors"
             >
               <FontAwesomeIcon
                 icon={isMobileMenuOpen ? faTimes : faBars}
                 className="w-5 h-5 sm:w-6 sm:h-6"
               />
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Mobile Search */}
         <form onSubmit={handleSearch} className="md:hidden pb-3 sm:pb-4">
           <div className="w-full relative">
-            <input
+            <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
-              className="w-full px-4 py-2.5 sm:py-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm bg-gray-50 focus:bg-white"
+              className="mb-0"
+              rightIcon={
+                <button
+                  type="submit"
+                  className="text-gray-400 hover:text-indigo-600 transition-colors"
+                >
+                  <FontAwesomeIcon icon={faSearch} className="w-5 h-5" />
+                </button>
+              }
             />
-            <button
-              type="submit"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition-colors"
-            >
-              <FontAwesomeIcon icon={faSearch} className="w-5 h-5" />
-            </button>
           </div>
         </form>
       </div>
@@ -277,13 +290,16 @@ export default function Header() {
                 <FontAwesomeIcon icon={faUser} className="mr-2" />
                 Profile
               </Link>
-              <button
+              <Button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 font-medium"
+                variant="ghost"
+                size="md"
+                fullWidth={true}
+                className="text-red-600 hover:bg-red-50 justify-start font-medium"
               >
                 <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
                 Sign Out
-              </button>
+              </Button>
             </>
           ) : (
             <Link

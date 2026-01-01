@@ -166,13 +166,16 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Profile Information</h2>
                   {!isEditing && (
-                    <button
+                    <Button
                       onClick={() => setIsEditing(true)}
-                      className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                      variant="primary"
+                      size="md"
+                      fullWidth={false}
+                      className="flex items-center gap-2"
                     >
                       <FontAwesomeIcon icon={faEdit} className="w-4 h-4" />
                       Edit Profile
-                    </button>
+                    </Button>
                   )}
                 </div>
 
@@ -201,54 +204,45 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Full Name
-                      </label>
-                      <input
-                        type="text"
-                        value={profileData.name}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        onChange={(e: any) =>
-                          setProfileData({ ...profileData, name: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                      <input
-                        type="email"
-                        value={profileData.email}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        onChange={(e: any) =>
-                          setProfileData({ ...profileData, email: e.target.value })
-                        }
-                        disabled
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        value={profileData.phone}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        onChange={(e: any) =>
-                          setProfileData({ ...profileData, phone: e.target.value })
-                        }
-                      />
-                    </div>
+                    <Input
+                      type="text"
+                      value={profileData.name}
+                      onChange={(e: any) =>
+                        setProfileData({ ...profileData, name: e.target.value })
+                      }
+                      label="Full Name"
+                      className=""
+                    />
+                    <Input
+                      type="email"
+                      value={profileData.email}
+                      onChange={(e: any) =>
+                        setProfileData({ ...profileData, email: e.target.value })
+                      }
+                      disabled
+                      label="Email"
+                      className=""
+                    />
+                    <Input
+                      type="tel"
+                      value={profileData.phone}
+                      onChange={(e: any) =>
+                        setProfileData({ ...profileData, phone: e.target.value })
+                      }
+                      label="Phone Number"
+                      className=""
+                    />
 
                     <div className="flex gap-3 pt-4">
-                      <button
+                      <Button
                         onClick={handleSaveProfile}
                         disabled={loading}
-                        className="w-1/2 justify-center px-4 py-2 bg-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                        variant="primary"
+                        className="flex-1"
                       >
                         {loading ? 'Saving...' : 'Save Changes'}
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => {
                           setIsEditing(false);
                           setProfileData({
@@ -257,10 +251,11 @@ export default function ProfilePage() {
                             phone: userProfile.phone || '',
                           });
                         }}
-                        className="w-1/2 justify-center px-4 py-2 bg-white text-gray-900 border border-gray-900 font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                        variant="outline"
+                        className="flex-1"
                       >
                         Cancel
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -272,13 +267,16 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Saved Addresses</h2>
                   {!isAddingAddress && (
-                    <button
+                    <Button
                       onClick={() => setIsAddingAddress(true)}
-                      className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                      variant="primary"
+                      size="md"
+                      fullWidth={false}
+                      className="flex items-center gap-2"
                     >
                       <FontAwesomeIcon icon={faPlus} className="w-4 h-4" />
                       Add Address
-                    </button>
+                    </Button>
                   )}
                 </div>
 
@@ -369,19 +367,24 @@ export default function ProfilePage() {
 
                         <div className="flex gap-2 pt-3 border-t">
                           {!address.isDefault && (
-                            <button
+                            <Button
                               onClick={() => setDefaultAddress(address.id)}
-                              className="text-gray-700 hover:text-gray-900 text-sm font-medium"
+                              variant="ghost"
+                              size="sm"
+                              fullWidth={false}
                             >
                               Set as Default
-                            </button>
+                            </Button>
                           )}
-                          <button
+                          <Button
                             onClick={() => removeAddress(address.id)}
-                            className="text-red-600 hover:text-red-700 text-sm font-medium ml-auto"
+                            variant="ghost"
+                            size="sm"
+                            fullWidth={false}
+                            className="ml-auto text-red-600 hover:text-red-700"
                           >
                             Delete
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -404,12 +407,14 @@ export default function ProfilePage() {
                   <p className="text-gray-700 mb-4 text-lg">
                     View and manage your favorite products
                   </p>
-                  <button
+                  <Button
                     onClick={() => router.push('/wishlist')}
-                    className="px-8 py-3 bg-gradient-to-r from-gray-900 to-black text-white font-bold rounded-lg hover:shadow-xl hover:shadow-gray-500/50 transition-all transform hover:scale-105"
+                    variant="primary"
+                    size="lg"
+                    fullWidth={false}
                   >
                     Go to Wishlist →
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}

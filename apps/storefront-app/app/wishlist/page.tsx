@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBox, faHeart, faShoppingCart, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { PageHeader, EmptyState } from '@/components';
 import { formatPrice } from '@/lib/utils/currency';
+import { Button } from '@e-commerce/ui-library';
 
 export const dynamic = 'force-dynamic';
 
@@ -114,20 +115,24 @@ export default function WishlistPage() {
 
                     {/* Action Buttons */}
                     <div className="flex gap-2">
-                      <button
+                      <Button
                         onClick={() => handleAddToCart(item)}
-                        className="flex-1 py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-pink-500/50 transition-all flex items-center justify-center gap-2"
+                        variant="primary"
+                        size="md"
+                        className="flex-1 flex items-center justify-center gap-2"
                       >
                         <FontAwesomeIcon icon={faShoppingCart} className="w-4 h-4" />
                         Add to Cart
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => handleRemove(item.productId)}
-                        className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
-                        title="Remove from wishlist"
+                        variant="primary"
+                        size="md"
+                        fullWidth={false}
+                        className="px-4 flex items-center gap-2"
                       >
                         <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-                      </button>
+                      </Button>
                     </div>
 
                     {/* Added Date */}
@@ -147,7 +152,7 @@ export default function WishlistPage() {
                   Add all items to your cart and checkout in seconds!
                 </p>
               </div>
-              <button
+              <Button
                 onClick={() => {
                   if (wishlist.length === 0) return;
                   let addedCount = 0;
@@ -158,10 +163,12 @@ export default function WishlistPage() {
                   showToast(`Added ${addedCount} items to cart!`, 'success');
                 }}
                 disabled={wishlist.length === 0}
-                className="px-8 py-3 bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 text-white font-bold rounded-lg hover:shadow-xl hover:shadow-rose-500/50 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="primary"
+                size="lg"
+                fullWidth={false}
               >
                 Add All to Cart
-              </button>
+              </Button>
             </div>
           </div>
         )}

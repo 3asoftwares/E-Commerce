@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faPhone, faMapMarkerAlt, faClock, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { useToast } from '@/lib/hooks/useToast';
+import { Button, Input } from '@e-commerce/ui-library';
 
 export default function ContactPage() {
   const { showToast } = useToast();
@@ -60,49 +61,37 @@ export default function ContactPage() {
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Your Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Subject *
-                  </label>
-                  <input
+                  <Input
                     type="text"
-                    name="subject"
-                    value={formData.subject}
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="How can we help you?"
+                    label="Your Name *"
+                    placeholder="John Doe"
+                    className=""
+                  />
+                  <Input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    label="Email Address *"
+                    placeholder="john@example.com"
+                    className=""
                   />
                 </div>
+                <Input
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  label="Subject *"
+                  placeholder="How can we help you?"
+                  className=""
+                />
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Message *
@@ -117,14 +106,16 @@ export default function ContactPage() {
                     placeholder="Tell us more about your inquiry..."
                   />
                 </div>
-                <button
+                <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-gradient-to-r from-black to-gray-600 text-white font-bold rounded-lg hover:shadow-xl hover:shadow-blue-500/50 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  variant="primary"
+                  size="lg"
+                  className=""
                 >
                   <FontAwesomeIcon icon={faPaperPlane} className="w-5 h-5" />
                   {loading ? 'Sending...' : 'Send Message'}
-                </button>
+                </Button>
               </form>
             </div>
           </div>

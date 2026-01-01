@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { useCreateOrder } from '@/lib/hooks';
-import { Button, Input } from '@e-commerce/ui-library';
+import { Button, Input, Radio } from '@e-commerce/ui-library';
 import { useToast } from '@/lib/hooks/useToast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faLock, faShippingFast } from '@fortawesome/free-solid-svg-icons';
@@ -152,6 +152,7 @@ export default function CheckoutPage() {
                         backgroundColor:
                           selectedAddressId === address.id ? 'rgb(238, 242, 255)' : 'white',
                       }}
+                      onClick={() => setSelectedAddressId(address.id)}
                     >
                       <input
                         type="radio"
@@ -179,12 +180,15 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              <button
+              <Button
                 onClick={() => setUseNewAddress(!useNewAddress)}
+                variant="ghost"
+                size="sm"
+                fullWidth={false}
                 className="text-blue-600 hover:text-blue-700 font-medium text-sm mb-4"
               >
                 {useNewAddress ? '← Use saved address' : '+ Add new address'}
-              </button>
+              </Button>
 
               {useNewAddress && (
                 <div className="space-y-4 pt-4 border-t">
@@ -231,70 +235,41 @@ export default function CheckoutPage() {
 
             {/* Delivery Method */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Delivery Method</h2>
-              <div className="space-y-3">
-                <label className="flex items-center p-4 border-2 border-blue-300 rounded-lg cursor-pointer bg-blue-50">
-                  <input
-                    type="radio"
-                    name="delivery"
-                    value="standard"
-                    checked={deliveryMethod === 'standard'}
-                    onChange={(e: any) => setDeliveryMethod(e.target.value)}
-                  />
-                  <div className="ml-3">
-                    <p className="font-medium text-gray-900">Standard Delivery</p>
-                    <p className="text-sm text-gray-600">5-7 business days</p>
-                  </div>
-                  <span className="ml-auto font-semibold text-gray-900">
-                    {subtotal > 100 ? 'FREE' : '₹100'}
-                  </span>
-                </label>
-                <label className="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input
-                    type="radio"
-                    name="delivery"
-                    value="express"
-                    checked={deliveryMethod === 'express'}
-                    onChange={(e: any) => setDeliveryMethod(e.target.value)}
-                  />
-                  <div className="ml-3">
-                    <p className="font-medium text-gray-900">Express Delivery</p>
-                    <p className="text-sm text-gray-600">2-3 business days</p>
-                  </div>
-                  <span className="ml-auto font-semibold text-gray-900">₹250</span>
-                </label>
-              </div>
+              <Radio
+                name="delivery"
+                label="Delivery Method"
+                value={deliveryMethod}
+                onChange={setDeliveryMethod}
+                variant="card"
+                options={[
+                  {
+                    value: 'standard',
+                    label: 'Standard Delivery',
+                    description: `5-7 business days • ${subtotal > 100 ? 'FREE' : '₹100'}`,
+                  },
+                  {
+                    value: 'express',
+                    label: 'Express Delivery',
+                    description: '2-3 business days • ₹250',
+                  },
+                ]}
+              />
             </div>
 
             {/* Payment Method */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Payment Method</h2>
-              <div className="space-y-3">
-                {[
+              <Radio
+                name="payment"
+                label="Payment Method"
+                value={paymentMethod}
+                onChange={setPaymentMethod}
+                variant="card"
+                options={[
                   { value: 'card', label: 'Credit/Debit Card', icon: '💳' },
                   { value: 'bank', label: 'Bank Transfer', icon: '🏦' },
                   { value: 'upi', label: 'UPI', icon: '📱' },
-                ].map((method) => (
-                  <label
-                    key={method.value}
-                    className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition ${
-                      paymentMethod === method.value
-                        ? 'border-blue-300 bg-blue-50'
-                        : 'border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment"
-                      value={method.value}
-                      checked={paymentMethod === method.value}
-                      onChange={(e: any) => setPaymentMethod(e.target.value)}
-                    />
-                    <span className="ml-3 text-xl">{method.icon}</span>
-                    <span className="ml-2 font-medium text-gray-900">{method.label}</span>
-                  </label>
-                ))}
-              </div>
+                ]}
+              />
             </div>
 
             {/* Order Notes */}

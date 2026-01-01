@@ -81,29 +81,35 @@ export default function CartPage() {
                     <div className="flex flex-col items-end justify-between">
                       {/* Quantity Control */}
                       <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-                        <button
+                        <Button
                           onClick={() => {
                             updateQuantity(item.id, Math.max(1, item.quantity - 1));
                             if (item.quantity > 1) {
                               showToast('Quantity updated', 'info');
                             }
                           }}
+                          variant="ghost"
+                          size="sm"
+                          fullWidth={false}
                           className="px-2 py-1 text-gray-700 hover:text-blue-600 font-semibold"
                         >
                           −
-                        </button>
+                        </Button>
                         <span className="px-3 py-1 font-semibold text-gray-900 min-w-[2.5rem] text-center">
                           {item.quantity}
                         </span>
-                        <button
+                        <Button
                           onClick={() => {
                             updateQuantity(item.id, item.quantity + 1);
                             showToast('Quantity updated', 'info');
                           }}
+                          variant="ghost"
+                          size="sm"
+                          fullWidth={false}
                           className="px-2 py-1 text-gray-700 hover:text-blue-600 font-semibold"
                         >
                           +
-                        </button>
+                        </Button>
                       </div>
 
                       {/* Total & Remove */}
@@ -111,15 +117,18 @@ export default function CartPage() {
                         <p className="text-lg font-bold text-gray-900 mb-2">
                           {formatPrice(item.price * item.quantity)}
                         </p>
-                        <button
+                        <Button
                           onClick={() => {
                             removeItem(item.id);
                             showToast('Item removed from cart', 'success');
                           }}
+                          variant="ghost"
+                          size="sm"
+                          fullWidth={false}
                           className="text-red-600 hover:text-red-700 text-sm font-medium hover:underline"
                         >
                           Remove
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -127,17 +136,20 @@ export default function CartPage() {
 
                 {/* Clear Cart Button */}
                 <div className="p-6 bg-gray-50 border-t border-gray-100 text-right">
-                  <button
+                  <Button
                     onClick={() => {
                       if (confirm('Are you sure you want to clear the cart?')) {
                         clearCart();
                         showToast('Cart cleared', 'success');
                       }
                     }}
+                    variant="ghost"
+                    size="sm"
+                    fullWidth={false}
                     className="text-red-600 hover:text-red-700 text-sm font-medium hover:underline"
                   >
                     Clear Cart
-                  </button>
+                  </Button>
                 </div>
               </div>
 

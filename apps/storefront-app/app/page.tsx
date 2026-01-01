@@ -5,6 +5,7 @@ import { useCartStore } from '../store/cartStore';
 import { useProducts } from '@/lib/hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingBag, faStar, faFire } from '@fortawesome/free-solid-svg-icons';
+import { Button } from '@e-commerce/ui-library';
 import { 
   ProductCard, 
   ProductCardCompact, 
@@ -228,9 +229,13 @@ export default function HomePage() {
               Get exclusive deals, early access to new products, and special offers delivered to
               your inbox.
             </p>
-            <button className="px-8 py-3 bg-white text-black font-semibold rounded-lg hover:shadow-lg transition-all">
+            <Button
+              variant="secondary"
+              size="lg"
+              fullWidth={false}
+            >
               Subscribe Now
-            </button>
+            </Button>
           </div>
         </section>
 

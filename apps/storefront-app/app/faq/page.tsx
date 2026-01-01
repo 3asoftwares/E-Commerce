@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle, faChevronDown, faChevronUp, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { Input, Button } from '@e-commerce/ui-library';
 
 interface FAQ {
   id: number;
@@ -162,35 +163,30 @@ export default function FAQPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Search Bar */}
         <div className="bg-white rounded-2xl shadow-xl p-4 mb-8 border border-gray-200">
-          <div className="relative">
-            <FontAwesomeIcon 
-              icon={faSearch} 
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" 
-            />
-            <input
-              type="text"
-              placeholder="Search for answers..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-none focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-lg"
-            />
-          </div>
+          <Input
+            type="text"
+            placeholder="Search for answers..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            leftIcon={
+              <FontAwesomeIcon icon={faSearch} className="text-gray-400 w-5 h-5" />
+            }
+            className="mb-0"
+          />
         </div>
 
         {/* Category Filters */}
         <div className="flex flex-wrap gap-3 mb-8">
           {categories.map(category => (
-            <button
+            <Button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                selectedCategory === category
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-              }`}
+              variant={selectedCategory === category ? 'primary' : 'outline'}
+              size="sm"
+              fullWidth={false}
             >
               {category}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -243,12 +239,14 @@ export default function FAQPage() {
           <p className="text-purple-100 mb-6">
             Our customer support team is always here to help you!
           </p>
-          <button 
+          <Button
             onClick={() => window.location.href = '/contact'}
-            className="px-8 py-3 bg-white text-purple-600 font-bold rounded-lg hover:shadow-xl transition-all transform hover:scale-105"
+            variant="secondary"
+            size="lg"
+            fullWidth={false}
           >
             Contact Support
-          </button>
+          </Button>
         </div>
       </div>
     </div>

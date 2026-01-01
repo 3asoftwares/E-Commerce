@@ -5,6 +5,7 @@ import { useCartStore } from '@/store/cartStore';
 import { useProduct } from '@/lib/hooks';
 import ProductReviews from '@/components/ProductReviews';
 import { useToast } from '@/lib/hooks/useToast';
+import { Button } from '@e-commerce/ui-library';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { formatPrice } from '@/lib/utils/currency';
@@ -201,17 +202,19 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
               )}
             </div>
 
-            {/* Quantity Selector */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity === 1}
-                  className="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
+                  variant="outline"
+                  size="sm"
+                  fullWidth={false}
+                  className="px-3 py-2"
                 >
                   −
-                </button>
+                </Button>
                 <input
                   type="number"
                   value={quantity}
@@ -220,13 +223,16 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
                   max={product.stock}
                   className="w-16 px-3 py-2 border border-gray-300 rounded text-center"
                 />
-                <button
+                <Button
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                   disabled={quantity >= product.stock}
-                  className="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
+                  variant="outline"
+                  size="sm"
+                  fullWidth={false}
+                  className="px-3 py-2"
                 >
                   +
-                </button>
+                </Button>
               </div>
             </div>
 

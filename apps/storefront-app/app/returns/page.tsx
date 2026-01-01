@@ -2,6 +2,7 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo, faCheckCircle, faBoxOpen, faClock, faShieldAlt, faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import { Button } from '@e-commerce/ui-library';
 
 export default function ReturnsPage() {
   return (
@@ -225,9 +226,13 @@ export default function ReturnsPage() {
           <p className="text-orange-100 mb-6 max-w-2xl mx-auto">
             Our customer support team is here to assist you with any questions about returns or refunds.
           </p>
-          <button className="px-8 py-3 bg-white text-orange-600 font-bold rounded-lg hover:shadow-xl transition-all transform hover:scale-105">
+          <Button
+            variant="secondary"
+            size="lg"
+            fullWidth={false}
+          >
             Contact Support
-          </button>
+          </Button>
         </div>
       </div>
     </div>

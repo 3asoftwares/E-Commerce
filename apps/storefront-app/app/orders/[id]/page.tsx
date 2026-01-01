@@ -4,6 +4,7 @@ import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOrder } from '@/lib/hooks';
 import { formatPrice } from '@/lib/utils/currency';
+import { Button } from '@e-commerce/ui-library';
 
 interface OrderDetailPageProps {
   params: Promise<{
@@ -39,7 +40,9 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
         <div className="bg-white rounded-lg shadow-md p-8 max-w-md text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h1>
           <p className="text-gray-600 mb-6">We couldn't find this order.</p>
-          <button onClick={() => router.push('/orders')}>Back to Orders</button>
+          <Button onClick={() => router.push('/orders')} variant="primary" size="md">
+            Back to Orders
+          </Button>
         </div>
       </div>
     );
@@ -52,12 +55,15 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <button
+          <Button
             onClick={() => router.push('/orders')}
+            variant="ghost"
+            size="sm"
+            fullWidth={false}
             className="text-blue-600 hover:text-blue-700 font-medium mb-2"
           >
             ← Back to Orders
-          </button>
+          </Button>
           <h1 className="text-3xl font-bold text-gray-900">Order #{order.orderNumber}</h1>
         </div>
       </div>
@@ -209,12 +215,12 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
               {/* Actions */}
               <div className="mt-6 space-y-2">
-                <button onClick={() => router.push('/products')} className="w-full">
+                <Button onClick={() => router.push('/products')} variant="primary" size="md">
                   Continue Shopping
-                </button>
-                <button className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition">
+                </Button>
+                <Button variant="outline" size="md">
                   Print Order
-                </button>
+                </Button>
               </div>
             </div>
           </div>
