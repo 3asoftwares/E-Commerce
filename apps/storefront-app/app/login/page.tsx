@@ -42,7 +42,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-12 text-center">
-            <h1 className="text-3xl font-bold text-white mb-2">🛍️ ShopHub</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">🛍️ 3A Softwares</h1>
             <p className="text-blue-100 text-sm">Welcome back to your favorite store</p>
           </div>
 

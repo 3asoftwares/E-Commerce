@@ -9,14 +9,14 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: {
-    default: 'ShopHub - Your One-Stop E-Commerce Destination',
-    template: '%s | ShopHub'
+    default: '3A Softwares - Your One-Stop E-Commerce Destination',
+    template: '%s | 3A Softwares'
   },
   description: 'Shop quality products at competitive prices. Browse electronics, clothing, home goods, and more with fast shipping and easy returns.',
   keywords: ['e-commerce', 'online shopping', 'products', 'deals', 'electronics', 'fashion', 'home goods'],
-  authors: [{ name: 'ShopHub Team' }],
-  creator: 'ShopHub',
-  publisher: 'ShopHub',
+  authors: [{ name: '3A Softwares Team' }],
+  creator: '3A Softwares',
+  publisher: '3A Softwares',
   formatDetection: {
     email: false,
     address: false,
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'http://localhost:3003',
-    title: 'ShopHub - Your One-Stop E-Commerce Destination',
+    title: '3A Softwares - Your One-Stop E-Commerce Destination',
     description: 'Shop quality products at competitive prices with fast shipping and easy returns.',
-    siteName: 'ShopHub',
+    siteName: '3A Softwares',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ShopHub - Your One-Stop E-Commerce Destination',
+    title: '3A Softwares - Your One-Stop E-Commerce Destination',
     description: 'Shop quality products at competitive prices with fast shipping and easy returns.',
     creator: '@shophub',
   },

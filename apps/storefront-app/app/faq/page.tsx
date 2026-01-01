@@ -104,7 +104,7 @@ const faqs: FAQ[] = [
   {
     id: 15,
     question: 'Are your products authentic?',
-    answer: 'Yes, all products sold on ShopHub are 100% authentic. We work directly with authorized distributors and verified sellers. Every product comes with a guarantee of authenticity.',
+    answer: 'Yes, all products sold on 3A Softwares are 100% authentic. We work directly with authorized distributors and verified sellers. Every product comes with a guarantee of authenticity.',
     category: 'Products',
   },
   {

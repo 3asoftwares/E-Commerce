@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, Spinner } from '@e-commerce/ui-library';
 import { productApi, handleApiError } from '../api/client';
+import { ImageUpload } from '../components/ImageUpload';
+import { useSellerAuthStore } from '../store/authStore';
 
 export const SellerUpload: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useSellerAuthStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -14,7 +17,6 @@ export const SellerUpload: React.FC = () => {
     category: '',
     stock: '',
     image: '',
-    sellerId: 'seller-001',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -32,6 +34,7 @@ export const SellerUpload: React.FC = () => {
         ...formData,
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
+        sellerId: user?.id || '',
       };
 
       await productApi.create(productData);
@@ -128,17 +131,13 @@ export const SellerUpload: React.FC = () => {
               <option value="Sports">Sports & Outdoors</option>
             </select>
           </div>
-
-          <Input
-            label="Product Image URL"
-            name="image"
-            type="url"
-            value={formData.image}
-            onChange={handleChange}
-            placeholder="https://..."
-            disabled={loading}
-          />
         </div>
+
+        <ImageUpload
+          currentImage={formData.image}
+          onImageUpload={(imageUrl) => setFormData((prev) => ({ ...prev, image: imageUrl }))}
+          onRemove={() => setFormData((prev) => ({ ...prev, image: '' }))}
+        />
 
         <div className="flex gap-4 pt-6">
           <Button type="submit" disabled={loading} className="flex-1">

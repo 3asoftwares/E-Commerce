@@ -9,7 +9,7 @@ import { useToast } from '@/lib/hooks/useToast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faFilter, faTag, faRedo } from '@fortawesome/free-solid-svg-icons';
 import { useSearchParams } from 'next/navigation';
-import { formatPrice } from '@/lib/utils/currency';
+import { ProductCard } from '@/components';
 
 type Product = ProductGraphQL;
 
@@ -45,11 +45,21 @@ export default function ProductsPage() {
   const { showToast } = useToast();
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  // Read search query from URL parameters
+  // Read search and category from URL parameters
   useEffect(() => {
     const searchQuery = searchParams.get('search');
+    const categoryQuery = searchParams.get('category');
+    
     if (searchQuery) {
       setSearch(searchQuery);
+    }
+    
+    if (categoryQuery) {
+      // Capitalize first letter to match CATEGORIES array format
+      const formattedCategory = categoryQuery.charAt(0).toUpperCase() + categoryQuery.slice(1).toLowerCase();
+      if (CATEGORIES.includes(formattedCategory)) {
+        setCategory(formattedCategory);
+      }
     }
   }, [searchParams]);
 
@@ -289,84 +299,14 @@ export default function ProductsPage() {
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
                   {sortedProducts.map((product) => (
-                    <div
+                    <ProductCard
                       key={product.id}
-                      className="bg-white rounded-2xl border border-gray-200 hover:border-indigo-300 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group transform hover:-translate-y-2"
-                    >
-                      {/* Product Image */}
-                      <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 h-56">
-                        <img
-                          src={product.imageUrl || '/placeholder.png'}
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const parent = e.currentTarget.parentElement;
-                            if (parent && !parent.querySelector('.fallback-icon')) {
-                              const fallback = document.createElement('div');
-                              fallback.className = 'fallback-icon absolute inset-0 flex items-center justify-center text-gray-400';
-                              const icon = document.createElement('i');
-                              icon.className = 'fas fa-box fa-3x';
-                              fallback.appendChild(icon);
-                              parent.appendChild(fallback);
-                            }
-                          }}
-                        />
-                        {product.stock === 0 && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <span className="text-white font-semibold">Out of Stock</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Product Info */}
-                      <div className="p-4">
-                        <a
-                          href={`/products/${product.id}`}
-                          className="text-lg font-semibold text-gray-900 hover:text-blue-600 line-clamp-2"
-                        >
-                          {product.name}
-                        </a>
-
-                        {/* Rating */}
-                        <div className="flex items-center mt-2 mb-2">
-                          <div className="flex text-yellow-400">
-                            {[...Array(5)].map((_, i) => (
-                              <span key={i}>{i < Math.floor(product.rating || 0) ? '★' : '☆'}</span>
-                            ))}
-                          </div>
-                          <span className="text-sm text-gray-600 ml-2">
-                            ({product.reviewCount || 0})
-                          </span>
-                        </div>
-
-                        {/* Price */}
-                        <div className="text-2xl font-bold text-gray-900 mb-4">
-                          {formatPrice(product.price)}
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => handleAddToCart(product)}
-                            disabled={product.stock === 0}
-                            className="flex-1"
-                          >
-                            Add to Cart
-                          </Button>
-                          <button
-                            onClick={() => handleWishlistToggle(product)}
-                            className={`px-3 py-2 rounded border transition-colors ${
-                              isInWishlist(product.id)
-                                ? 'bg-red-100 text-red-600 border-red-300'
-                                : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200'
-                            }`}
-                          >
-                            {isInWishlist(product.id) ? '♥' : '♡'}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                      product={product}
+                      onAddToCart={handleAddToCart}
+                      onWishlistToggle={handleWishlistToggle}
+                      isInWishlist={isInWishlist(product.id)}
+                      showWishlistButton={true}
+                    />
                   ))}
                 </div>
 

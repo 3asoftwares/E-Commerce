@@ -5,20 +5,18 @@ import { faShoppingBag, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 export default function Footer() {
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-950 text-white mt-20 relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
-      <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5">India</div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl">SA</div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl">AUS</div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {/* About */}
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
                 <FontAwesomeIcon icon={faShoppingBag} />
               </div>
-              <h3 className="font-extrabold text-xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-pink-300">ShopHub</h3>
+              <h3 className="font-extrabold text-xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-pink-300">3A Softwares</h3>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
               Your trusted online marketplace for quality products at competitive prices. Shop with confidence and style.
@@ -150,7 +148,7 @@ export default function Footer() {
               </a>
             </div>
             <div className="text-center sm:text-right">
-              <p className="text-gray-400 text-sm mb-2">© 2025 ShopHub. All rights reserved.</p>
+              <p className="text-gray-400 text-sm mb-2">© 2025 3A Softwares. All rights reserved.</p>
               <div className="flex flex-wrap justify-center sm:justify-end gap-4 text-xs">
                 <Link href="/privacy" className="text-gray-400 hover:text-blue-400 transition-colors">
                   Privacy Policy

@@ -2,19 +2,21 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUIStore } from '../store/uiStore';
 import { Button } from '@e-commerce/ui-library';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChartLine, faUsers, faBox, faShoppingCart, faTicket, faBars, faChevronLeft, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 interface NavItem {
   path: string;
-  icon: string;
+  icon: IconDefinition;
   label: string;
 }
 
 const navItems: NavItem[] = [
-  { path: '/', icon: '📊', label: 'Dashboard' },
-  { path: '/users', icon: '👥', label: 'Users' },
-  { path: '/products', icon: '📦', label: 'Products' },
-  { path: '/orders', icon: '🛒', label: 'Orders' },
-  { path: '/coupons', icon: '🎟️', label: 'Coupons' },
+  { path: '/', icon: faChartLine, label: 'Dashboard' },
+  { path: '/users', icon: faUsers, label: 'Users' },
+  { path: '/products', icon: faBox, label: 'Products' },
+  { path: '/orders', icon: faShoppingCart, label: 'Orders' },
+  { path: '/coupons', icon: faTicket, label: 'Coupons' },
 ];
 
 export const Sidebar: React.FC = () => {
@@ -32,7 +34,7 @@ export const Sidebar: React.FC = () => {
             className="w-full"
             aria-label="Open sidebar"
           >
-            ☰
+            <FontAwesomeIcon icon={faBars} />
           </Button>
         </div>
         <nav className="p-2 space-y-2">
@@ -47,7 +49,7 @@ export const Sidebar: React.FC = () => {
               }`}
               title={item.label}
             >
-              <span className="text-xl">{item.icon}</span>
+              <FontAwesomeIcon icon={item.icon} className="text-lg" />
             </Link>
           ))}
         </nav>
@@ -65,7 +67,7 @@ export const Sidebar: React.FC = () => {
           size="sm"
           aria-label="Close sidebar"
         >
-          ◄
+          <FontAwesomeIcon icon={faChevronLeft} />
         </Button>
       </div>
       <nav className="p-4 space-y-2">
@@ -79,7 +81,7 @@ export const Sidebar: React.FC = () => {
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
             }`}
           >
-            <span className="text-xl">{item.icon}</span>
+            <FontAwesomeIcon icon={item.icon} className="text-lg" />
             <span>{item.label}</span>
           </Link>
         ))}

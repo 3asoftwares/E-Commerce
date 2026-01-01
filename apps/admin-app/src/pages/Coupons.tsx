@@ -187,11 +187,7 @@ export const Coupons: React.FC = () => {
       </div>
 
       {/* Create/Edit Modal */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="p-6">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-            {editingCoupon ? 'Edit Coupon' : 'Create New Coupon'}
-          </h2>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingCoupon ? 'Edit Coupon' : 'Create Coupon'}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Coupon Code"
@@ -307,7 +303,6 @@ export const Coupons: React.FC = () => {
               <Button type="submit">{editingCoupon ? 'Update' : 'Create'}</Button>
             </div>
           </form>
-        </div>
       </Modal>
     </div>
   );

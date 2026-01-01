@@ -6,6 +6,7 @@ import { useCartStore } from '@/store/cartStore';
 import { Button, Input } from '@e-commerce/ui-library';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faMapMarkerAlt, faHeart, faEdit, faTrash, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { PageHeader } from '@/components';
 
 interface Address {
   id: string;
@@ -107,21 +108,14 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      {/* Header */}
-      <div className="bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl shadow-lg">
-              <FontAwesomeIcon icon={faUser} className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">My Account</h1>
-              <p className="text-gray-700 mt-1 font-medium">Welcome back, {userProfile.name}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        icon={faUser}
+        title="My Account"
+        subtitle={`Welcome back, ${userProfile.name}`}
+        iconGradient="from-gray-700 to-gray-900"
+        titleGradient="from-gray-900 to-black"
+      />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

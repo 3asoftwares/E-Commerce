@@ -7,6 +7,7 @@ import { useToast } from '@/lib/hooks/useToast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faBox } from '@fortawesome/free-solid-svg-icons';
 import { formatPrice } from '@/lib/utils/currency';
+import { PageHeader, EmptyState } from '@/components';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,35 +23,29 @@ export default function CartPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-purple-50/40">
-      {/* Header */}
-      <div className="bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600">Shopping Cart</h1>
-          {items.length > 0 && (
-            <p className="text-gray-700 mt-3 text-lg font-medium flex items-center gap-2">
-              <span className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">{items.length}</span>
-              {items.length === 1 ? 'item' : 'items'} in your cart
-            </p>
-          )}
-        </div>
-      </div>
+      <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        icon={faShoppingCart}
+        title="Shopping Cart"
+        badge={items.length > 0 ? {
+          count: items.length,
+          label: items.length === 1 ? 'item' : 'items'
+        } : undefined}
+        iconGradient="from-gray-700 to-gray-900"
+        titleGradient="from-gray-900 to-black"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {items.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-2xl p-20 text-center border border-gray-200">
-            <div className="inline-block p-6 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full mb-6">
-              <FontAwesomeIcon icon={faShoppingCart} className="w-20 h-20 text-indigo-600" />
-            </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Your Cart is Empty</h2>
-            <p className="text-gray-600 mb-10 text-lg max-w-md mx-auto">Looks like you haven’t added anything yet. Discover amazing products now!</p>
-            <Link
-              href="/products"
-              className="inline-block px-10 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold rounded-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105 hover:-translate-y-1"
-            >
-              Start Shopping →
-            </Link>
-          </div>
+          <EmptyState
+            icon={faShoppingCart}
+            title="Your Cart is Empty"
+            description="Looks like you haven't added anything yet. Discover amazing products now!"
+            actionText="Start Shopping →"
+            actionHref="/products"
+            iconColor="text-indigo-600"
+            iconBgColor="from-indigo-100 to-purple-100"
+          />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}

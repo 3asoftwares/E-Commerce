@@ -7,8 +7,9 @@ import { useCreateOrder } from '@/lib/hooks';
 import { Button, Input } from '@e-commerce/ui-library';
 import { useToast } from '@/lib/hooks/useToast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faLock, faShippingFast, faCreditCard } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faLock, faShippingFast } from '@fortawesome/free-solid-svg-icons';
 import { formatPrice } from '@/lib/utils/currency';
+import { PageHeader } from '@/components';
 
 interface Address {
   id: string;
@@ -120,17 +121,14 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-indigo-50/30 to-purple-50/30">
-      {/* Header */}
-      <div className="bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600">Secure Checkout</h1>
-          <p className="text-gray-600 mt-2 flex items-center gap-2">
-            <FontAwesomeIcon icon={faLock} className="text-green-600" />
-            SSL Encrypted • Safe & Secure
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        icon={faLock}
+        title="Secure Checkout"
+        subtitle="SSL Encrypted • Safe & Secure"
+        iconGradient="from-gray-700 to-gray-900"
+        titleGradient="from-gray-900 to-black"
+      />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

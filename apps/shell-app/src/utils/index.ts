@@ -16,8 +16,6 @@ export const renderApp = (role: string) => {
     window.location.href = 'http://localhost:3001?' + params.toString();
   } else if (role === 'seller') {
     window.location.href = 'http://localhost:3002?' + params.toString();
-  } else {
-    window.location.href = 'http://localhost:3003?' + params.toString();
   }
 };
 

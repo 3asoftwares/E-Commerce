@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: 'Browse our complete catalog of quality products. Filter by category, price, and rating to find exactly what you need.',
   keywords: ['products', 'shop', 'catalog', 'online shopping'],
   openGraph: {
-    title: 'Shop All Products | ShopHub',
+    title: 'Shop All Products | 3A Softwares',
     description: 'Browse our complete catalog of quality products.',
     type: 'website',
   },

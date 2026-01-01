@@ -8,13 +8,14 @@ import { Logo3A } from '@e-commerce/utils';
 
 // Pages
 import { Dashboard } from './pages/Dashboard';
+import { SellerProducts } from './pages/SellerProducts';
 import { SellerUpload } from './pages/SellerUpload';
 import { SellerOrders } from './pages/SellerOrders';
 import { SellerEarnings } from './pages/SellerEarnings';
 
 function App() {
-  const { isAuthenticated, user, hydrate } = useSellerAuthStore();
-
+  const { isAuthenticated, user, hydrate , clearAuth} = useSellerAuthStore();
+  
   useEffect(() => {
     // Extract auth data from query parameters and store in localStorage
     const params = new URLSearchParams(window.location.search);
@@ -56,13 +57,14 @@ function App() {
         <Header
           logoUrl={Logo3A}
           appName="Seller Portal"
+          onLogout={() => clearAuth()}
           user={user ? { name: user.name } : undefined}
         />
       )}
 
       <div className="flex">
         {isAuthenticated && <Sidebar />}
-        
+
         <div className={`flex-1 ${isAuthenticated ? 'lg:ml-64' : ''}`}>
           {isAuthenticated ? (
             <Routes>
@@ -78,7 +80,7 @@ function App() {
                 path="/products"
                 element={
                   <ProtectedRoute>
-                    <SellerUpload />
+                    <SellerProducts />
                   </ProtectedRoute>
                 }
               />

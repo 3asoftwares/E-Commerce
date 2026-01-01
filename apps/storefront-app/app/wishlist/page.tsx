@@ -5,7 +5,8 @@ import { useCartStore } from '@/store/cartStore';
 import Link from 'next/link';
 import { useToast } from '@/lib/hooks/useToast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faShoppingCart, faBox, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faShoppingCart, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { PageHeader, EmptyState } from '@/components';
 import { formatPrice } from '@/lib/utils/currency';
 
 export const dynamic = 'force-dynamic';
@@ -33,46 +34,29 @@ export default function WishlistPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
-      {/* Header */}
-      <div className="bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="flex items-center gap-4 mb-2">
-            <div className="p-4 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl shadow-lg">
-              <FontAwesomeIcon icon={faHeart} className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-rose-600">
-              My Wishlist
-            </h1>
-          </div>
-          {wishlist.length > 0 && (
-            <p className="text-gray-700 mt-3 text-lg font-medium flex items-center gap-2">
-              <span className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                {wishlist.length}
-              </span>
-              {wishlist.length === 1 ? 'item' : 'items'} in your wishlist
-            </p>
-          )}
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        icon={faHeart}
+        title="My Wishlist"
+        badge={wishlist.length > 0 ? {
+          count: wishlist.length,
+          label: wishlist.length === 1 ? 'item' : 'items'
+        } : undefined}
+        iconGradient="from-gray-700 to-gray-900"
+        titleGradient="from-gray-900 to-black"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {wishlist.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-2xl p-20 text-center border border-gray-200">
-            <div className="inline-block p-6 bg-gradient-to-br from-pink-100 to-rose-100 rounded-full mb-6">
-              <FontAwesomeIcon icon={faHeart} className="w-20 h-20 text-pink-600" />
-            </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Your Wishlist is Empty</h2>
-            <p className="text-gray-600 mb-10 text-lg max-w-md mx-auto">
-              Save items you love so you can find them easily later. Start adding your favorites!
-            </p>
-            <Link
-              href="/products"
-              className="inline-block px-10 py-4 bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-2xl hover:shadow-rose-500/50 transition-all transform hover:scale-105 hover:-translate-y-1"
-            >
-              Discover Products →
-            </Link>
-          </div>
+          <EmptyState
+            icon={faHeart}
+            title="Your Wishlist is Empty"
+            description="Save items you love so you can find them easily later. Start adding your favorites!"
+            actionText="Discover Products →"
+            actionHref="/products"
+            iconColor="text-pink-600"
+            iconBgColor="from-pink-100 to-rose-100"
+          />
         ) : (
           <div className="space-y-6">
             {/* Action Buttons */}

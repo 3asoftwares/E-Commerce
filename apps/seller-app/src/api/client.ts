@@ -52,6 +52,11 @@ export const productApi = {
   getAll: (page = 1, limit = 10) =>
     productClient.get('/api/products', { params: { page, limit } }),
 
+  getBySeller: (sellerId: string) =>
+    productClient.get('/api/products', {
+      params: { sellerId, limit: 1000 }
+    }).then(response => response.data),
+
   getById: (id: string) => productClient.get(`/api/products/${id}`),
 
   create: (data: any) => productClient.post('/api/products', data),
@@ -86,9 +91,14 @@ export const orderApi = {
   cancel: (id: string) => orderClient.post(`/api/orders/${id}/cancel`, {}),
 };
 
-// ==================== ERROR HANDLING ====================
 export const handleApiError = (error: any): string => {
   if (axios.isAxiosError(error)) {
+    if (
+      error.response?.data?.message ===
+      'Invalid or expired token'
+    ) {
+      window.location.href = 'http://localhost:3000?logout=true';
+    }
     return error.response?.data?.message || error.message;
   }
   return 'An error occurred';

@@ -5,7 +5,17 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingBag, faSearch, faHeart, faShoppingCart, faUser, faChevronDown, faSignOutAlt, faBox, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+  faSearch,
+  faHeart,
+  faShoppingCart,
+  faUser,
+  faCaretDown,
+  faSignOutAlt,
+  faBox,
+  faBars,
+  faTimes,
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function Header() {
   const router = useRouter();
@@ -53,16 +63,19 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-lg">
-      <div className="max-w-7xl mx-auto px-2 xs:px-3 sm:px-4 lg:px-8">
+    <header className="sticky top-0 z-50 bg-white backdrop-blur-lg border-b border-gray-200 shadow-lg">
+      <div className="max-w-7xl mx-auto px-2 xs:px-3 sm:px-4 lg:px-8 py-2">
         <div className="flex items-center justify-between h-14 sm:h-16">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-1 sm:gap-2 group flex-shrink-0">
-            <div className="w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-lg sm:rounded-xl flex items-center justify-center text-white font-bold text-lg sm:text-xl group-hover:shadow-xl group-hover:scale-110 transition-all">
-              <FontAwesomeIcon icon={faShoppingBag} className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="">
+              <img
+                src={'https://res.cloudinary.com/dpdfyou3r/image/upload/v1767265363/3A_gczh29.png'}
+                alt={'3A Softwares'}
+                className="object-contain w-16"
+              />
             </div>
-            <span className="hidden xs:block text-lg sm:text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600">
-              ShopHub
+            <span className="hidden xs:block text-lg sm:text-2xl font-extrabold text-black">
+              3A Softwares
             </span>
           </Link>
 
@@ -74,7 +87,7 @@ export default function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for products, brands, and more..."
-                className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm bg-gray-50 focus:bg-white"
+                className="w-full px-5 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm bg-gray-50 focus:bg-white"
               />
               <button
                 type="submit"
@@ -115,7 +128,7 @@ export default function Header() {
                 className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform"
               />
               {items.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 xs:w-5 xs:h-5 bg-gradient-to-br from-indigo-600 to-purple-600 text-white text-[10px] xs:text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
+                <span className="absolute -top-1 -right-1 w-4 h-4 xs:w-5 xs:h-5 bg-gray-400 text-white text-[10px] xs:text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
                   {items.length}
                 </span>
               )}
@@ -129,6 +142,7 @@ export default function Header() {
                   <span className="text-xs xs:text-sm font-bold text-gray-800 truncate max-w-xs">
                     {user.name || user.email?.split('@')[0]}
                   </span>
+                  <FontAwesomeIcon icon={faCaretDown} className="w-4 h-4 xs:w-5 xs:h-5" />
                 </button>
                 <button
                   className="sm:hidden p-1.5 xs:p-2 text-gray-600 hover:text-indigo-600"
@@ -153,14 +167,16 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/about"
-                    className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                    className="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-b border-gray-100"
                   >
+                    <FontAwesomeIcon icon={faBox} className="mr-2" />
                     About
                   </Link>
                   <Link
                     href="/contact"
-                    className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                    className="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-b border-gray-100"
                   >
+                    <FontAwesomeIcon icon={faBox} className="mr-2" />
                     Contact
                   </Link>
                   <button

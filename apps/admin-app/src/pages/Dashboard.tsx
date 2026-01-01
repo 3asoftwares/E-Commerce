@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useDashboardStats, useOrders } from '../api/queries';
 import { Badge, Spinner, Button } from '@e-commerce/ui-library';
 import { OrderStatus } from '@e-commerce/types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers, faShoppingCart, faDollarSign, faClock, faExclamationTriangle, faBell, faTimes, faSync } from '@fortawesome/free-solid-svg-icons';
 
 export const Dashboard: React.FC = () => {
   const { data, isLoading, error, refetch } = useDashboardStats();
@@ -19,10 +21,10 @@ export const Dashboard: React.FC = () => {
     // Generate alerts based on stats
     const newAlerts: string[] = [];
     if (stats.pendingOrders > 10) {
-      newAlerts.push(`⚠️ ${stats.pendingOrders} pending orders require attention`);
+      newAlerts.push(`${stats.pendingOrders} pending orders require attention`);
     }
     if (recentOrders?.orders.orders.some((o: any) => o.orderStatus === OrderStatus.PENDING)) {
-      newAlerts.push('🔔 New orders received');
+      newAlerts.push('New orders received');
     }
     setAlerts(newAlerts);
   }, [stats, recentOrders]);
@@ -54,6 +56,7 @@ export const Dashboard: React.FC = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
         <Button onClick={() => refetch()} variant="outline" size="sm">
+          <FontAwesomeIcon icon={faSync} className="mr-2" />
           Refresh
         </Button>
       </div>
@@ -66,12 +69,15 @@ export const Dashboard: React.FC = () => {
               key={index}
               className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 flex items-center justify-between"
             >
-              <span className="text-yellow-800 dark:text-yellow-200">{alert}</span>
+              <div className="flex items-center gap-3">
+                <FontAwesomeIcon icon={alert.includes('pending') ? faExclamationTriangle : faBell} className="text-yellow-600 dark:text-yellow-400" />
+                <span className="text-yellow-800 dark:text-yellow-200">{alert}</span>
+              </div>
               <button
                 onClick={() => setAlerts(alerts.filter((_, i) => i !== index))}
                 className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-200"
               >
-                ✕
+                <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
           ))}
@@ -83,7 +89,7 @@ export const Dashboard: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Users</h3>
-            <span className="text-2xl">👥</span>
+            <FontAwesomeIcon icon={faUsers} className="text-2xl text-blue-600" />
           </div>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalUsers}</p>
           <p className="text-sm text-green-600 dark:text-green-400 mt-2">↗︎ 12% from last month</p>
@@ -92,7 +98,7 @@ export const Dashboard: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Orders</h3>
-            <span className="text-2xl">🛒</span>
+            <FontAwesomeIcon icon={faShoppingCart} className="text-2xl text-green-600" />
           </div>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalOrders}</p>
           <p className="text-sm text-green-600 dark:text-green-400 mt-2">↗︎ 8% from last month</p>
@@ -101,7 +107,7 @@ export const Dashboard: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Revenue</h3>
-            <span className="text-2xl">💰</span>
+            <FontAwesomeIcon icon={faDollarSign} className="text-2xl text-purple-600" />
           </div>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
             ${stats.totalRevenue.toLocaleString()}
@@ -114,7 +120,7 @@ export const Dashboard: React.FC = () => {
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Pending Orders
             </h3>
-            <span className="text-2xl">⏳</span>
+            <FontAwesomeIcon icon={faClock} className="text-2xl text-yellow-600" />
           </div>
           <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
             {stats.pendingOrders}

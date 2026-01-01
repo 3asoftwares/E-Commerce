@@ -39,7 +39,6 @@ export const useSellerAuthStore = create<SellerAuthState>((set) => ({
       isAuthenticated: false,
       error: null,
     });
-    // Redirect to shell-app logout
     window.location.href = 'http://localhost:3000?logout=true';
   },
 
@@ -58,12 +57,10 @@ export const useSellerAuthStore = create<SellerAuthState>((set) => ({
         if (user && user.role === 'seller') {
           set({
             user: {
-              id: user.id,
+              id: user._id,
               email: user.email,
               name: user.name,
-              role: user.role,
-              businessName: user.businessName,
-              isApproved: user.isApproved,
+              role: user.role
             },
             token,
             isAuthenticated: true,

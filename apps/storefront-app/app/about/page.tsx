@@ -14,7 +14,7 @@ export default function AboutPage() {
               <FontAwesomeIcon icon={faStore} className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 mb-4">
-              About ShopHub
+              About 3A Softwares
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Your trusted online marketplace for quality products and exceptional service
@@ -29,7 +29,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
           <div className="prose max-w-none text-gray-600 space-y-4">
             <p className="text-lg leading-relaxed">
-              Founded in 2020, ShopHub started with a simple mission: to make online shopping accessible, 
+              Founded in 2020, 3A Softwares started with a simple mission: to make online shopping accessible, 
               enjoyable, and trustworthy for everyone. What began as a small startup has grown into a 
               thriving e-commerce platform serving thousands of satisfied customers worldwide.
             </p>
@@ -40,7 +40,7 @@ export default function AboutPage() {
               security, and customer satisfaction at every step.
             </p>
             <p className="text-lg leading-relaxed">
-              Today, ShopHub is proud to partner with hundreds of verified sellers and brands, offering an 
+              Today, 3A Softwares is proud to partner with hundreds of verified sellers and brands, offering an 
               extensive selection of products across multiple categories. From electronics to fashion, home 
               goods to sports equipment, we're here to help you find exactly what you need.
             </p>
@@ -92,7 +92,7 @@ export default function AboutPage() {
 
         {/* Why Choose Us */}
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-2xl p-8 md:p-12 mb-12 text-white">
-          <h2 className="text-3xl font-bold mb-8 text-center">Why Choose ShopHub?</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center">Why Choose 3A Softwares?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="inline-block p-4 bg-white/20 rounded-xl mb-4">

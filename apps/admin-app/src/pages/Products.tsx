@@ -8,6 +8,7 @@ import {
 } from '../api/queries';
 import { Button, Input, Modal, Table, Badge, Spinner, Pagination } from '@e-commerce/ui-library';
 import type { ProductGraphQL as Product, CreateProductInput } from '@e-commerce/types';
+import { ImageUpload } from '../components/ImageUpload';
 
 export const Products: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -176,7 +177,7 @@ export const Products: React.FC = () => {
       </div>
 
       {/* Products Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-[400px] overflow-auto">
         <Table data={filteredProducts} columns={columns} />
       </div>
 
@@ -191,59 +192,79 @@ export const Products: React.FC = () => {
         </div>
       )}
 
-      {/* Create/Edit Modal */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="p-6">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-            {editingProduct ? 'Edit Product' : 'Create New Product'}
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              label="Product Name"
-              value={formData.name}
-              onChange={(e:any) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} 
+        title={editingProduct ? 'Edit Product' : 'Create Product'}>
+        <div className="bg-white dark:bg-gray-800 overflow-hidden">
+          <form onSubmit={handleSubmit} className="">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Product Name
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 transition-colors dark:bg-gray-700 dark:text-white"
+                placeholder="Enter product name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 Description
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e:any) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                rows={3}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 transition-colors dark:bg-gray-700 dark:text-white resize-none"
+                rows={4}
                 required
+                placeholder="Describe your product..."
               />
             </div>
+
             <div className="grid grid-cols-2 gap-4">
-              <Input
-                label="Price"
-                type="number"
-                step="0.01"
-                value={formData.price}
-                onChange={(e:any) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-                required
-              />
-              <Input
-                label="Stock"
-                type="number"
-                value={formData.stock}
-                onChange={(e:any) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
-                required
-              />
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Price (₹)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                  required
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 transition-colors dark:bg-gray-700 dark:text-white"
+                  placeholder="0.00"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Stock Quantity
+                </label>
+                <input
+                  type="number"
+                  value={formData.stock}
+                  onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
+                  required
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 transition-colors dark:bg-gray-700 dark:text-white"
+                  placeholder="0"
+                />
+              </div>
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 Category
               </label>
               <select
                 value={formData.category}
-                onChange={(e:any) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 transition-colors dark:bg-gray-700 dark:text-white"
                 required
               >
-                <option value="">Select Category</option>
+                <option value="">Select a category</option>
                 {categories.map((cat: string) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -251,22 +272,33 @@ export const Products: React.FC = () => {
                 ))}
               </select>
             </div>
-            <Input
-              label="Image URL"
-              value={formData.imageUrl}
-              onChange={(e:any) => setFormData({ ...formData, imageUrl: e.target.value })}
+
+            <ImageUpload
+              currentImage={formData.imageUrl}
+              onImageUpload={(imageUrl) => setFormData({ ...formData, imageUrl })}
+              onRemove={() => setFormData({ ...formData, imageUrl: '' })}
             />
-            <div className="flex justify-end gap-3 mt-6">
-              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="flex-1 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
                 Cancel
-              </Button>
-              <Button type="submit" disabled={createProduct.isPending || updateProduct.isPending}>
+              </button>
+              <button
+                type="submit"
+                disabled={createProduct.isPending || updateProduct.isPending}
+                className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 {createProduct.isPending || updateProduct.isPending
                   ? 'Saving...'
                   : editingProduct
-                  ? 'Update'
-                  : 'Create'}
-              </Button>
+                  ? '✓ Update Product'
+                  : '✓ Create Product'}
+              </button>
             </div>
           </form>
         </div>

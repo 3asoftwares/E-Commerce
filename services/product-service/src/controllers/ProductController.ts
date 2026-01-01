@@ -16,6 +16,7 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
     const limit = parseInt(req.query.limit as string) || 20;
     const search = req.query.search as string;
     const category = req.query.category as string;
+    const sellerId = req.query.sellerId as string;
     const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined;
     const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined;
     const sortBy = (req.query.sortBy as string) || 'createdAt';
@@ -27,7 +28,7 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
     const cacheKey = CacheKeys.products(page, limit);
     const cached = await CacheService.get(cacheKey);
     const hasCustomSort = req.query.sortBy || req.query.sortOrder;
-    if (cached && !search && !category && !minPrice && !maxPrice && !hasCustomSort) {
+    if (cached && !search && !category && !minPrice && !maxPrice && !hasCustomSort && !sellerId) {
       res.status(200).json({
         success: true,
         data: cached,
@@ -50,6 +51,10 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
 
     if (category && category !== 'All') {
       query.category = category;
+    }
+
+    if (sellerId) {
+      query.sellerId = sellerId;
     }
 
     if (minPrice !== undefined || maxPrice !== undefined) {
