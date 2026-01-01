@@ -1,18 +1,16 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import Link from 'next/link';
 import { useToast } from '@/lib/hooks/useToast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faShoppingCart, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBox, faHeart, faShoppingCart, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { PageHeader, EmptyState } from '@/components';
 import { formatPrice } from '@/lib/utils/currency';
 
 export const dynamic = 'force-dynamic';
 
 export default function WishlistPage() {
-  const router = useRouter();
   const { wishlist, removeFromWishlist, addItem } = useCartStore();
   const { showToast } = useToast();
 

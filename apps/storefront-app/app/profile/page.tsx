@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { Button, Input } from '@e-commerce/ui-library';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faMapMarkerAlt, faHeart, faEdit, faTrash, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faMapMarkerAlt, faHeart, faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { PageHeader } from '@/components';
 
 interface Address {
@@ -117,17 +117,17 @@ export default function ProfilePage() {
         titleGradient="from-gray-900 to-black"
       />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden sticky top-24 border border-gray-200">
+            <div className="bg-white shadow-xl overflow-hidden sticky top-24 border border-gray-200">
               <nav className="flex flex-col">
                 <button
                   onClick={() => setActiveTab('profile')}
                   className={`px-6 py-4 text-left font-semibold transition flex items-center gap-3 ${
                     activeTab === 'profile'
-                      ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 border-l-4 border-indigo-600'
+                      ? 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900 border-l-4 border-gray-900'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -138,7 +138,7 @@ export default function ProfilePage() {
                   onClick={() => setActiveTab('addresses')}
                   className={`px-6 py-4 text-left font-semibold transition flex items-center gap-3 ${
                     activeTab === 'addresses'
-                      ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 border-l-4 border-indigo-600'
+                      ? 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900 border-l-4 border-gray-900'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -149,7 +149,7 @@ export default function ProfilePage() {
                   onClick={() => setActiveTab('wishlist')}
                   className={`px-6 py-4 text-left font-semibold transition flex items-center gap-3 ${
                     activeTab === 'wishlist'
-                      ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 border-l-4 border-indigo-600'
+                      ? 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900 border-l-4 border-gray-900'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -160,7 +160,6 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Profile Tab */}
             {activeTab === 'profile' && (
@@ -170,7 +169,7 @@ export default function ProfilePage() {
                   {!isEditing && (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                      className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
                     >
                       <FontAwesomeIcon icon={faEdit} className="w-4 h-4" />
                       Edit Profile
@@ -207,9 +206,10 @@ export default function ProfilePage() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Full Name
                       </label>
-                      <Input
+                      <input
                         type="text"
                         value={profileData.name}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         onChange={(e: any) =>
                           setProfileData({ ...profileData, name: e.target.value })
                         }
@@ -217,9 +217,10 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                      <Input
+                      <input
                         type="email"
                         value={profileData.email}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         onChange={(e: any) =>
                           setProfileData({ ...profileData, email: e.target.value })
                         }
@@ -230,9 +231,10 @@ export default function ProfilePage() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Phone Number
                       </label>
-                      <Input
+                      <input
                         type="tel"
                         value={profileData.phone}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         onChange={(e: any) =>
                           setProfileData({ ...profileData, phone: e.target.value })
                         }
@@ -240,10 +242,14 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="flex gap-3 pt-4">
-                      <Button onClick={handleSaveProfile} disabled={loading} className="flex-1">
+                      <button
+                        onClick={handleSaveProfile}
+                        disabled={loading}
+                        className="w-1/2 justify-center px-4 py-2 bg-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                      >
                         {loading ? 'Saving...' : 'Save Changes'}
-                      </Button>
-                      <Button
+                      </button>
+                      <button
                         onClick={() => {
                           setIsEditing(false);
                           setProfileData({
@@ -252,11 +258,10 @@ export default function ProfilePage() {
                             phone: userProfile.phone || '',
                           });
                         }}
-                        variant="outline"
-                        className="flex-1"
+                        className="w-1/2 justify-center px-4 py-2 bg-white text-gray-900 border border-gray-900 font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
                       >
                         Cancel
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 )}
@@ -271,7 +276,7 @@ export default function ProfilePage() {
                   {!isAddingAddress && (
                     <button
                       onClick={() => setIsAddingAddress(true)}
-                      className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                      className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
                     >
                       <FontAwesomeIcon icon={faPlus} className="w-4 h-4" />
                       Add Address
@@ -280,7 +285,7 @@ export default function ProfilePage() {
                 </div>
 
                 {isAddingAddress && (
-                  <div className="mb-8 p-6 bg-gray-50 rounded-lg border-2 border-blue-200">
+                  <div className="mb-8 p-6 bg-gray-50 rounded-lg border-2 border-gray-300">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Address</h3>
                     <div className="space-y-4">
                       <Input
@@ -367,7 +372,7 @@ export default function ProfilePage() {
                           {!address.isDefault && (
                             <button
                               onClick={() => setDefaultAddress(address.id)}
-                              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                              className="text-gray-700 hover:text-gray-900 text-sm font-medium"
                             >
                               Set as Default
                             </button>
@@ -385,24 +390,24 @@ export default function ProfilePage() {
                 ) : (
                   <div className="text-center py-12">
                     <p className="text-gray-600 mb-4">No addresses saved yet</p>
-                    <Button onClick={() => setIsAddingAddress(true)}>Add Your First Address</Button>
                   </div>
                 )}
               </div>
             )}
 
-            {/* Wishlist Tab */}
             {activeTab === 'wishlist' && (
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+              <div className="bg-white shadow-xl p-8 border border-gray-200">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">My Wishlist</h2>
                 <div className="text-center py-12">
-                  <div className="inline-block p-6 bg-gradient-to-br from-pink-100 to-rose-100 rounded-full mb-6">
-                    <FontAwesomeIcon icon={faHeart} className="w-16 h-16 text-pink-600" />
+                  <div className="inline-block p-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full mb-6">
+                    <FontAwesomeIcon icon={faHeart} className="w-16 h-16 text-gray-700" />
                   </div>
-                  <p className="text-gray-700 mb-4 text-lg">View and manage your favorite products</p>
+                  <p className="text-gray-700 mb-4 text-lg">
+                    View and manage your favorite products
+                  </p>
                   <button
                     onClick={() => router.push('/wishlist')}
-                    className="px-8 py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white font-bold rounded-lg hover:shadow-xl hover:shadow-pink-500/50 transition-all transform hover:scale-105"
+                    className="px-8 py-3 bg-gradient-to-r from-gray-900 to-black text-white font-bold rounded-lg hover:shadow-xl hover:shadow-gray-500/50 transition-all transform hover:scale-105"
                   >
                     Go to Wishlist →
                   </button>

@@ -1,19 +1,20 @@
 'use client';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStore, faUsers, faAward, faHeart, faShieldAlt, faTruck, faHeadset } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faAward, faHeart, faShieldAlt, faTruck, faHeadset } from '@fortawesome/free-solid-svg-icons';
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      {/* Header */}
-      <div className="bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <div className="inline-block p-4 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl shadow-lg mb-4">
-              <FontAwesomeIcon icon={faStore} className="w-10 h-10 text-white" />
-            </div>
-            <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 mb-4">
+      <div className="bg-white/95 backdrop-blur-lg border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col items-center w-full">
+            <img
+                src={'https://res.cloudinary.com/dpdfyou3r/image/upload/v1767265363/3A_gczh29.png'}
+                alt={'3A Softwares'}
+                className="object-contain w-28"
+            />
+            <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-300 mb-4">
               About 3A Softwares
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -23,26 +24,27 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Our Story */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 mb-12 border border-gray-200">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
           <div className="prose max-w-none text-gray-600 space-y-4">
             <p className="text-lg leading-relaxed">
-              Founded in 2020, 3A Softwares started with a simple mission: to make online shopping accessible, 
-              enjoyable, and trustworthy for everyone. What began as a small startup has grown into a 
-              thriving e-commerce platform serving thousands of satisfied customers worldwide.
+              Founded in 2020, 3A Softwares started with a simple mission: to make online shopping
+              accessible, enjoyable, and trustworthy for everyone. What began as a small startup has
+              grown into a thriving e-commerce platform serving thousands of satisfied customers
+              worldwide.
             </p>
             <p className="text-lg leading-relaxed">
-              We believe that shopping online should be more than just a transaction. It's about discovering 
-              products you love, connecting with brands you trust, and enjoying a seamless experience from 
-              browsing to delivery. That's why we've built our platform with care, focusing on quality, 
-              security, and customer satisfaction at every step.
+              We believe that shopping online should be more than just a transaction. It's about
+              discovering products you love, connecting with brands you trust, and enjoying a
+              seamless experience from browsing to delivery. That's why we've built our platform
+              with care, focusing on quality, security, and customer satisfaction at every step.
             </p>
             <p className="text-lg leading-relaxed">
-              Today, 3A Softwares is proud to partner with hundreds of verified sellers and brands, offering an 
-              extensive selection of products across multiple categories. From electronics to fashion, home 
-              goods to sports equipment, we're here to help you find exactly what you need.
+              Today, 3A Softwares is proud to partner with hundreds of verified sellers and brands,
+              offering an extensive selection of products across multiple categories. From
+              electronics to fashion, home goods to sports equipment, we're here to help you find
+              exactly what you need.
             </p>
           </div>
         </div>
@@ -57,7 +59,8 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Trust & Security</h3>
               <p className="text-gray-600 text-sm">
-                Your security is our priority. We use industry-leading encryption and secure payment methods.
+                Your security is our priority. We use industry-leading encryption and secure payment
+                methods.
               </p>
             </div>
             <div className="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-200 hover:shadow-2xl transition-shadow">
@@ -75,7 +78,8 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Customer Love</h3>
               <p className="text-gray-600 text-sm">
-                Your satisfaction drives everything we do. We're here to make your experience amazing.
+                Your satisfaction drives everything we do. We're here to make your experience
+                amazing.
               </p>
             </div>
             <div className="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-200 hover:shadow-2xl transition-shadow">
@@ -91,7 +95,7 @@ export default function AboutPage() {
         </div>
 
         {/* Why Choose Us */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-2xl p-8 md:p-12 mb-12 text-white">
+        <div className="bg-gradient-to-r from-black to-gray-400 rounded-2xl shadow-2xl p-8 md:p-12 mb-12 text-white">
           <h2 className="text-3xl font-bold mb-8 text-center">Why Choose 3A Softwares?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">

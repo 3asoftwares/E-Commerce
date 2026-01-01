@@ -33,24 +33,26 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Header */}
-      <div className="bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <div className="inline-block p-4 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl shadow-lg mb-4">
-              <FontAwesomeIcon icon={faEnvelope} className="w-10 h-10 text-white" />
-            </div>
-            <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 mb-4">
+      <div className="bg-white/95 backdrop-blur-lg border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col items-center w-full">
+            <img
+              src={'https://res.cloudinary.com/dpdfyou3r/image/upload/v1767265363/3A_gczh29.png'}
+              alt={'3A Softwares'}
+              className="object-contain w-28"
+            />
+            <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-300 mb-4">
               Contact Us
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              Have questions? We'd love to hear from you. Send us a message and we'll respond as
+              soon as possible.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Form */}
           <div className="lg:col-span-2">
@@ -118,7 +120,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-lg hover:shadow-xl hover:shadow-blue-500/50 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-gradient-to-r from-black to-gray-600 text-white font-bold rounded-lg hover:shadow-xl hover:shadow-blue-500/50 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <FontAwesomeIcon icon={faPaperPlane} className="w-5 h-5" />
                   {loading ? 'Sending...' : 'Send Message'}
@@ -133,31 +135,32 @@ export default function ContactPage() {
               <h3 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg">
-                    <FontAwesomeIcon icon={faMapMarkerAlt} className="w-5 h-5 text-blue-600" />
+                  <div className="p-3 bg-gradient-to-br from-gray-200 to-gray-200 rounded-lg">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Address</h4>
                     <p className="text-gray-600 text-sm">
-                      123 Commerce Street<br />
-                      New York, NY 10001<br />
-                      United States
+                      167, Dayanand Ward
+                      <br />
+                      Sagar, Madhya Pradesh 470002
+                      <br />
+                      India
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg">
-                    <FontAwesomeIcon icon={faPhone} className="w-5 h-5 text-blue-600" />
+                  <div className="p-3 bg-gradient-to-br from-gray-200 to-gray-200 rounded-lg">
+                    <FontAwesomeIcon icon={faPhone} className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Phone</h4>
-                    <p className="text-gray-600 text-sm">+1 (555) 123-4567</p>
-                    <p className="text-gray-600 text-sm">+1 (555) 987-6543</p>
+                    <p className="text-gray-600 text-sm">+91 70470 26537</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg">
-                    <FontAwesomeIcon icon={faEnvelope} className="w-5 h-5 text-blue-600" />
+                  <div className="p-3 bg-gradient-to-br from-gray-200 to-gray-200 rounded-lg">
+                    <FontAwesomeIcon icon={faEnvelope} className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Email</h4>
@@ -166,8 +169,8 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg">
-                    <FontAwesomeIcon icon={faClock} className="w-5 h-5 text-blue-600" />
+                  <div className="p-3 bg-gradient-to-br from-gray-200 to-gray-200 rounded-lg">
+                    <FontAwesomeIcon icon={faClock} className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Business Hours</h4>
@@ -179,14 +182,14 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-xl p-6 text-white">
+            <div className="bg-gradient-to-br from-black to-gray-600 rounded-2xl shadow-xl p-6 text-white">
               <h3 className="text-xl font-bold mb-3">Quick Response</h3>
               <p className="text-blue-100 text-sm mb-4">
                 We typically respond to all inquiries within 24 hours during business days.
               </p>
               <div className="bg-white/20 rounded-lg p-3 text-sm">
                 <p className="font-semibold mb-1">For urgent matters:</p>
-                <p className="text-blue-100">Call us at +1 (555) 123-4567</p>
+                <p className="text-blue-100">Call us at +91 70470 26537</p>
               </div>
             </div>
           </div>
