@@ -64,9 +64,9 @@ export default function ProductReviews({ productId, averageRating, totalReviews 
             <span className="text-gray-600">({totalReviews} reviews)</span>
           </div>
         </div>
-        <Button onClick={() => setShowReviewForm(!showReviewForm)}>
+        <button onClick={() => setShowReviewForm(!showReviewForm)}>
           Write a Review
-        </Button>
+        </button>
       </div>
 
       {/* Review Form */}
@@ -112,14 +112,14 @@ export default function ProductReviews({ productId, averageRating, totalReviews 
           </div>
 
           <div className="flex gap-3">
-            <Button type="submit">Submit Review</Button>
-            <Button
+            <button type="submit">Submit Review</button>
+            <button
               type="button"
               variant="outline"
               onClick={() => setShowReviewForm(false)}
             >
               Cancel
-            </Button>
+            </button>
           </div>
         </form>
       )}

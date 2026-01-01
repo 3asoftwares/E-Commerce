@@ -3,25 +3,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { useCartStore } from '@/store/cartStore';
 import { useProducts } from '@/lib/hooks';
-import { Button } from '@e-commerce/ui-library';
 import type { ProductGraphQL } from '@e-commerce/types';
 import { useToast } from '@/lib/hooks/useToast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faFilter, faTag, faRedo } from '@fortawesome/free-solid-svg-icons';
 import { useSearchParams } from 'next/navigation';
 import { ProductCard } from '@/components';
+import { Select } from '@e-commerce/ui-library';
 
 type Product = ProductGraphQL;
 
 const CATEGORIES = [
-  'All',
-  'Electronics',
-  'Clothing',
-  'Home',
-  'Books',
-  'Food',
-  'Sports',
-  'Toys',
+  {value: 'All', label: 'All'},
+  {value: 'Electronics', label: 'Electronics'},
+  {value: 'Clothing', label: 'Clothing'},
+  {value: 'Home', label: 'Home'},
+  {value: 'Books', label: 'Books'},
+  {value: 'Food', label: 'Food'},
+  {value: 'Sports', label: 'Sports'},
+  {value: 'Toys', label: 'Toys'},
 ];
 
 const SORT_OPTIONS = [
@@ -169,7 +169,9 @@ export default function ProductsPage() {
       <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600">Discover Products</h1>
+            <h1 className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-600">
+              Discover Products
+            </h1>
             <div className="px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full text-sm font-bold text-indigo-700">
               {data?.pagination.total || 0} Products
             </div>
@@ -183,30 +185,22 @@ export default function ProductsPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-32 border border-gray-200">
               <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <FontAwesomeIcon icon={faFilter} className="text-indigo-600" />
+                <FontAwesomeIcon icon={faFilter} className="text-gray-600" />
                 Filters
               </h2>
 
               {/* Category Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-                  <FontAwesomeIcon icon={faTag} className="text-gray-500" />
-                  Category
-                </label>
-                <select
+                <Select
                   value={category}
+                  label={'Category'}
                   onChange={(e: any) => {
                     setCategory(e.target.value);
                     setPage(1);
                   }}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 font-medium transition-all"
-                >
-                  {CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
+                  className="w-full"
+                  options={CATEGORIES}
+                />
               </div>
 
               {/* Price Range Filter */}
@@ -255,7 +249,11 @@ export default function ProductsPage() {
               {/* Sort */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
-                <select value={sortBy} onChange={(e: any) => setSortBy(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select
+                  value={sortBy}
+                  onChange={(e: any) => setSortBy(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
                   {SORT_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
@@ -265,7 +263,7 @@ export default function ProductsPage() {
               </div>
 
               {/* Reset Filters */}
-              <Button
+              <button
                 onClick={() => {
                   setSearch('');
                   setCategory('All');
@@ -277,7 +275,7 @@ export default function ProductsPage() {
               >
                 <FontAwesomeIcon icon={faRedo} className="mr-2" />
                 Reset Filters
-              </Button>
+              </button>
             </div>
           </div>
 

@@ -4,7 +4,7 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 interface PageHeaderProps {
   icon: IconDefinition;
   title: string;
-  subtitle?: string;
+  subtitle?: any;
   badge?: {
     count: number;
     label: string;

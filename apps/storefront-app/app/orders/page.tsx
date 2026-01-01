@@ -65,7 +65,7 @@ export default function OrdersPage() {
           <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
             <h2 className="text-xl font-semibold text-red-800 mb-2">Error Loading Orders</h2>
             <p className="text-red-700 mb-4">Failed to load your orders. Please try again later.</p>
-            <Button onClick={() => router.push('/')}>Go Home</Button>
+            <button onClick={() => router.push('/')}>Go Home</button>
           </div>
         </div>
       </div>
@@ -96,7 +96,10 @@ export default function OrdersPage() {
         ) : (
           <div className="space-y-4">
             {orders.map((order: Order) => (
-              <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+              <div
+                key={order.id}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+              >
                 <div className="p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                     <div>
@@ -120,7 +123,8 @@ export default function OrdersPage() {
                             STATUS_COLORS[order.status]
                           }`}
                         >
-                          {STATUS_ICONS[order.status]} {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          {STATUS_ICONS[order.status]}{' '}
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
                       )}
                     </div>
@@ -150,7 +154,9 @@ export default function OrdersPage() {
 
                   {/* Order Items Preview */}
                   <div className="mb-6">
-                    <p className="text-sm font-semibold text-gray-900 mb-3">Items ({order.items.length})</p>
+                    <p className="text-sm font-semibold text-gray-900 mb-3">
+                      Items ({order.items.length})
+                    </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {order.items.slice(0, 3).map((item, idx) => (
                         <div
@@ -178,7 +184,8 @@ export default function OrdersPage() {
                     >
                       View Details
                     </Button>
-                    {order.status && (order.status === 'shipped' || order.status === 'processing') ? (
+                    {order.status &&
+                    (order.status === 'shipped' || order.status === 'processing') ? (
                       <Button
                         onClick={() => router.push(`/orders/${order.id}/track`)}
                         variant="outline"

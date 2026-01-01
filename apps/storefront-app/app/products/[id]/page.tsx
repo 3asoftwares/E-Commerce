@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useCartStore } from '@/store/cartStore';
 import { useProduct } from '@/lib/hooks';
-import { Button } from '@e-commerce/ui-library';
 import ProductReviews from '@/components/ProductReviews';
 import { useToast } from '@/lib/hooks/useToast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faBox } from '@fortawesome/free-solid-svg-icons';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { formatPrice } from '@/lib/utils/currency';
 
 interface ProductDetailProps {
@@ -53,9 +52,9 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
         <div className="bg-red-50 border border-red-200 rounded-lg p-8 max-w-md">
           <h1 className="text-xl font-semibold text-red-800 mb-2">Product Not Found</h1>
           <p className="text-red-700 mb-4">The product you're looking for doesn't exist.</p>
-          <Button onClick={() => (window.location.href = '/products')}>
+          <button onClick={() => (window.location.href = '/products')}>
             Back to Products
-          </Button>
+          </button>
         </div>
       </div>
     );
@@ -131,10 +130,11 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
                   const parent = e.currentTarget.parentElement;
                   if (parent && !parent.querySelector('.fallback-icon')) {
                     const fallback = document.createElement('div');
-                      fallback.className = 'fallback-icon absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200 rounded-lg';
-                      const icon = document.createElement('i');
-                      icon.className = 'fas fa-box fa-5x';
-                      fallback.appendChild(icon);
+                    fallback.className =
+                      'fallback-icon absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200 rounded-lg';
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-box fa-5x';
+                    fallback.appendChild(icon);
                     parent.appendChild(fallback);
                   }
                 }}
@@ -167,10 +167,12 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
             <div className="flex items-center mb-4">
               <div className="flex text-yellow-400 text-lg">
                 {[...Array(5)].map((_, i) => (
-                  <FontAwesomeIcon 
-                    key={i} 
-                    icon={faStar} 
-                    className={i < Math.floor(product.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}
+                  <FontAwesomeIcon
+                    key={i}
+                    icon={faStar}
+                    className={
+                      i < Math.floor(product.rating || 0) ? 'text-yellow-400' : 'text-gray-300'
+                    }
                   />
                 ))}
               </div>
@@ -192,9 +194,7 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
             <div className="mb-6">
               {product.stock > 0 ? (
                 <div className="text-green-600 font-semibold">
-                  {product.stock > 10
-                    ? 'In Stock'
-                    : `Only ${product.stock} left in stock`}
+                  {product.stock > 10 ? 'In Stock' : `Only ${product.stock} left in stock`}
                 </div>
               ) : (
                 <div className="text-red-600 font-semibold">Out of Stock</div>
@@ -215,7 +215,7 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
                 <input
                   type="number"
                   value={quantity}
-                  onChange={(e:any) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  onChange={(e: any) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                   min="1"
                   max={product.stock}
                   className="w-16 px-3 py-2 border border-gray-300 rounded text-center"
@@ -232,23 +232,20 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
 
             {/* Action Buttons */}
             <div className="flex gap-3 mb-8">
-              <Button
+              <button
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className="flex-1"
-                size="lg"
+                className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
               >
                 Add to Cart
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={handleBuyNow}
                 disabled={product.stock === 0}
-                className="flex-1"
-                size="lg"
-                variant="secondary"
+                className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
               >
                 Buy Now
-              </Button>
+              </button>
               <button
                 onClick={handleWishlistToggle}
                 className={`px-6 py-3 rounded border-2 font-semibold transition-colors ${
@@ -270,8 +267,12 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
             {/* Specifications */}
             {/* Category & Seller Info */}
             <div className="border-t mt-6 pt-6 text-sm text-gray-600">
-              <p>Category: <span className="text-gray-900 font-medium">{product.category}</span></p>
-              <p className="mt-1">Seller ID: <span className="text-gray-900">{product.sellerId}</span></p>
+              <p>
+                Category: <span className="text-gray-900 font-medium">{product.category}</span>
+              </p>
+              <p className="mt-1">
+                Seller ID: <span className="text-gray-900">{product.sellerId}</span>
+              </p>
             </div>
           </div>
         </div>

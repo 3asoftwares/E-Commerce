@@ -18,7 +18,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       error,
       helperText,
       size = 'md',
-      fullWidth = false,
+      fullWidth = true,
       leftIcon,
       rightIcon,
       className = '',
@@ -29,8 +29,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const sizeClasses = {
       sm: 'text-sm px-3 py-1.5',
-      md: 'text-base px-4 py-2',
-      lg: 'text-lg px-5 py-3',
+      md: 'text-base px-4 py-2.5',
+      lg: 'text-lg px-6 py-4',
     };
 
     const widthClass = fullWidth ? 'w-full' : '';
@@ -57,8 +57,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={`
-              block rounded-lg border-2 focus:ring-2 focus:ring-offset-1 transition-all duration-150
-              dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:focus:border-blue-400
+              rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-150
               ${sizeClasses[size]}
               ${widthClass}
               ${errorClasses}
@@ -77,9 +76,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
-        {error && <p className="mt-2 text-sm font-semibold text-red-700 dark:text-red-400">{error}</p>}
+        {error && (
+          <p className="mt-2 text-sm font-semibold text-red-700 dark:text-red-400">{error}</p>
+        )}
 
-        {helperText && !error && <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{helperText}</p>}
+        {helperText && !error && (
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{helperText}</p>
+        )}
       </div>
     );
   }

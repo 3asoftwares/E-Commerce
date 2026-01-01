@@ -114,7 +114,7 @@ export default function CheckoutPage() {
           </div>
           <h1 className="text-3xl font-extrabold text-gray-900 mb-3">Cart is Empty</h1>
           <p className="text-gray-600 mb-8 text-lg">Add items to your cart before checking out.</p>
-          <Button onClick={() => router.push('/products')} className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold hover:shadow-2xl">Continue Shopping</Button>
+          <button onClick={() => router.push('/products')} className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold hover:shadow-2xl">Continue Shopping</button>
         </div>
       </div>
     );
@@ -148,8 +148,10 @@ export default function CheckoutPage() {
                       key={address.id}
                       className="flex items-start p-5 border-2 rounded-xl cursor-pointer transition-all hover:bg-indigo-50 hover:scale-[1.02]"
                       style={{
-                        borderColor: selectedAddressId === address.id ? 'rgb(99, 102, 241)' : '#e5e7eb',
-                        backgroundColor: selectedAddressId === address.id ? 'rgb(238, 242, 255)' : 'white',
+                        borderColor:
+                          selectedAddressId === address.id ? 'rgb(99, 102, 241)' : '#e5e7eb',
+                        backgroundColor:
+                          selectedAddressId === address.id ? 'rgb(238, 242, 255)' : 'white',
                       }}
                     >
                       <input
@@ -188,6 +190,7 @@ export default function CheckoutPage() {
               {useNewAddress && (
                 <div className="space-y-4 pt-4 border-t">
                   <Input
+                    size='md'
                     type="text"
                     placeholder="Street Address"
                     value={newAddress.street}
@@ -352,14 +355,13 @@ export default function CheckoutPage() {
               </div>
 
               {/* Place Order Button */}
-              <Button
+              <button
                 onClick={handleSubmitOrder}
                 disabled={loading}
-                className="w-full mb-3"
-                size="lg"
+                className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
               >
                 {loading ? 'Processing...' : 'Place Order'}
-              </Button>
+              </button>
 
               <button
                 onClick={() => router.push('/cart')}

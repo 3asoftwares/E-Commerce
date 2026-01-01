@@ -36,10 +36,14 @@ export default function WishlistPage() {
       <PageHeader
         icon={faHeart}
         title="My Wishlist"
-        badge={wishlist.length > 0 ? {
-          count: wishlist.length,
-          label: wishlist.length === 1 ? 'item' : 'items'
-        } : undefined}
+        badge={
+          wishlist.length > 0
+            ? {
+                count: wishlist.length,
+                label: wishlist.length === 1 ? 'item' : 'items',
+              }
+            : undefined
+        }
         iconGradient="from-gray-700 to-gray-900"
         titleGradient="from-gray-900 to-black"
       />
@@ -119,7 +123,7 @@ export default function WishlistPage() {
                       </button>
                       <button
                         onClick={() => handleRemove(item.productId)}
-                        className="px-4 py-2.5 bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+                        className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
                         title="Remove from wishlist"
                       >
                         <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
@@ -138,9 +142,7 @@ export default function WishlistPage() {
             {/* Bottom Actions */}
             <div className="bg-white rounded-xl shadow-md p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="text-center sm:text-left">
-                <p className="text-gray-900 font-bold text-lg mb-1">
-                  Love Everything? 🎉
-                </p>
+                <p className="text-gray-900 font-bold text-lg mb-1">Love Everything? 🎉</p>
                 <p className="text-gray-600 text-sm">
                   Add all items to your cart and checkout in seconds!
                 </p>

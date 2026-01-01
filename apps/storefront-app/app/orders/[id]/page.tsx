@@ -66,7 +66,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
         <div className="bg-white rounded-lg shadow-md p-8 max-w-md text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h1>
           <p className="text-gray-600 mb-6">We couldn't find this order.</p>
-          <Button onClick={() => router.push('/orders')}>Back to Orders</Button>
+          <button onClick={() => router.push('/orders')}>Back to Orders</button>
         </div>
       </div>
     );
@@ -77,7 +77,6 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <button
@@ -94,18 +93,13 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Status Timeline */}
             <div className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">Order Status</h2>
-
               <div className="relative">
-                {/* Timeline */}
                 <div className="flex items-center">
                   {STATUS_STEPS.map((step, idx) => (
                     <div key={step.key} className="flex-1">
-                      {/* Step Circle */}
                       <div className="flex flex-col items-center">
                         <div
                           className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition ${
@@ -248,9 +242,9 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
               {/* Actions */}
               <div className="mt-6 space-y-2">
-                <Button onClick={() => router.push('/products')} className="w-full">
+                <button onClick={() => router.push('/products')} className="w-full">
                   Continue Shopping
-                </Button>
+                </button>
                 <button className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition">
                   Print Order
                 </button>

@@ -120,7 +120,7 @@ export function ProductSlider({
               onClick={() => goToSlide(index)}
               className={`transition-all ${
                 index === currentIndex
-                  ? 'w-8 h-2 bg-gradient-to-r from-indigo-600 to-purple-600'
+                  ? 'w-8 h-2 bg-gradient-to-r from-black to-gray-400'
                   : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
               } rounded-full`}
               aria-label={`Go to slide ${index + 1}`}

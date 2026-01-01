@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 interface SectionHeaderProps {
   badge?: {
     icon: React.ReactNode;
@@ -8,7 +6,7 @@ interface SectionHeaderProps {
     textColor?: string;
   };
   title: string;
-  description: string;
+  description?: string;
   titleGradient?: string;
 }
 

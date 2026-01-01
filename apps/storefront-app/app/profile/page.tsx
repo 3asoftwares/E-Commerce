@@ -112,7 +112,7 @@ export default function ProfilePage() {
       <PageHeader
         icon={faUser}
         title="My Account"
-        subtitle={`Welcome back, ${userProfile.name}`}
+        subtitle={<span>Welcome back, <b>{userProfile.name}</b></span>}
         iconGradient="from-gray-700 to-gray-900"
         titleGradient="from-gray-900 to-black"
       />
@@ -161,7 +161,6 @@ export default function ProfilePage() {
           </div>
 
           <div className="lg:col-span-3">
-            {/* Profile Tab */}
             {activeTab === 'profile' && (
               <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
                 <div className="flex items-center justify-between mb-6">
@@ -268,7 +267,6 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* Addresses Tab */}
             {activeTab === 'addresses' && (
               <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
                 <div className="flex items-center justify-between mb-6">
@@ -289,6 +287,7 @@ export default function ProfilePage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Address</h3>
                     <div className="space-y-4">
                       <Input
+                        size="md"
                         type="text"
                         placeholder="Street Address"
                         value={newAddress.street || ''}

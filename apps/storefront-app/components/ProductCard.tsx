@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@e-commerce/ui-library';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faHeart as faHeartSolid, faBox } from '@fortawesome/free-solid-svg-icons';
 import { formatPrice } from '@/lib/utils/currency';
@@ -122,9 +121,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         {/* Price */}
-        <p className="text-3xl font-extrabold text-gray-900 mb-4">
-          {formatPrice(product.price)}
-        </p>
+        <p className="text-3xl font-extrabold text-gray-900 mb-4">{formatPrice(product.price)}</p>
 
         {/* Action Buttons */}
         {onAddToCart && (
@@ -134,10 +131,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 Out of Stock
               </div>
             ) : (
-              <Button onClick={() => onAddToCart(product)} className="w-full text-sm">
+              <button
+                onClick={() => onAddToCart(product)}
+                className="px-4 py-2 bg-gradient-to-r from-gray-900 to-black text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+              >
                 <FontAwesomeIcon icon={faShoppingCart} className="mr-2" />
                 Add to Cart
-              </Button>
+              </button>
             )}
           </>
         )}
