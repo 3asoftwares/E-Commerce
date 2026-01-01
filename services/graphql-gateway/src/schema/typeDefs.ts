@@ -188,6 +188,8 @@ export const typeDefs = `#graphql
       category: String
       minPrice: Float
       maxPrice: Float
+      sortBy: String
+      sortOrder: String
     ): ProductConnection!
     
     product(id: ID!): Product
@@ -197,7 +199,7 @@ export const typeDefs = `#graphql
     categories: [String!]!
 
     # Orders
-    orders(page: Int, limit: Int): OrderConnection!
+    orders(page: Int, limit: Int, customerId: String): OrderConnection!
     
     order(id: ID!): Order
     

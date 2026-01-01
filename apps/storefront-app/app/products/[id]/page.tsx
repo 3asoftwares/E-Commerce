@@ -1,27 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { useCartStore } from '@/store/cartStore';
-import { apiService } from '@/lib/api/service';
+import { useProduct } from '@/lib/hooks';
 import { Button } from '@e-commerce/ui-library';
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  originalPrice?: number;
-  image?: string;
-  images?: string[];
-  category: string;
-  stock: number;
-  rating: number;
-  reviews: number;
-  sellerId: string;
-  sku: string;
-  specifications?: Record<string, string>;
-}
+import ProductReviews from '@/components/ProductReviews';
+import { useToast } from '@/lib/hooks/useToast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar, faBox } from '@fortawesome/free-solid-svg-icons';
+import { formatPrice } from '@/lib/utils/currency';
 
 interface ProductDetailProps {
   params: {
@@ -33,20 +20,24 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
   const { id } = params;
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-  const { addItem, isInWishlist, addToWishlist, removeFromWishlist } = useCartStore();
+  const { addItem, isInWishlist, addToWishlist, removeFromWishlist, addRecentlyViewed } = useCartStore();
+  const { showToast } = useToast();
 
-  const { data: product, isLoading, error } = useQuery<Product>({
-    queryKey: ['product', id],
-    queryFn: () => apiService.getProductById(id),
-  });
-
-  // Fetch related products
-  const { data: relatedProducts } = useQuery({
-    queryKey: ['related-products', product?.category],
-    queryFn: () =>
-      product?.category ? apiService.getProductsByCategory(product.category, 1, 4) : null,
-    enabled: !!product?.category,
-  });
+  const { data: product, isLoading, error } = useProduct(id);
+  
+  // Track recently viewed products
+  useEffect(() => {
+    if (product) {
+      addRecentlyViewed({
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.imageUrl || '/placeholder.png',
+        category: product.category,
+        viewedAt: Date.now(),
+      });
+    }
+  }, [product, addRecentlyViewed]);
 
   if (isLoading) {
     return (
@@ -70,23 +61,20 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
     );
   }
 
-  const discountPercent = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0;
-
   const handleAddToCart = () => {
+    if (!product) return;
+    
     addItem({
       id: product.id,
       name: product.name,
       price: product.price,
       quantity,
-      image: (product.images || [product.image])?.[0] || '/placeholder.png',
+      image: product.imageUrl || '/placeholder.png',
       productId: product.id,
       sellerId: product.sellerId,
     });
 
-    // Optional: Show toast notification
-    alert(`${product.name} added to cart!`);
+    showToast(`${product.name} added to cart!`, 'success');
   };
 
   const handleBuyNow = () => {
@@ -95,20 +83,24 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
   };
 
   const handleWishlistToggle = () => {
+    if (!product) return;
+    
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id);
+      showToast('Removed from wishlist', 'info');
     } else {
       addToWishlist({
         productId: product.id,
         name: product.name,
         price: product.price,
-        image: (product.images || [product.image])?.[0] || '/placeholder.png',
+        image: product.imageUrl || '/placeholder.png',
         addedAt: Date.now(),
       });
+      showToast('Added to wishlist', 'success');
     }
   };
 
-  const images = product.images || [product.image || '/placeholder.png'];
+  const images = [product?.imageUrl || '/placeholder.png'];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -122,24 +114,31 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
           Products
         </a>
         <span>/</span>
-        <span>{product.category}</span>
+        <span>{product?.category || 'Product'}</span>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-lg shadow-lg p-8">
           {/* Image Gallery */}
           <div>
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <img
                 src={images[selectedImage]}
-                alt={product.name}
+                alt={product?.name || 'Product'}
                 className="w-full h-96 object-cover rounded-lg bg-gray-200"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  const parent = e.currentTarget.parentElement;
+                  if (parent && !parent.querySelector('.fallback-icon')) {
+                    const fallback = document.createElement('div');
+                      fallback.className = 'fallback-icon absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-200 rounded-lg';
+                      const icon = document.createElement('i');
+                      icon.className = 'fas fa-box fa-5x';
+                      fallback.appendChild(icon);
+                    parent.appendChild(fallback);
+                  }
+                }}
               />
-              {discountPercent > 0 && (
-                <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                  -{discountPercent}%
-                </div>
-              )}
             </div>
 
             {/* Thumbnail Gallery */}
@@ -168,11 +167,15 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
             <div className="flex items-center mb-4">
               <div className="flex text-yellow-400 text-lg">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i}>{i < Math.floor(product.rating || 0) ? '★' : '☆'}</span>
+                  <FontAwesomeIcon 
+                    key={i} 
+                    icon={faStar} 
+                    className={i < Math.floor(product.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}
+                  />
                 ))}
               </div>
               <span className="text-gray-600 ml-2">
-                {product.rating.toFixed(1)} ({product.reviews} reviews)
+                {product.rating.toFixed(1)} ({product.reviewCount} reviews)
               </span>
             </div>
 
@@ -180,13 +183,8 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
             <div className="mb-6">
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold text-gray-900">
-                  ${product.price.toFixed(2)}
+                  {formatPrice(product.price)}
                 </span>
-                {product.originalPrice && (
-                  <span className="text-lg text-gray-500 line-through">
-                    ${product.originalPrice.toFixed(2)}
-                  </span>
-                )}
               </div>
             </div>
 
@@ -270,58 +268,22 @@ export default function ProductDetailPage({ params }: ProductDetailProps) {
             </div>
 
             {/* Specifications */}
-            {product.specifications && Object.keys(product.specifications).length > 0 && (
-              <div className="border-t mt-6 pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Specifications</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {Object.entries(product.specifications).map(([key, value]) => (
-                    <div key={key}>
-                      <p className="text-sm text-gray-600">{key}</p>
-                      <p className="font-medium text-gray-900">{value}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* SKU */}
+            {/* Category & Seller Info */}
             <div className="border-t mt-6 pt-6 text-sm text-gray-600">
-              SKU: {product.sku}
+              <p>Category: <span className="text-gray-900 font-medium">{product.category}</span></p>
+              <p className="mt-1">Seller ID: <span className="text-gray-900">{product.sellerId}</span></p>
             </div>
           </div>
         </div>
 
-        {/* Related Products */}
-        {relatedProducts && relatedProducts.products?.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.products.map((prod: Product) => (
-                <a
-                  key={prod.id}
-                  href={`/products/${prod.id}`}
-                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
-                >
-                  <div className="relative overflow-hidden bg-gray-200 h-48">
-                    <img
-                      src={prod.image || '/placeholder.png'}
-                      alt={prod.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2">
-                      {prod.name}
-                    </h3>
-                    <p className="text-lg font-bold text-gray-900">
-                      ${prod.price.toFixed(2)}
-                    </p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Product Reviews Section */}
+        <div className="mt-12">
+          <ProductReviews
+            productId={product.id}
+            averageRating={product.rating || 0}
+            totalReviews={product.reviewCount || 0}
+          />
+        </div>
       </div>
     </div>
   );

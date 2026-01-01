@@ -45,9 +45,9 @@ export const resolvers = {
 
     // Product Queries
     products: async (_: any, args: any) => {
-      const { page, limit, search, category, minPrice, maxPrice } = args;
+      const { page, limit, search, category, minPrice, maxPrice, sortBy, sortOrder } = args;
       const response = await productClient.get('/api/products', {
-        params: { page, limit, search, category, minPrice, maxPrice },
+        params: { page, limit, search, category, minPrice, maxPrice, sortBy, sortOrder },
       });
       return response.data.data;
     },
@@ -68,9 +68,9 @@ export const resolvers = {
     },
 
     orders: async (_: any, args: any) => {
-      const { page, limit } = args;
+      const { page, limit, customerId } = args;
       const response = await orderClient.get('/api/orders', {
-        params: { page, limit },
+        params: { page, limit, customerId },
       });
       return response.data.data;
     },
@@ -147,13 +147,81 @@ export const resolvers = {
   Mutation: {
     // Auth Mutations
     login: async (_: any, { input }: any) => {
-      const response = await authClient.post('/api/auth/login', input);
-      return response.data.data;
+      try {
+        const response = await authClient.post('/api/auth/login', input);
+        
+        // Check if response indicates failure
+        if (!response.data || !response.data.success) {
+          throw new Error(response.data?.message || 'Login failed');
+        }
+
+        const { user, accessToken, refreshToken } = response.data;
+        
+        // Ensure we have all required data
+        if (!user || !accessToken || !refreshToken) {
+          throw new Error('Invalid response from authentication service');
+        }
+        
+        return {
+          user: {
+            id: user._id || user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            isActive: user.isActive !== undefined ? user.isActive : true,
+            emailVerified: user.emailVerified !== undefined ? user.emailVerified : false,
+            createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : null,
+            lastLogin: user.lastLogin ? new Date(user.lastLogin).toISOString() : null,
+          },
+          accessToken,
+          refreshToken,
+        };
+      } catch (error: any) {
+        // Handle axios errors
+        if (error.response?.data?.message) {
+          throw new Error(error.response.data.message);
+        }
+        throw new Error(error.message || 'Login failed');
+      }
     },
 
     register: async (_: any, { input }: any) => {
-      const response = await authClient.post('/api/auth/register', input);
-      return response.data.data;
+      try {
+        const response = await authClient.post('/api/auth/register', input);
+        
+        // Check if response indicates failure
+        if (!response.data || !response.data.success) {
+          throw new Error(response.data?.message || 'Registration failed');
+        }
+
+        const { user, accessToken, refreshToken } = response.data;
+        
+        // Ensure we have all required data
+        if (!user || !accessToken || !refreshToken) {
+          throw new Error('Invalid response from authentication service');
+        }
+        
+        return {
+          user: {
+            id: user._id || user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            isActive: user.isActive !== undefined ? user.isActive : true,
+            emailVerified: user.emailVerified !== undefined ? user.emailVerified : false,
+            createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : null,
+            lastLogin: user.lastLogin ? new Date(user.lastLogin).toISOString() : null,
+          },
+          accessToken,
+          refreshToken,
+        };
+      } catch (error: any) {
+        // Handle axios errors
+        if (error.response?.data?.message) {
+          throw new Error(error.response.data.message);
+        }
+        throw new Error(error.message || 'Registration failed');
+      }
     },
 
     logout: async (_: any, __: any, context: any) => {

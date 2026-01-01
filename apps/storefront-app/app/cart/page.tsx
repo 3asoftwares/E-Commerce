@@ -1,16 +1,19 @@
 'use client';
 
-import HeaderWrapper from '@/components/HeaderWrapper';
-import FooterWrapper from '@/components/FooterWrapper';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import Link from 'next/link';
+import { useToast } from '@/lib/hooks/useToast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart, faBox } from '@fortawesome/free-solid-svg-icons';
+import { formatPrice } from '@/lib/utils/currency';
 
 export const dynamic = 'force-dynamic';
 
 export default function CartPage() {
   const router = useRouter();
   const { items, removeItem, updateQuantity, clearCart } = useCartStore();
+  const { showToast } = useToast();
 
   const subtotal = items.reduce((sum:number, item:{price:number, quantity:number}) => sum + item.price * item.quantity, 0);
   const tax = subtotal * 0.08;
@@ -19,36 +22,40 @@ export default function CartPage() {
 
   return (
     <>
-      <HeaderWrapper />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-purple-50/40">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-4xl font-bold text-gray-900">Shopping Cart</h1>
+      <div className="bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600">Shopping Cart</h1>
           {items.length > 0 && (
-            <p className="text-gray-600 mt-2">{items.length} item(s) in your cart</p>
+            <p className="text-gray-700 mt-3 text-lg font-medium flex items-center gap-2">
+              <span className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">{items.length}</span>
+              {items.length === 1 ? 'item' : 'items'} in your cart
+            </p>
           )}
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {items.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-16 text-center">
-            <div className="text-6xl mb-4">🛒</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Your Cart is Empty</h2>
-            <p className="text-gray-600 mb-8">Looks like you haven't added anything yet. Start shopping!</p>
+          <div className="bg-white rounded-2xl shadow-2xl p-20 text-center border border-gray-200">
+            <div className="inline-block p-6 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full mb-6">
+              <FontAwesomeIcon icon={faShoppingCart} className="w-20 h-20 text-indigo-600" />
+            </div>
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Your Cart is Empty</h2>
+            <p className="text-gray-600 mb-10 text-lg max-w-md mx-auto">Looks like you haven’t added anything yet. Discover amazing products now!</p>
             <Link
               href="/products"
-              className="inline-block px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all"
+              className="inline-block px-10 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold rounded-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105 hover:-translate-y-1"
             >
-              Continue Shopping →
+              Start Shopping →
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-xl shadow-md overflow-hidden">
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
                 {/* Items */}
                 {items.map((item:any, index:number) => (
                   <div
@@ -57,8 +64,8 @@ export default function CartPage() {
                   >
                     {/* Product Image */}
                     <div className="flex-shrink-0">
-                      <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-3xl">
-                        📦
+                      <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
+                        <FontAwesomeIcon icon={faBox} className="w-10 h-10 text-gray-400" />
                       </div>
                     </div>
 
@@ -71,7 +78,7 @@ export default function CartPage() {
                         {item.name}
                       </Link>
                       <p className="text-sm text-gray-600 mb-3">SKU: {item.productId}</p>
-                      <p className="text-lg font-bold text-blue-600">${item.price.toFixed(2)}</p>
+                      <p className="text-lg font-bold text-blue-600">{formatPrice(item.price)}</p>
                     </div>
 
                     {/* Quantity and Actions */}
@@ -79,7 +86,12 @@ export default function CartPage() {
                       {/* Quantity Control */}
                       <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
                         <button
-                          onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                          onClick={() => {
+                            updateQuantity(item.id, Math.max(1, item.quantity - 1));
+                            if (item.quantity > 1) {
+                              showToast('Quantity updated', 'info');
+                            }
+                          }}
                           className="px-2 py-1 text-gray-700 hover:text-blue-600 font-semibold"
                         >
                           −
@@ -88,7 +100,10 @@ export default function CartPage() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => {
+                            updateQuantity(item.id, item.quantity + 1);
+                            showToast('Quantity updated', 'info');
+                          }}
                           className="px-2 py-1 text-gray-700 hover:text-blue-600 font-semibold"
                         >
                           +
@@ -98,10 +113,13 @@ export default function CartPage() {
                       {/* Total & Remove */}
                       <div className="text-right">
                         <p className="text-lg font-bold text-gray-900 mb-2">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          {formatPrice(item.price * item.quantity)}
                         </p>
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => {
+                            removeItem(item.id);
+                            showToast('Item removed from cart', 'success');
+                          }}
                           className="text-red-600 hover:text-red-700 text-sm font-medium hover:underline"
                         >
                           Remove
@@ -117,6 +135,7 @@ export default function CartPage() {
                     onClick={() => {
                       if (confirm('Are you sure you want to clear the cart?')) {
                         clearCart();
+                        showToast('Cart cleared', 'success');
                       }
                     }}
                     className="text-red-600 hover:text-red-700 text-sm font-medium hover:underline"
@@ -144,18 +163,18 @@ export default function CartPage() {
                 <div className="space-y-4 mb-6 pb-6 border-b border-gray-200">
                   <div className="flex justify-between text-gray-700">
                     <span className="font-medium">Subtotal</span>
-                    <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                    <span className="font-semibold">{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span className="font-medium">Tax (8%)</span>
-                    <span className="font-semibold">${tax.toFixed(2)}</span>
+                    <span className="font-semibold">{formatPrice(tax)}</span>
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span className="font-medium">Shipping</span>
                     {shipping === 0 ? (
                       <span className="text-green-600 font-bold">FREE ✓</span>
                     ) : (
-                      <span className="font-semibold">${shipping.toFixed(2)}</span>
+                      <span className="font-semibold">{formatPrice(shipping)}</span>
                     )}
                   </div>
                 </div>
@@ -165,7 +184,7 @@ export default function CartPage() {
                   <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6">
                     <p className="font-semibold text-blue-900 mb-1">🎉 Free Shipping Alert!</p>
                     <p className="text-sm text-blue-800">
-                      Add ${(100 - subtotal).toFixed(2)} more for free shipping.
+                      Add {formatPrice(100 - subtotal)} more for free shipping.
                     </p>
                   </div>
                 )}
@@ -174,7 +193,7 @@ export default function CartPage() {
                 <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
                   <p className="text-gray-700 text-sm font-medium mb-1">Total Amount</p>
                   <p className="text-4xl font-bold text-gray-900">
-                    ${total.toFixed(2)}
+                    {formatPrice(total)}
                   </p>
                 </div>
 
@@ -216,8 +235,6 @@ export default function CartPage() {
           </div>
         )}
       </div>
-    </div>
-      <FooterWrapper />
-    </>
-  );
+    </div> 
+    </>)
 }

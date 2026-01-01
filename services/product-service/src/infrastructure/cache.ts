@@ -102,6 +102,7 @@ export const CacheKeys = {
   product: (id: string) => `product:${id}`,
   products: (page: number, limit: number) => `products:${page}:${limit}`,
   productsByCategory: (category: string) => `products:category:${category}`,
+  categories: () => `categories:all`,
   order: (id: string) => `order:${id}`,
   orders: (page: number, limit: number) => `orders:${page}:${limit}`,
   user: (id: string) => `user:${id}`,
@@ -116,6 +117,7 @@ export const CacheKeys = {
 export const CacheTTL = {
   PRODUCTS: 3600, // 1 hour
   PRODUCT_DETAIL: 1800, // 30 minutes
+  CATEGORIES: 7200, // 2 hours
   ORDERS: 300, // 5 minutes
   USERS: 1800, // 30 minutes
   SESSION: 86400, // 24 hours

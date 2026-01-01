@@ -7,7 +7,6 @@
 import { Request, Response } from 'express';
 import User, { UserRole } from '../models/User';
 import { generateTokens, verifyRefreshToken } from '../utils/jwt';
-import bcrypt from 'bcryptjs';
 
 /**
  * Register new user
@@ -27,10 +26,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Create new user
+    // Create new user (password will be hashed by pre-save hook)
     const user = new User({
       email,
-      password: await bcrypt.hash(password, 10),
+      password,
       name: name || email.split('@')[0],
       role: role || UserRole.CUSTOMER, // Default to customer
     });
@@ -95,7 +94,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
       res.status(401).json({

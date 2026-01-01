@@ -1,15 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { apiService } from '@/lib/api/service';
+import { useOrders } from '@/lib/hooks';
 import { Button } from '@e-commerce/ui-library';
+import { formatPrice } from '@/lib/utils/currency';
+import { useCartStore } from '@/store/cartStore';
 
 interface Order {
   id: string;
   orderNumber: string;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status?: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   total: number;
   createdAt: string;
   items: Array<{
@@ -40,14 +41,12 @@ const STATUS_ICONS = {
 export default function OrdersPage() {
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const { userProfile } = useCartStore();
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['orders', page],
-    queryFn: () => apiService.getOrders(page, 10),
-  });
+  const { data, isLoading, error } = useOrders(page, 10, userProfile?.id);
 
   const orders = data?.orders || [];
-  const totalPages = data?.pages || 1;
+  const totalPages = data?.pagination.pages || 1;
 
   if (isLoading) {
     return (
@@ -113,7 +112,6 @@ export default function OrdersPage() {
             {orders.map((order: Order) => (
               <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
                 <div className="p-6">
-                  {/* Order Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
@@ -130,13 +128,15 @@ export default function OrdersPage() {
                       </p>
                     </div>
                     <div className="mt-4 sm:mt-0">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          STATUS_COLORS[order.status]
-                        }`}
-                      >
-                        {STATUS_ICONS[order.status]} {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                      </span>
+                      {order.status && (
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                            STATUS_COLORS[order.status]
+                          }`}
+                        >
+                          {STATUS_ICONS[order.status]} {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -151,7 +151,7 @@ export default function OrdersPage() {
                     <div>
                       <p className="text-sm text-gray-600">Total Amount</p>
                       <p className="text-lg font-semibold text-gray-900">
-                        ${order.total.toFixed(2)}
+                        {formatPrice(order.total)}
                       </p>
                     </div>
                     <div>
@@ -192,7 +192,7 @@ export default function OrdersPage() {
                     >
                       View Details
                     </Button>
-                    {order.status === 'shipped' || order.status === 'processing' ? (
+                    {order.status && (order.status === 'shipped' || order.status === 'processing') ? (
                       <Button
                         onClick={() => router.push(`/orders/${order.id}/track`)}
                         variant="outline"
@@ -202,7 +202,7 @@ export default function OrdersPage() {
                         Track Package
                       </Button>
                     ) : null}
-                    {order.status === 'delivered' ? (
+                    {order.status && order.status === 'delivered' ? (
                       <Button
                         onClick={() => router.push(`/products?reorder=${order.id}`)}
                         variant="outline"

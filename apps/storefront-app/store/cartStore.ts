@@ -38,9 +38,19 @@ export interface WishlistItem {
   addedAt: number;
 }
 
+export interface RecentlyViewedItem {
+  productId: string;
+  name: string;
+  price: number;
+  image?: string;
+  category: string;
+  viewedAt: number;
+}
+
 export interface CartStore {
   items: CartItem[];
   wishlist: WishlistItem[];
+  recentlyViewed: RecentlyViewedItem[];
   userProfile: UserProfile | null;
   
   // Cart actions
@@ -56,8 +66,13 @@ export interface CartStore {
   removeFromWishlist: (productId: string) => void;
   isInWishlist: (productId: string) => boolean;
   
+  // Recently viewed actions
+  addRecentlyViewed: (item: RecentlyViewedItem) => void;
+  clearRecentlyViewed: () => void;
+  
   // User profile actions
-  setUserProfile: (profile: UserProfile) => void;
+  setUserProfile: (profile: UserProfile | null) => void;
+  loadUserFromStorage: () => void;
   addAddress: (address: Address) => void;
   removeAddress: (addressId: string) => void;
   setDefaultAddress: (addressId: string) => void;
@@ -68,6 +83,7 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       wishlist: [],
+      recentlyViewed: [],
       userProfile: null,
 
       // Cart methods
@@ -125,9 +141,41 @@ export const useCartStore = create<CartStore>()(
       isInWishlist: (productId) => {
         return get().wishlist.some((w) => w.productId === productId);
       },
+      
+      // Recently viewed methods
+      addRecentlyViewed: (item) => {
+        const { recentlyViewed } = get();
+        const filtered = recentlyViewed.filter(i => i.productId !== item.productId);
+        set({ recentlyViewed: [item, ...filtered].slice(0, 12) }); // Keep only last 12
+      },
+      
+      clearRecentlyViewed: () => set({ recentlyViewed: [] }),
 
       // User profile methods
       setUserProfile: (profile) => set({ userProfile: profile }),
+
+      loadUserFromStorage: () => {
+        if (typeof window === 'undefined') return;
+        
+        try {
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            const user = JSON.parse(storedUser);
+            set({
+              userProfile: {
+                id: user.id,
+                email: user.email,
+                name: user.name || user.email.split('@')[0],
+                addresses: user.addresses || [],
+                defaultAddressId: user.defaultAddressId,
+                phone: user.phone,
+              },
+            });
+          }
+        } catch (error) {
+          console.error('Failed to load user from storage:', error);
+        }
+      },
 
       addAddress: (address) =>
         set((state) => {

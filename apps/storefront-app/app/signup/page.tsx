@@ -3,16 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRegister } from '@/lib/hooks/useAuth';
 
 export default function SignupPage() {
   const router = useRouter();
+  const { register, isLoading, error: registerError } = useRegister();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -25,37 +26,23 @@ export default function SignupPage() {
     e.preventDefault();
     setError('');
     setSuccess('');
-    setIsLoading(true);
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
-      setIsLoading(false);
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3010/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
+      await register({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
       });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Signup failed');
-      }
-
-      setSuccess('Account created! Redirecting to login...');
-      setTimeout(() => router.push('/login'), 2000);
+      setSuccess('Account created! Redirecting to home...');
+      setTimeout(() => router.push('/'), 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Signup failed');
-    } finally {
-      setIsLoading(false);
+      setError(registerError?.message || (err instanceof Error ? err.message : 'Signup failed'));
     }
   };
 

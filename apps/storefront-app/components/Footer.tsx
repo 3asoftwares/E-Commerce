@@ -1,56 +1,67 @@
 import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingBag, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <footer className="bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-950 text-white mt-20 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* About */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-                🛍️
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                <FontAwesomeIcon icon={faShoppingBag} />
               </div>
-              <h3 className="font-bold text-lg">ShopHub</h3>
+              <h3 className="font-extrabold text-xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-pink-300">ShopHub</h3>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Your trusted online marketplace for quality products at competitive prices. Shop with confidence.
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Your trusted online marketplace for quality products at competitive prices. Shop with confidence and style.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
             <h3 className="font-bold text-lg mb-4 text-white">Shop</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2.5 text-sm">
               <li>
                 <Link
                   href="/products"
-                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-indigo-400 transition-colors inline-flex items-center gap-2 group"
                 >
+                  <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   Products
                 </Link>
               </li>
               <li>
                 <Link
                   href="/products?featured=true"
-                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-indigo-400 transition-colors inline-flex items-center gap-2 group"
                 >
+                  <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   Featured Items
                 </Link>
               </li>
               <li>
                 <Link
                   href="/products?discount=true"
-                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-indigo-400 transition-colors inline-flex items-center gap-2 group"
                 >
+                  <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   Deals
                 </Link>
               </li>
               <li>
                 <Link
                   href="/about"
-                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-indigo-400 transition-colors inline-flex items-center gap-2 group"
                 >
+                  <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   About Us
                 </Link>
               </li>
@@ -60,36 +71,40 @@ export default function Footer() {
           {/* Customer Service */}
           <div>
             <h3 className="font-bold text-lg mb-4 text-white">Support</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2.5 text-sm">
               <li>
                 <Link
                   href="/contact"
-                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-purple-400 transition-colors inline-flex items-center gap-2 group"
                 >
+                  <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   Contact Us
                 </Link>
               </li>
               <li>
                 <Link
                   href="/shipping"
-                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-purple-400 transition-colors inline-flex items-center gap-2 group"
                 >
+                  <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   Shipping Info
                 </Link>
               </li>
               <li>
                 <Link
                   href="/returns"
-                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-purple-400 transition-colors inline-flex items-center gap-2 group"
                 >
+                  <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   Returns & Refunds
                 </Link>
               </li>
               <li>
                 <Link
                   href="/faq"
-                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-purple-400 transition-colors inline-flex items-center gap-2 group"
                 >
+                  <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   FAQ
                 </Link>
               </li>

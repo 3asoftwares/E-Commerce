@@ -9,15 +9,22 @@ export const getAllOrders = async (req: Request, res: Response): Promise<void> =
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
+    const customerId = req.query.customerId as string;
     const skip = (page - 1) * limit;
 
+    // Build query filter
+    const query: any = {};
+    if (customerId) {
+      query.customerId = customerId;
+    }
+
     const [orders, total] = await Promise.all([
-      Order.find()
+      Order.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .lean(),
-      Order.countDocuments(),
+      Order.countDocuments(query),
     ]);
 
     res.status(200).json({

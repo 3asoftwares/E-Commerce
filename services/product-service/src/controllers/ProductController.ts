@@ -23,10 +23,11 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
 
     const skip = (page - 1) * limit;
 
-    // Try to get from cache
+    // Try to get from cache (only for default sorting and no filters)
     const cacheKey = CacheKeys.products(page, limit);
     const cached = await CacheService.get(cacheKey);
-    if (cached && !search && !category && !minPrice && !maxPrice) {
+    const hasCustomSort = req.query.sortBy || req.query.sortOrder;
+    if (cached && !search && !category && !minPrice && !maxPrice && !hasCustomSort) {
       res.status(200).json({
         success: true,
         data: cached,
@@ -39,10 +40,15 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
     const query: any = { isActive: true };
 
     if (search) {
-      query.$text = { $search: search };
+      // Use text search if index exists, otherwise use regex
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { tags: { $in: [new RegExp(search, 'i')] } }
+      ];
     }
 
-    if (category) {
+    if (category && category !== 'All') {
       query.category = category;
     }
 

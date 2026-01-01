@@ -1,8 +1,3 @@
-/**
- * GraphQL Queries Index
- * Exports all GraphQL queries organized by service
- */
-
 // Dashboard Queries
 export * from './dashboard.queries';
 

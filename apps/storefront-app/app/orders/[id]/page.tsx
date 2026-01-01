@@ -1,9 +1,9 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { apiService } from '@/lib/api/service';
+import { useOrder } from '@/lib/hooks';
 import { Button } from '@e-commerce/ui-library';
+import { formatPrice } from '@/lib/utils/currency';
 
 interface OrderDetail {
   id: string;
@@ -50,10 +50,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
   const { id } = params;
   const router = useRouter();
 
-  const { data: order, isLoading, error } = useQuery<OrderDetail>({
-    queryKey: ['order', id],
-    queryFn: () => apiService.getOrderById(id),
-  });
+  const { data: order, isLoading, error } = useOrder(id);
 
   if (isLoading) {
     return (
@@ -177,10 +174,10 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
                     <div className="text-right">
                       <p className="text-lg font-semibold text-gray-900">
-                        ${item.total.toFixed(2)}
+                        {formatPrice(item.total)}
                       </p>
                       <p className="text-sm text-gray-600">
-                        ${item.price.toFixed(2)} each
+                        {formatPrice(item.price)} each
                       </p>
                     </div>
                   </div>
@@ -212,22 +209,22 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
               <div className="space-y-3 mb-6 pb-6 border-b">
                 <div className="flex justify-between text-gray-700">
                   <span>Subtotal</span>
-                  <span>${order.subtotal.toFixed(2)}</span>
+                  <span>{formatPrice(order.subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-gray-700">
                   <span>Shipping</span>
-                  <span>${order.shipping.toFixed(2)}</span>
+                  <span>{formatPrice(order.shipping)}</span>
                 </div>
                 <div className="flex justify-between text-gray-700">
                   <span>Tax</span>
-                  <span>${order.tax.toFixed(2)}</span>
+                  <span>{formatPrice(order.tax)}</span>
                 </div>
               </div>
 
               <div className="flex justify-between items-baseline mb-6">
                 <span className="font-semibold text-gray-700">Total</span>
                 <span className="text-2xl font-bold text-gray-900">
-                  ${order.total.toFixed(2)}
+                  {formatPrice(order.total)}
                 </span>
               </div>
 

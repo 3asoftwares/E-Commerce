@@ -4,8 +4,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
 import { useState, useEffect } from 'react';
+import { ToastProvider } from '@/lib/hooks/useToast';
+import { useInitializeAuth } from '@/lib/hooks/useInitializeAuth';
 
 function AuthLoader({ children }: { children: React.ReactNode }) {
+  useInitializeAuth(); // Initialize user profile from storage
+  
   useEffect(() => {
     // Extract auth data from query parameters and store in localStorage
     if (typeof window !== 'undefined') {
@@ -45,7 +49,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
-        <AuthLoader>{children}</AuthLoader>
+        <ToastProvider>
+          <AuthLoader>{children}</AuthLoader>
+        </ToastProvider>
       </RecoilRoot>
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>

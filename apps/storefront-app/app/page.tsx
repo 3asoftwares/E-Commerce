@@ -1,16 +1,28 @@
 'use client';
 
 import Link from 'next/link';
-import HeaderWrapper from '../components/HeaderWrapper';
-import FooterWrapper from '../components/FooterWrapper';
-import { useFeaturedProducts } from '../lib/api/queries';
+
 import { useCartStore } from '../store/cartStore';
+import { useProducts } from '@/lib/hooks';
+import { Button } from '@e-commerce/ui-library';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingBag, faStar, faFire } from '@fortawesome/free-solid-svg-icons';
+import { ProductSlider } from '@/components/ProductSlider';
+import { formatPrice } from '@/lib/utils/currency';
 
 export default function HomePage() {
-  const { data, isLoading } = useFeaturedProducts();
-  const { addItem } = useCartStore();
-
-  const featuredProducts = data?.featuredProducts || [];
+  const { addItem, recentlyViewed } = useCartStore();
+  
+  // Fetch featured products (first 8 products)
+  const { data: productsData, isLoading } = useProducts(1, 8);
+  const featuredProducts = productsData?.products || [];
+  
+  // Fetch new arrivals (most recent products)
+  const { data: newArrivalsData, isLoading: isLoadingNew } = useProducts(1, 8, {
+    sortBy: 'createdAt',
+    sortOrder: 'desc'
+  });
+  const newArrivals = newArrivalsData?.products || [];
 
   const handleAddToCart = (product: any) => {
     addItem({
@@ -24,138 +36,297 @@ export default function HomePage() {
 
   return (
     <>
-      <HeaderWrapper />
       <main>
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 text-white py-32">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white py-28 overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                  Welcome to ShopHub
+                <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold mb-6 border border-white/30">
+                  ✨ New Year Sale - Up to 50% Off
+                </div>
+                <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+                  Welcome to
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-pink-200">
+                    ShopHub
+                  </span>
                 </h1>
-                <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-                  Discover amazing products at unbeatable prices. Fast shipping, secure checkout, and 30-day returns.
+                <p className="text-xl text-purple-100 mb-8 leading-relaxed max-w-xl">
+                  Discover amazing products at unbeatable prices. Fast shipping, secure checkout,
+                  and 30-day hassle-free returns.
                 </p>
                 <div className="flex gap-4 flex-wrap">
                   <Link
                     href="/products"
-                    className="px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:shadow-xl hover:shadow-blue-400/50 transition-all transform hover:scale-105"
+                    className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl hover:shadow-2xl hover:shadow-white/20 transition-all transform hover:scale-105 hover:-translate-y-1"
                   >
                     Shop Now →
                   </Link>
                   <Link
                     href="/products?featured=true"
-                    className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-all"
+                    className="px-8 py-4 border-2 border-white/80 text-white font-bold rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all"
                   >
                     View Featured
                   </Link>
                 </div>
               </div>
-              <div className="hidden md:block">
-                <div className="text-9xl">🛍️</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Trust Badges Section */}
-        <section className="bg-gradient-to-r from-slate-50 to-slate-100 py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl mb-3">🚚</div>
-                <h3 className="font-semibold text-gray-900 mb-1">Free Shipping</h3>
-                <p className="text-sm text-gray-600">On orders over $50</p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl mb-3">🔒</div>
-                <h3 className="font-semibold text-gray-900 mb-1">Secure Payment</h3>
-                <p className="text-sm text-gray-600">100% secure transactions</p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl mb-3">↩️</div>
-                <h3 className="font-semibold text-gray-900 mb-1">Easy Returns</h3>
-                <p className="text-sm text-gray-600">30-day return policy</p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl mb-3">💬</div>
-                <h3 className="font-semibold text-gray-900 mb-1">24/7 Support</h3>
-                <p className="text-sm text-gray-600">Dedicated customer service</p>
+              <div className="hidden md:flex justify-center items-center">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-3xl blur-2xl opacity-50"></div>
+                  <div className="relative text-white transform hover:scale-110 transition-transform">
+                    <FontAwesomeIcon icon={faShoppingBag} className="w-32 h-32" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Featured Products */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-3">Featured Products</h2>
-            <p className="text-lg text-gray-600">Handpicked items just for you</p>
+        <section className="bg-gradient-to-br from-white via-indigo-50/30 to-purple-50/30 py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <div className="inline-block px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold mb-4">
+              <FontAwesomeIcon icon={faFire} className="mr-2" />
+              Trending Now
+            </div>
+            <h2 className="text-5xl font-extrabold text-gray-900 mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600">
+              Featured Products
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Handpicked items curated just for you. Premium quality at the best prices.
+            </p>
           </div>
 
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="rounded-lg overflow-hidden bg-white shadow-md animate-pulse">
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-lg overflow-hidden bg-white shadow-md animate-pulse"
+                >
                   <div className="h-48 bg-gray-200"></div>
                   <div className="p-4">
-                    <div className="h-4 bg-gray-200 mb-3 rounded"></div>
-                    <div className="h-6 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-20"></div>
                   </div>
                 </div>
               ))}
             </div>
+          ) : featuredProducts.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <p>No products available at the moment.</p>
+            </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredProducts.slice(0, 8).map((product: any) => (
+              <ProductSlider itemsPerView={4} autoplay={true} autoplayDelay={5000}>
+                {featuredProducts.map((product: any) => (
                   <div
                     key={product.id}
-                    className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:scale-105 group"
+                    className="rounded-2xl overflow-hidden bg-white border border-gray-200 hover:border-indigo-300 shadow-lg hover:shadow-2xl transition-all duration-300 group transform hover:-translate-y-2"
                   >
-                    {/* Product Image */}
-                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-blue-100 transition-colors">
-                      <div className="text-6xl">📦</div>
+                    <div className="relative h-56 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                      <img
+                        src={product.imageUrl || '/placeholder.png'}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const parent = e.currentTarget.parentElement;
+                          if (parent && !parent.querySelector('.fallback-icon')) {
+                            const fallback = document.createElement('div');
+                            fallback.className =
+                              'fallback-icon absolute inset-0 flex items-center justify-center text-6xl text-gray-400';
+                            fallback.textContent = '📦';
+                            parent.appendChild(fallback);
+                          }
+                        }}
+                      />
+                      {product.stock === 0 && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <span className="text-white font-semibold">Out of Stock</span>
+                        </div>
+                      )}
                     </div>
-
-                    {/* Product Info */}
-                    <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm group-hover:text-blue-600 transition-colors">
+                    <div className="p-5">
+                      <Link
+                        href={`/products/${product.id}`}
+                        className="font-bold text-gray-900 hover:text-indigo-600 line-clamp-2 block mb-3 text-lg transition-colors"
+                      >
                         {product.name}
-                      </h3>
-                      <p className="text-2xl font-bold text-blue-600 mb-4">
-                        ${product.price.toFixed(2)}
-                      </p>
-                      <div className="flex gap-2">
-                        <Link
-                          href={`/products/${product.id}`}
-                          className="flex-1 px-3 py-2 text-center text-sm font-medium text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
-                        >
-                          View
-                        </Link>
-                        <button
-                          onClick={() => handleAddToCart(product)}
-                          className="flex-1 px-3 py-2 text-center text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                          Add
-                        </button>
+                      </Link>
+
+                      {/* Rating */}
+                      <div className="flex items-center mb-3">
+                        <div className="flex text-yellow-500 text-base">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i}>{i < Math.floor(product.rating || 0) ? '★' : '☆'}</span>
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-600 ml-2 font-medium">
+                          ({product.reviewCount || 0})
+                        </span>
                       </div>
+
+                      <p className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600 mb-4">
+                        {formatPrice(product.price)}
+                      </p>
+
+                      {product.stock === 0 ? (
+                        <div className="text-center text-sm text-red-600 font-semibold py-2">
+                          Out of Stock
+                        </div>
+                      ) : (
+                        <Button onClick={() => handleAddToCart(product)} className="w-full text-sm">
+                          Add to Cart
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}
-              </div>
+              </ProductSlider>
+
               <div className="text-center mt-12">
                 <Link
                   href="/products"
-                  className="inline-block px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all transform hover:scale-105"
+                  className="inline-block px-10 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold rounded-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105 hover:-translate-y-1"
                 >
                   Explore All Products →
                 </Link>
               </div>
             </>
           )}
+          </div>
         </section>
+
+        {/* New Arrivals */}
+        <section className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-12 text-center">
+              <div className="inline-block px-4 py-2 bg-pink-100 text-pink-700 rounded-full text-sm font-semibold mb-4">
+                <FontAwesomeIcon icon={faStar} className="mr-2" />
+                Just Launched
+              </div>
+              <h2 className="text-5xl font-extrabold text-gray-900 mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-indigo-600">
+                New Arrivals
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Check out our latest products fresh from the collection
+              </p>
+            </div>
+
+            {isLoadingNew ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="rounded-lg overflow-hidden bg-white shadow animate-pulse">
+                    <div className="h-32 bg-gray-200"></div>
+                    <div className="p-3">
+                      <div className="h-3 bg-gray-200 rounded mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-16"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : newArrivals.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <p>No new arrivals at the moment.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                {newArrivals
+                  .slice(0, 6)
+                  .map((product: any) => (
+                  <Link
+                    key={product.id}
+                    href={`/products/${product.id}`}
+                    className="rounded-lg overflow-hidden bg-white shadow hover:shadow-lg transition-shadow group"
+                  >
+                    <div className="relative h-32 bg-gray-100 overflow-hidden">
+                      <img
+                        src={product.imageUrl || '/placeholder.png'}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const parent = e.currentTarget.parentElement;
+                          if (parent && !parent.querySelector('.fallback-icon')) {
+                            const fallback = document.createElement('div');
+                            fallback.className =
+                              'fallback-icon absolute inset-0 flex items-center justify-center text-4xl text-gray-400';
+                            fallback.textContent = '📦';
+                            parent.appendChild(fallback);
+                          }
+                        }}
+                      />
+                      {product.stock === 0 && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <span className="text-white text-xs font-semibold">Out of Stock</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-3">
+                      <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1 group-hover:text-blue-600">
+                        {product.name}
+                      </h3>
+                      <p className="text-lg font-bold text-blue-600">{formatPrice(product.price)}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Recently Viewed */}
+        {recentlyViewed.length > 0 && (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div className="mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-3">Recently Viewed</h2>
+              <p className="text-lg text-gray-600">Continue where you left off</p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+              {recentlyViewed.slice(0, 6).map((item) => (
+                <Link
+                  key={item.productId}
+                  href={`/products/${item.productId}`}
+                  className="rounded-lg overflow-hidden bg-white shadow hover:shadow-lg transition-shadow group"
+                >
+                  <div className="relative h-32 bg-gray-100 overflow-hidden">
+                    <img
+                      src={item.image || '/placeholder.png'}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const parent = e.currentTarget.parentElement;
+                        if (parent && !parent.querySelector('.fallback-icon')) {
+                          const fallback = document.createElement('div');
+                          fallback.className =
+                            'fallback-icon absolute inset-0 flex items-center justify-center text-4xl text-gray-400';
+                          fallback.textContent = '📦';
+                          parent.appendChild(fallback);
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="p-3">
+                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1 group-hover:text-blue-600">
+                      {item.name}
+                    </h3>
+                    <p className="text-lg font-bold text-blue-600">{formatPrice(item.price)}</p>
+                    <p className="text-xs text-gray-500 mt-1">{item.category}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Categories */}
         <section className="bg-white border-t border-gray-200 py-20">
@@ -191,15 +362,43 @@ export default function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold mb-4">Join Our Community</h2>
             <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-              Get exclusive deals, early access to new products, and special offers delivered to your inbox.
+              Get exclusive deals, early access to new products, and special offers delivered to
+              your inbox.
             </p>
             <button className="px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:shadow-lg transition-all">
               Subscribe Now
             </button>
           </div>
         </section>
+
+        {/* Trust Badges Section */}
+        <section className="bg-gradient-to-r from-slate-50 to-slate-100 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div className="text-center">
+                <div className="text-4xl mb-3">🚚</div>
+                <h3 className="font-semibold text-gray-900 mb-1">Free Shipping</h3>
+                <p className="text-sm text-gray-600">On orders over ₹500</p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-3">🔒</div>
+                <h3 className="font-semibold text-gray-900 mb-1">Secure Payment</h3>
+                <p className="text-sm text-gray-600">100% secure transactions</p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-3">↩️</div>
+                <h3 className="font-semibold text-gray-900 mb-1">Easy Returns</h3>
+                <p className="text-sm text-gray-600">30-day return policy</p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-3">💬</div>
+                <h3 className="font-semibold text-gray-900 mb-1">24/7 Support</h3>
+                <p className="text-sm text-gray-600">Dedicated customer service</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
-      <FooterWrapper />
     </>
   );
 }

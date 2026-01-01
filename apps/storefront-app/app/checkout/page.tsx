@@ -3,8 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
-import { apiService } from '@/lib/api/service';
+import { useCreateOrder } from '@/lib/hooks';
 import { Button, Input } from '@e-commerce/ui-library';
+import { useToast } from '@/lib/hooks/useToast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart, faLock, faShippingFast, faCreditCard } from '@fortawesome/free-solid-svg-icons';
+import { formatPrice } from '@/lib/utils/currency';
 
 interface Address {
   id: string;
@@ -19,7 +23,8 @@ interface Address {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, userProfile } = useCartStore();
-  const [loading, setLoading] = useState(false);
+  const { mutateAsync: createOrder, isPending: loading } = useCreateOrder();
+  const { showToast } = useToast();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState('standard');
@@ -44,23 +49,21 @@ export default function CheckoutPage() {
   const handleSubmitOrder = async () => {
     // Validation
     if (!userProfile) {
-      alert('Please log in to place an order');
+      showToast('Please log in to place an order', 'error');
       router.push('/login');
       return;
     }
 
     const shippingAddressId = useNewAddress ? null : selectedAddressId;
     if (!shippingAddressId && !useNewAddress) {
-      alert('Please select or add a shipping address');
+      showToast('Please select or add a shipping address', 'warning');
       return;
     }
 
     if (!paymentMethod) {
-      alert('Please select a payment method');
+      showToast('Please select a payment method', 'warning');
       return;
     }
-
-    setLoading(true);
 
     try {
       const orderData = {
@@ -68,9 +71,10 @@ export default function CheckoutPage() {
         customerEmail: userProfile.email,
         items: items.map((item:any) => ({
           productId: item.productId,
+          productName: item.name,
           quantity: item.quantity,
           price: item.price,
-          sellerId: item.sellerId,
+          subtotal: item.price * item.quantity,
         })),
         subtotal,
         tax,
@@ -78,47 +82,53 @@ export default function CheckoutPage() {
         total,
         shippingAddress: useNewAddress
           ? newAddress
-          : userProfile.addresses?.find((a: Address) => a.id === shippingAddressId),
-        deliveryMethod,
+          : (userProfile.addresses?.find((a: Address) => a.id === shippingAddressId) || {
+              street: '',
+              city: '',
+              state: '',
+              zip: '',
+              country: ''
+            }),
         paymentMethod,
         notes: orderNotes,
       };
 
-      const response = await apiService.createOrder(orderData);
-
-      if (response.success) {
-        // TODO: Handle payment processing
-        // Redirect to payment or order confirmation
-        router.push(`/orders/${response.orderId}`);
-      } else {
-        alert('Failed to create order. Please try again.');
-      }
+      const order = await createOrder(orderData);
+      showToast('Order placed successfully!', 'success');
+      
+      // Redirect to order confirmation
+      router.push(`/orders/${order.id}`);
     } catch (error) {
       console.error('Order creation failed:', error);
-      alert('Error creating order. Please try again.');
-    } finally {
-      setLoading(false);
+      showToast('Error creating order. Please try again.', 'error');
     }
   };
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white rounded-lg shadow-md p-8 max-w-md text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Cart is Empty</h1>
-          <p className="text-gray-600 mb-6">Add items to your cart before checking out.</p>
-          <Button onClick={() => router.push('/products')}>Continue Shopping</Button>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-indigo-50/30 to-purple-50/30 flex items-center justify-center">
+        <div className="bg-white rounded-2xl shadow-2xl p-12 max-w-md text-center border border-gray-200">
+          <div className="inline-block p-6 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full mb-6">
+            <FontAwesomeIcon icon={faShoppingCart} className="w-16 h-16 text-indigo-600" />
+          </div>
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-3">Cart is Empty</h1>
+          <p className="text-gray-600 mb-8 text-lg">Add items to your cart before checking out.</p>
+          <Button onClick={() => router.push('/products')} className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold hover:shadow-2xl">Continue Shopping</Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-indigo-50/30 to-purple-50/30">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
+      <div className="bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600">Secure Checkout</h1>
+          <p className="text-gray-600 mt-2 flex items-center gap-2">
+            <FontAwesomeIcon icon={faLock} className="text-green-600" />
+            SSL Encrypted • Safe & Secure
+          </p>
         </div>
       </div>
 
@@ -127,17 +137,21 @@ export default function CheckoutPage() {
           {/* Checkout Form */}
           <div className="lg:col-span-2 space-y-6">
             {/* Shipping Address */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Shipping Address</h2>
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+                <FontAwesomeIcon icon={faShippingFast} className="text-indigo-600" />
+                Shipping Address
+              </h2>
 
               {userProfile?.addresses && userProfile.addresses.length > 0 && !useNewAddress && (
                 <div className="space-y-3 mb-4">
                   {userProfile.addresses.map((address: Address) => (
                     <label
                       key={address.id}
-                      className="flex items-start p-4 border-2 rounded-lg cursor-pointer transition hover:bg-blue-50"
+                      className="flex items-start p-5 border-2 rounded-xl cursor-pointer transition-all hover:bg-indigo-50 hover:scale-[1.02]"
                       style={{
-                        borderColor: selectedAddressId === address.id ? '#3b82f6' : '#e5e7eb',
+                        borderColor: selectedAddressId === address.id ? 'rgb(99, 102, 241)' : '#e5e7eb',
+                        backgroundColor: selectedAddressId === address.id ? 'rgb(238, 242, 255)' : 'white',
                       }}
                     >
                       <input
@@ -146,7 +160,7 @@ export default function CheckoutPage() {
                         value={address.id}
                         checked={selectedAddressId === address.id}
                         onChange={() => setSelectedAddressId(address.id)}
-                        className="mt-1"
+                        className="mt-1 w-5 h-5 text-indigo-600"
                       />
                       <div className="ml-3">
                         <p className="font-medium text-gray-900">
@@ -232,7 +246,7 @@ export default function CheckoutPage() {
                     <p className="text-sm text-gray-600">5-7 business days</p>
                   </div>
                   <span className="ml-auto font-semibold text-gray-900">
-                    {subtotal > 100 ? 'FREE' : '$10.00'}
+                    {subtotal > 100 ? 'FREE' : '₹100'}
                   </span>
                 </label>
                 <label className="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
@@ -247,7 +261,7 @@ export default function CheckoutPage() {
                     <p className="font-medium text-gray-900">Express Delivery</p>
                     <p className="text-sm text-gray-600">2-3 business days</p>
                   </div>
-                  <span className="ml-auto font-semibold text-gray-900">$25.00</span>
+                  <span className="ml-auto font-semibold text-gray-900">₹250</span>
                 </label>
               </div>
             </div>
@@ -308,7 +322,7 @@ export default function CheckoutPage() {
                     <span>
                       {item.name} x {item.quantity}
                     </span>
-                    <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-medium">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
@@ -317,26 +331,26 @@ export default function CheckoutPage() {
               <div className="space-y-3 mb-6 pb-6 border-b text-sm">
                 <div className="flex justify-between text-gray-700">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-gray-700">
                   <span>Shipping</span>
                   {shipping === 0 ? (
                     <span className="text-green-600 font-semibold">Free</span>
                   ) : (
-                    <span>${shipping.toFixed(2)}</span>
+                    <span>{formatPrice(shipping)}</span>
                   )}
                 </div>
                 <div className="flex justify-between text-gray-700">
                   <span>Tax (8%)</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>{formatPrice(tax)}</span>
                 </div>
               </div>
 
               {/* Total */}
               <div className="flex justify-between items-baseline mb-6">
                 <span className="font-semibold text-gray-700">Total</span>
-                <span className="text-3xl font-bold text-gray-900">${total.toFixed(2)}</span>
+                <span className="text-3xl font-bold text-gray-900">{formatPrice(total)}</span>
               </div>
 
               {/* Place Order Button */}

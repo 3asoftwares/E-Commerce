@@ -1,30 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useRef } from 'react';
 import { useCartStore } from '@/store/cartStore';
-import { apiService } from '@/lib/api/service';
-import { Button, Input } from '@e-commerce/ui-library';
+import { useProducts } from '@/lib/hooks';
+import { Button } from '@e-commerce/ui-library';
+import type { ProductGraphQL } from '@e-commerce/types';
+import { useToast } from '@/lib/hooks/useToast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDollarSign, faFilter, faTag, faRedo } from '@fortawesome/free-solid-svg-icons';
+import { useSearchParams } from 'next/navigation';
+import { formatPrice } from '@/lib/utils/currency';
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image?: string;
-  category: string;
-  stock: number;
-  rating: number;
-  reviews: number;
-  sellerId: string;
-}
-
-interface ProductsResponse {
-  products: Product[];
-  total: number;
-  page: number;
-  pages: number;
-}
+type Product = ProductGraphQL;
 
 const CATEGORIES = [
   'All',
@@ -46,35 +33,33 @@ const SORT_OPTIONS = [
 ];
 
 export default function ProductsPage() {
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [sortBy, setSortBy] = useState('newest');
   const [page, setPage] = useState(1);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [hasMore, setHasMore] = useState(true);
   const { addItem, isInWishlist, addToWishlist, removeFromWishlist } = useCartStore();
+  const { showToast } = useToast();
+  const observerTarget = useRef<HTMLDivElement>(null);
 
-  // Fetch products with filters
-  const { data, isLoading, error } = useQuery<ProductsResponse>({
-    queryKey: ['products', category, priceRange, search, sortBy, page],
-    queryFn: async () => {
-      const filters = {
-        ...(search && { search }),
-        ...(category !== 'All' && { category }),
-        ...(priceRange.min > 0 && { minPrice: priceRange.min }),
-        ...(priceRange.max < 1000 && { maxPrice: priceRange.max }),
-      };
+  // Read search query from URL parameters
+  useEffect(() => {
+    const searchQuery = searchParams.get('search');
+    if (searchQuery) {
+      setSearch(searchQuery);
+    }
+  }, [searchParams]);
 
-      const response = await apiService.getProducts(page, 20, filters);
-      
-      // Apply sorting on client side as well for consistency
-      const products = Array.isArray(response.products) ? response.products : [];
-      const sorted = sortProducts(products, sortBy);
-      
-      return { ...response, products: sorted };
-    },
-  });
-
-  const products = data?.products || [];
+  // Fetch products with filters using GraphQL
+  const filters = {
+    ...(search && { search }),
+    ...(category !== 'All' && { category }),
+    ...(priceRange.min > 0 && { minPrice: priceRange.min }),
+    ...(priceRange.max < 1000 && { maxPrice: priceRange.max }),
+  };
 
   const sortProducts = (items: Product[], sort: string): Product[] => {
     const sorted = [...items];
@@ -86,58 +71,98 @@ export default function ProductsPage() {
       case 'rating':
         return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       case 'popular':
-        return sorted.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
+        return sorted.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
       case 'newest':
       default:
         return sorted;
     }
   };
 
-  const handleAddToCart = (product: Product) => {
+  const { data, isLoading, error } = useProducts(page, 12, filters);
+
+  // Update products when new data arrives
+  useEffect(() => {
+    if (data?.products) {
+      if (page === 1) {
+        setAllProducts(data.products);
+      } else {
+        setAllProducts(prev => [...prev, ...data.products]);
+      }
+      setHasMore(page < (data.pagination.pages || 1));
+    }
+  }, [data, page]);
+
+  // Reset when filters change
+  useEffect(() => {
+    setPage(1);
+    setAllProducts([]);
+    setHasMore(true);
+  }, [search, category, priceRange.min, priceRange.max]);
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !isLoading) {
+          setPage(prev => prev + 1);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasMore, isLoading]);
+
+  const sortedProducts = sortProducts(allProducts, sortBy);
+
+  const handleAddToCart = (product: any) => {
     addItem({
       id: product.id,
       name: product.name,
       price: product.price,
       quantity: 1,
-      image: product.image || '/placeholder.png',
+      image: product.imageUrl || '/placeholder.png',
       productId: product.id,
       sellerId: product.sellerId,
     });
+    showToast(`${product.name} added to cart!`, 'success');
   };
 
-  const handleWishlistToggle = (product: Product) => {
+  const handleWishlistToggle = (product: any) => {
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id);
+      showToast('Removed from wishlist', 'info');
     } else {
       addToWishlist({
         productId: product.id,
         name: product.name,
         price: product.price,
-        image: product.image || '/placeholder.png',
+        image: product.imageUrl || '/placeholder.png',
         addedAt: Date.now(),
       });
+      showToast('Added to wishlist', 'success');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-indigo-50/30 to-purple-50/30">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Products</h1>
-
-          {/* Search Bar */}
-          <div className="mb-4">
-            <Input
-              type="text"
-              placeholder="Search products..."
-              value={search}
-              onChange={(e: any) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="w-full"
-            />
+      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600">Discover Products</h1>
+            <div className="px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full text-sm font-bold text-indigo-700">
+              {data?.pagination.total || 0} Products
+            </div>
           </div>
         </div>
       </div>
@@ -146,19 +171,25 @@ export default function ProductsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6 sticky top-24">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
+            <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-32 border border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <FontAwesomeIcon icon={faFilter} className="text-indigo-600" />
+                Filters
+              </h2>
 
               {/* Category Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                  <FontAwesomeIcon icon={faTag} className="text-gray-500" />
+                  Category
+                </label>
                 <select
                   value={category}
                   onChange={(e: any) => {
                     setCategory(e.target.value);
                     setPage(1);
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 font-medium transition-all"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
@@ -170,7 +201,10 @@ export default function ProductsPage() {
 
               {/* Price Range Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                  <FontAwesomeIcon icon={faDollarSign} className="text-gray-500" />
+                  Price Range
+                </label>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="number"
@@ -229,9 +263,9 @@ export default function ProductsPage() {
                   setSortBy('newest');
                   setPage(1);
                 }}
-                className="w-full"
-                variant="outline"
+                className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold hover:from-red-600 hover:to-pink-600"
               >
+                <FontAwesomeIcon icon={faRedo} className="mr-2" />
                 Reset Filters
               </Button>
             </div>
@@ -247,24 +281,36 @@ export default function ProductsPage() {
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
                 Error loading products. Please try again.
               </div>
-            ) : products.length === 0 ? (
+            ) : sortedProducts.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-lg">No products found.</p>
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                  {products.map((product) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
+                  {sortedProducts.map((product) => (
                     <div
                       key={product.id}
-                      className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
+                      className="bg-white rounded-2xl border border-gray-200 hover:border-indigo-300 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group transform hover:-translate-y-2"
                     >
                       {/* Product Image */}
-                      <div className="relative overflow-hidden bg-gray-200 h-48">
+                      <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 h-56">
                         <img
-                          src={product.image || '/placeholder.png'}
+                          src={product.imageUrl || '/placeholder.png'}
                           alt={product.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const parent = e.currentTarget.parentElement;
+                            if (parent && !parent.querySelector('.fallback-icon')) {
+                              const fallback = document.createElement('div');
+                              fallback.className = 'fallback-icon absolute inset-0 flex items-center justify-center text-gray-400';
+                              const icon = document.createElement('i');
+                              icon.className = 'fas fa-box fa-3x';
+                              fallback.appendChild(icon);
+                              parent.appendChild(fallback);
+                            }
+                          }}
                         />
                         {product.stock === 0 && (
                           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -290,13 +336,13 @@ export default function ProductsPage() {
                             ))}
                           </div>
                           <span className="text-sm text-gray-600 ml-2">
-                            ({product.reviews || 0})
+                            ({product.reviewCount || 0})
                           </span>
                         </div>
 
                         {/* Price */}
                         <div className="text-2xl font-bold text-gray-900 mb-4">
-                          ${product.price.toFixed(2)}
+                          {formatPrice(product.price)}
                         </div>
 
                         {/* Actions */}
@@ -324,34 +370,20 @@ export default function ProductsPage() {
                   ))}
                 </div>
 
-                {/* Pagination */}
-                {data && data.pages > 1 && (
-                  <div className="flex justify-center gap-2 mt-8">
-                    <Button
-                      onClick={() => setPage(Math.max(1, page - 1))}
-                      disabled={page === 1}
-                      variant="outline"
-                    >
-                      Previous
-                    </Button>
-                    {[...Array(data.pages)].map((_, i) => (
-                      <Button
-                        key={i + 1}
-                        onClick={() => setPage(i + 1)}
-                        variant={page === i + 1 ? 'primary' : 'outline'}
-                      >
-                        {i + 1}
-                      </Button>
-                    ))}
-                    <Button
-                      onClick={() => setPage(Math.min(data.pages, page + 1))}
-                      disabled={page === data.pages}
-                      variant="outline"
-                    >
-                      Next
-                    </Button>
-                  </div>
-                )}
+                {/* Infinite Scroll Trigger */}
+                <div ref={observerTarget} className="py-8 text-center">
+                  {isLoading && (
+                    <div className="flex justify-center items-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                      <span className="ml-3 text-gray-600">Loading more products...</span>
+                    </div>
+                  )}
+                  {!hasMore && allProducts.length > 0 && (
+                    <p className="text-gray-500 font-medium">
+                      You've reached the end! ({allProducts.length} products shown)
+                    </p>
+                  )}
+                </div>
               </>
             )}
           </div>

@@ -3,38 +3,36 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useLogin } from '@/lib/hooks/useAuth';
+import { useCartStore } from '@/store/cartStore';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login, isLoading, error: loginError } = useLogin();
+  const { setUserProfile } = useCartStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3010/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) throw new Error('Login failed');
-
-      const data = await response.json();
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
+      const result = await login({ email, password });
+      // Save user profile to cart store
+      if (result?.user) {
+        setUserProfile({
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.name || result.user.email.split('@')[0],
+          addresses: [],
+        });
+      }
+      // Redirect to home on success
       router.push('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
-    } finally {
-      setIsLoading(false);
+      setError(loginError?.message || (err instanceof Error ? err.message : 'Login failed'));
     }
   };
 

@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { Button, Input } from '@e-commerce/ui-library';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faMapMarkerAlt, faHeart, faEdit, faTrash, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 interface Address {
   id: string;
@@ -105,12 +107,19 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
-          <p className="text-gray-600 mt-1">Welcome, {userProfile.name}</p>
+      <div className="bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl shadow-lg">
+              <FontAwesomeIcon icon={faUser} className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">My Account</h1>
+              <p className="text-gray-700 mt-1 font-medium">Welcome back, {userProfile.name}</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -118,37 +127,40 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden sticky top-24">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden sticky top-24 border border-gray-200">
               <nav className="flex flex-col">
                 <button
                   onClick={() => setActiveTab('profile')}
-                  className={`px-6 py-4 text-left font-medium transition ${
+                  className={`px-6 py-4 text-left font-semibold transition flex items-center gap-3 ${
                     activeTab === 'profile'
-                      ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
+                      ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 border-l-4 border-indigo-600'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  👤 Profile
+                  <FontAwesomeIcon icon={faUser} className="w-5 h-5" />
+                  Profile
                 </button>
                 <button
                   onClick={() => setActiveTab('addresses')}
-                  className={`px-6 py-4 text-left font-medium transition ${
+                  className={`px-6 py-4 text-left font-semibold transition flex items-center gap-3 ${
                     activeTab === 'addresses'
-                      ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
+                      ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 border-l-4 border-indigo-600'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  📍 Addresses
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="w-5 h-5" />
+                  Addresses
                 </button>
                 <button
                   onClick={() => setActiveTab('wishlist')}
-                  className={`px-6 py-4 text-left font-medium transition ${
+                  className={`px-6 py-4 text-left font-semibold transition flex items-center gap-3 ${
                     activeTab === 'wishlist'
-                      ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
+                      ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 border-l-4 border-indigo-600'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  ❤️ Wishlist
+                  <FontAwesomeIcon icon={faHeart} className="w-5 h-5" />
+                  Wishlist
                 </button>
               </nav>
             </div>
@@ -158,13 +170,17 @@ export default function ProfilePage() {
           <div className="lg:col-span-3">
             {/* Profile Tab */}
             {activeTab === 'profile' && (
-              <div className="bg-white rounded-lg shadow-md p-8">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Profile Information</h2>
                   {!isEditing && (
-                    <Button onClick={() => setIsEditing(true)} variant="outline">
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                    >
+                      <FontAwesomeIcon icon={faEdit} className="w-4 h-4" />
                       Edit Profile
-                    </Button>
+                    </button>
                   )}
                 </div>
 
@@ -255,11 +271,17 @@ export default function ProfilePage() {
 
             {/* Addresses Tab */}
             {activeTab === 'addresses' && (
-              <div className="bg-white rounded-lg shadow-md p-8">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Saved Addresses</h2>
                   {!isAddingAddress && (
-                    <Button onClick={() => setIsAddingAddress(true)}>+ Add Address</Button>
+                    <button
+                      onClick={() => setIsAddingAddress(true)}
+                      className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+                    >
+                      <FontAwesomeIcon icon={faPlus} className="w-4 h-4" />
+                      Add Address
+                    </button>
                   )}
                 </div>
 
@@ -377,11 +399,19 @@ export default function ProfilePage() {
 
             {/* Wishlist Tab */}
             {activeTab === 'wishlist' && (
-              <div className="bg-white rounded-lg shadow-md p-8">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">My Wishlist</h2>
-                <div className="text-center py-12 text-gray-600">
-                  <p className="mb-4">Wishlist feature coming soon!</p>
-                  <p>View and manage your favorite products here.</p>
+                <div className="text-center py-12">
+                  <div className="inline-block p-6 bg-gradient-to-br from-pink-100 to-rose-100 rounded-full mb-6">
+                    <FontAwesomeIcon icon={faHeart} className="w-16 h-16 text-pink-600" />
+                  </div>
+                  <p className="text-gray-700 mb-4 text-lg">View and manage your favorite products</p>
+                  <button
+                    onClick={() => router.push('/wishlist')}
+                    className="px-8 py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white font-bold rounded-lg hover:shadow-xl hover:shadow-pink-500/50 transition-all transform hover:scale-105"
+                  >
+                    Go to Wishlist →
+                  </button>
                 </div>
               </div>
             )}
