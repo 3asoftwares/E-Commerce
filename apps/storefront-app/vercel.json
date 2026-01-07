@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd ../.. && yarn install && yarn workspace @e-commerce/types build && yarn workspace @e-commerce/utils build && yarn workspace @e-commerce/ui-library build && yarn workspace storefront-app build",
+  "outputDirectory": ".next",
+  "installCommand": "yarn install",
+  "framework": "nextjs",
+  "devCommand": "yarn dev",
+  "regions": ["iad1"],
+  "env": {
+    "NEXT_PUBLIC_ENV": "production"
+  }
+}

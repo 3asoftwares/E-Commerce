@@ -1,0 +1,14 @@
+{
+  "buildCommand": "cd ../.. && yarn install && yarn workspace @e-commerce/types build && yarn workspace @e-commerce/utils build && yarn workspace @e-commerce/ui-library build && yarn workspace seller-app build",
+  "outputDirectory": "dist",
+  "installCommand": "yarn install",
+  "framework": "vite",
+  "devCommand": "yarn dev",
+  "regions": ["iad1"],
+  "env": {
+    "VITE_ENV": "production"
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
