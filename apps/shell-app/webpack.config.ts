@@ -72,7 +72,6 @@ module.exports = {
       },
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
       'process.env.ADMIN_APP_URL': JSON.stringify(ADMIN_APP_URL),
       'process.env.SELLER_APP_URL': JSON.stringify(SELLER_APP_URL),
     }),

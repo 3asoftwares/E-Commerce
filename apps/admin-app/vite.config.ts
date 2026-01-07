@@ -45,4 +45,14 @@ export default defineConfig({
       'Access-Control-Allow-Origin': '*',
     },
   },
-}));
+  css: {
+    postcss: path.resolve(__dirname, 'postcss.config.js'),
+  },
+  resolve: {
+    alias: {
+      '3a-ecommerce-ui-library': path.resolve(__dirname, '../../packages/ui-library/src'),
+      '3a-ecommerce-types': path.resolve(__dirname, '../../packages/types/src'),
+      '3a-ecommerce-utils': path.resolve(__dirname, '../../packages/utils/src'),
+    },
+  },
+});

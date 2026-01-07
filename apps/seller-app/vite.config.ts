@@ -1,11 +1,11 @@
-import { defineConfig, mergeConfig } from 'vite';
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 import federation from '@originjs/vite-plugin-federation';
-import { createBaseViteConfig } from '../../packages/utils/src/config/vite.config';
+import * as path from 'path';
 
-const baseConfig = createBaseViteConfig(__dirname);
-
-export default mergeConfig(baseConfig, defineConfig({
+export default defineConfig({
   plugins: [
+    react(),
     federation({
       name: 'sellerApp',
       filename: 'remoteEntry.js',
@@ -45,4 +45,14 @@ export default mergeConfig(baseConfig, defineConfig({
       'Access-Control-Allow-Origin': '*',
     },
   },
-}));
+  css: {
+    postcss: path.resolve(__dirname, 'postcss.config.js'),
+  },
+  resolve: {
+    alias: {
+      '3a-ecommerce-ui-library': path.resolve(__dirname, '../../packages/ui-library/src'),
+      '3a-ecommerce-types': path.resolve(__dirname, '../../packages/types/src'),
+      '3a-ecommerce-utils': path.resolve(__dirname, '../../packages/utils/src'),
+    },
+  },
+});
