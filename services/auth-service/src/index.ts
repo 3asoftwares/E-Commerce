@@ -13,10 +13,14 @@ import { Logger } from '3a-ecommerce-utils/server';
 
 dotenv.config();
 
+// Check if running on Vercel (serverless environment)
+const isVercel = process.env.VERCEL === '1';
+
 // Configure logger for auth service
+// Disable file logging on Vercel since serverless has no persistent filesystem
 Logger.configure({
   enableConsole: true,
-  enableFile: process.env.ENABLE_FILE_LOGGING === 'true',
+  enableFile: !isVercel && process.env.ENABLE_FILE_LOGGING === 'true',
   logFilePath: process.env.LOG_FILE_PATH || 'logs/auth-service.log',
   logLevel: process.env.LOG_LEVEL || 'debug',
 });
@@ -99,6 +103,9 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
-startServer();
+// Only start the server if not running in a serverless environment (Vercel)
+if (process.env.VERCEL !== '1') {
+  startServer();
+}
 
 export default app;

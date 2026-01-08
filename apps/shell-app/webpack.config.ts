@@ -45,10 +45,14 @@ module.exports = {
       util: false,
       buffer: false,
       querystring: false,
+      process: false,
     },
   },
   plugins: [
     ...baseConfig.plugins,
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
     new ModuleFederationPlugin({
       name: 'shell',
       filename: 'remoteEntry.js',
