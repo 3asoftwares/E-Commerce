@@ -35,7 +35,7 @@ RUN yarn workspace @3asoftwares/utils build || true
 RUN yarn workspace @3asoftwares/types build || true
 
 # Expose ports for all backend services
-EXPOSE 3010 3011 3012 3013 3014 4000
+EXPOSE 3011 3011 3012 3013 3014 4000
 
 # Default command (can be overridden)
 CMD ["yarn", "dev:backend"]

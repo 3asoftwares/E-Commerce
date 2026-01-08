@@ -37,11 +37,11 @@ metadata:
 data:
   NODE_ENV: 'production'
   ALLOWED_ORIGINS: 'https://yourdomain.com,https://admin.yourdomain.com'
-  AUTH_SERVICE_URL: 'http://auth-service:3010'
-  PRODUCT_SERVICE_URL: 'http://product-service:3011'
-  ORDER_SERVICE_URL: 'http://order-service:3012'
-  CATEGORY_SERVICE_URL: 'http://category-service:3013'
-  COUPON_SERVICE_URL: 'http://coupon-service:3014'
+  AUTH_SERVICE_URL: 'http://auth-service:3011'
+  CATEGORY_SERVICE_URL: 'http://category-service:3012'
+  COUPON_SERVICE_URL: 'http://coupon-service:3013'
+  PRODUCT_SERVICE_URL: 'http://product-service:3014'
+  ORDER_SERVICE_URL: 'http://order-service:3015'
 
 ---
 # ============================================
@@ -69,13 +69,13 @@ spec:
           image: ghcr.io/your-org/ecommerce/backend:latest
           command: ['node', 'services/auth-service/dist/index.js']
           ports:
-            - containerPort: 3010
+            - containerPort: 3011
           envFrom:
             - configMapRef:
                 name: ecommerce-config
           env:
             - name: PORT
-              value: '3010'
+              value: '3011'
             - name: MONGODB_URI
               valueFrom:
                 secretKeyRef:
@@ -96,13 +96,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 3010
+              port: 3011
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /health
-              port: 3010
+              port: 3011
             initialDelaySeconds: 5
             periodSeconds: 5
 
@@ -116,8 +116,8 @@ spec:
   selector:
     app: auth-service
   ports:
-    - port: 3010
-      targetPort: 3010
+    - port: 3011
+      targetPort: 3011
   type: ClusterIP
 
 ---
@@ -359,7 +359,7 @@ spec:
               service:
                 name: auth-service
                 port:
-                  number: 3010
+                  number: 3011
 
 ---
 # ============================================

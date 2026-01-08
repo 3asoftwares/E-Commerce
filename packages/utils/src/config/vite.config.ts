@@ -31,11 +31,20 @@ export async function createLibraryViteConfig(rootDir: string): Promise<UserConf
     fileName: (format: string) => `ui-library.${format}.js`,
   };
   config.build.rollupOptions = config.build.rollupOptions || {};
-  config.build.rollupOptions.external = ['react', 'react-dom'];
+  config.build.rollupOptions.external = [
+    'react',
+    'react-dom',
+    '@fortawesome/fontawesome-svg-core',
+    '@fortawesome/free-solid-svg-icons',
+    '@fortawesome/react-fontawesome',
+  ];
   config.build.rollupOptions.output = {
     globals: {
       react: 'React',
       'react-dom': 'ReactDOM',
+      '@fortawesome/fontawesome-svg-core': 'FontAwesome',
+      '@fortawesome/free-solid-svg-icons': 'FontAwesomeSolid',
+      '@fortawesome/react-fontawesome': 'FontAwesomeReact',
     },
   };
 

@@ -32,7 +32,7 @@ RUN yarn install --frozen-lockfile
 COPY . .
 
 # Expose ports for services and frontend apps
-EXPOSE 3000 3001 3002 3003 3010 3011 3012 3013 3014 4000 6006
+EXPOSE 3000 3001 3002 3003 3011 3011 3012 3013 3014 4000 6006
 
 # Default command
 CMD ["yarn", "dev:all"]

@@ -22,7 +22,7 @@ yarn dev:storefront            # Storefront App (Port 3003)
 
 🔧 RUN INDIVIDUAL BACKEND SERVICES
 ----------------------------------
-yarn dev:auth              # Auth Service (Port 3010)
+yarn dev:auth              # Auth Service (Port 3011)
 yarn dev:gateway           # GraphQL Gateway (Port 4000)
 yarn dev:order             # Order Service (Port 3012)
 yarn dev:product           # Product Service (Port 3011)
@@ -62,7 +62,7 @@ GraphQL:     http://localhost:4000/graphql
 
 🔍 ACCESS BACKEND SERVICES
 --------------------------
-Auth:        http://localhost:3010
+Auth:        http://localhost:3011
 Product:     http://localhost:3011
 Order:       http://localhost:3012
 Category:    http://localhost:3013

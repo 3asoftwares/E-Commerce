@@ -75,7 +75,7 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      PORT: 3010
+      PORT: 3011
       SERVICE_NAME: auth-service
       MONGODB_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/ecommerce?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
@@ -97,7 +97,7 @@ services:
           cpus: '0.5'
           memory: 512M
     healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3010/health']
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3011/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -112,7 +112,7 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      PORT: 3011
+      PORT: 3014
       SERVICE_NAME: product-service
       MONGODB_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/ecommerce?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
@@ -132,7 +132,7 @@ services:
           cpus: '0.5'
           memory: 512M
     healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3011/health']
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3014/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -147,13 +147,13 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      PORT: 3012
+      PORT: 3015
       SERVICE_NAME: order-service
       MONGODB_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/ecommerce?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
-      AUTH_SERVICE_URL: http://auth-service:3010
-      PRODUCT_SERVICE_URL: http://product-service:3011
+      AUTH_SERVICE_URL: http://auth-service:3011
+      PRODUCT_SERVICE_URL: http://product-service:3014
     command: ["node", "services/order-service/dist/index.js"]
     depends_on:
       - auth-service
@@ -167,7 +167,7 @@ services:
           cpus: '0.5'
           memory: 512M
     healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3012/health']
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3015/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -182,7 +182,7 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      PORT: 3013
+      PORT: 3012
       SERVICE_NAME: category-service
       MONGODB_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/ecommerce?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
@@ -202,7 +202,7 @@ services:
           cpus: '0.25'
           memory: 256M
     healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3013/health']
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3012/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -217,7 +217,7 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      PORT: 3014
+      PORT: 3013
       SERVICE_NAME: coupon-service
       MONGODB_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/ecommerce?authSource=admin
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
@@ -237,7 +237,7 @@ services:
           cpus: '0.25'
           memory: 256M
     healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3014/health']
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3013/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -254,11 +254,11 @@ services:
       NODE_ENV: production
       PORT: 4000
       SERVICE_NAME: graphql-gateway
-      AUTH_SERVICE_URL: http://auth-service:3010
-      PRODUCT_SERVICE_URL: http://product-service:3011
-      ORDER_SERVICE_URL: http://order-service:3012
-      CATEGORY_SERVICE_URL: http://category-service:3013
-      COUPON_SERVICE_URL: http://coupon-service:3014
+      AUTH_SERVICE_URL: http://auth-service:3011
+      CATEGORY_SERVICE_URL: http://category-service:3012
+      COUPON_SERVICE_URL: http://coupon-service:3013
+      PRODUCT_SERVICE_URL: http://product-service:3014
+      ORDER_SERVICE_URL: http://order-service:3015
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
       GRAPHQL_INTROSPECTION: 'false'
       GRAPHQL_PLAYGROUND: 'false'

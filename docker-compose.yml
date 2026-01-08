@@ -56,11 +56,12 @@ services:
       - '3001:3001' # Admin App
       - '3002:3002' # Seller App
       - '3003:3003' # Storefront
-      - '3010:3010' # Auth Service
-      - '3011:3011' # Product Service
-      - '3012:3012' # Order Service
-      - '3013:3013' # Category Service
-      - '3014:3014' # Coupon Service
+      - '3011:3011' # Auth Service
+      - '3011:3011' # Auth Service
+      - '3012:3012' # Category Service
+      - '3013:3013' # Coupon Service
+      - '3014:3014' # Product Service
+      - '3015:3015' # Order Service
       - '4000:4000' # GraphQL Gateway
       - '6006:6006' # Storybook
     environment:
@@ -72,11 +73,11 @@ services:
       # CORS
       ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003
       # Service URLs (internal)
-      AUTH_SERVICE_URL: http://localhost:3010
-      PRODUCT_SERVICE_URL: http://localhost:3011
-      ORDER_SERVICE_URL: http://localhost:3012
-      CATEGORY_SERVICE_URL: http://localhost:3013
-      COUPON_SERVICE_URL: http://localhost:3014
+      AUTH_SERVICE_URL: http://localhost:3011
+      CATEGORY_SERVICE_URL: http://localhost:3012
+      COUPON_SERVICE_URL: http://localhost:3013
+      PRODUCT_SERVICE_URL: http://localhost:3014
+      ORDER_SERVICE_URL: http://localhost:3015
       # JWT
       JWT_SECRET: dev-jwt-secret-change-in-production
       JWT_EXPIRES_IN: 24h

@@ -14,7 +14,7 @@ import {
 describe('Constants', () => {
   describe('PORT_CONFIG', () => {
     it('should have all service ports defined', () => {
-      expect(PORT_CONFIG.AUTH_SERVICE).toBe(3010);
+      expect(PORT_CONFIG.AUTH_SERVICE).toBe(3011);
       expect(PORT_CONFIG.PRODUCT_SERVICE).toBe(3011);
       expect(PORT_CONFIG.ORDER_SERVICE).toBe(3012);
       expect(PORT_CONFIG.CATEGORY_SERVICE).toBe(3013);

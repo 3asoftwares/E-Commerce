@@ -75,7 +75,6 @@
     "test:coverage:frontend": "yarn test:coverage:admin && yarn test:coverage:shell && yarn test:coverage:seller && yarn test:coverage:storefront",
     "test:coverage:backend": "yarn test:coverage:auth && yarn test:coverage:category && yarn test:coverage:coupon && yarn test:coverage:order && yarn test:coverage:product",
     "test:coverage:all": "yarn test:coverage:frontend && yarn test:coverage:backend && yarn test:coverage:storybook",
-    "test:coverage": "yarn test:coverage:all",
     "lint:admin": "yarn workspace @3asoftwares/admin-app run lint",
     "lint:shell": "yarn workspace @3asoftwares/shell-app run lint",
     "lint:seller": "yarn workspace @3asoftwares/seller-app run lint",

@@ -81,7 +81,7 @@ COPY --from=builder /app/services/order-service/dist ./services/order-service/di
 COPY --from=builder /app/services/product-service/dist ./services/product-service/dist
 
 # Expose ports
-EXPOSE 3000 3001 3002 3003 3010 3011 3012 3013 3014 4000
+EXPOSE 3000 3001 3002 3003 3011 3011 3012 3013 3014 4000
 
 # Set environment
 ENV NODE_ENV=production

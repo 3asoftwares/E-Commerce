@@ -24,7 +24,7 @@ module.exports = {
         __dirname,
         '../../packages/ui-library/dist/ui-library.es.js'
       ),
-      '@3asoftwares/utils': path.resolve(__dirname, '../../packages/utils/dist'),
+      '@3asoftwares/utils': path.resolve(__dirname, '../../packages/utils/dist/client.mjs'),
       '@3asoftwares/types': path.resolve(__dirname, '../../packages/types/dist'),
     },
     fallback: {
