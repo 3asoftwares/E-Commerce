@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Logger } from '3a-ecommerce-utils';
+import { Logger } from '@3asoftwares/utils';
 
 interface RemoteModuleConfig {
   scope: string;

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Coupon } from '../models/Coupon';
-import { Logger } from '3a-ecommerce-utils/server';
+import { Logger } from '@3asoftwares/utils/server';
 
 export const getCoupons = async (req: Request, res: Response) => {
   try {

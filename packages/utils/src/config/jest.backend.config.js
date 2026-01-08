@@ -31,7 +31,7 @@ module.exports = {
   testTimeout: 10000,
   verbose: true,
   moduleNameMapper: {
-    '^3a-ecommerce-utils/server$': '<rootDir>/tests/__mocks__/utils.ts',
-    '^3a-ecommerce-types$': '<rootDir>/../../packages/types/src/index.ts',
+    '^@3asoftwares/utils/server$': '<rootDir>/tests/__mocks__/utils.ts',
+    '^@3asoftwares/types$': '<rootDir>/../../packages/types/src/index.ts',
   },
 };

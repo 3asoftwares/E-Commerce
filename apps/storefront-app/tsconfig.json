@@ -1,5 +1,5 @@
 {
-  "extends": "3a-ecommerce-utils/config/tsconfig.base.json",
+  "extends": "@3asoftwares/utils/config/tsconfig.base.json",
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -16,10 +16,10 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "3a-ecommerce-ui-library": ["../../packages/ui-library/src"],
-      "3a-ecommerce-ui-library/*": ["../../packages/ui-library/src/*"],
-      "3a-ecommerce-types": ["../../packages/types/src"],
-      "3a-ecommerce-types/*": ["../../packages/types/src/*"]
+      "@3asoftwares/ui-library": ["../../packages/ui-library/src"],
+      "@3asoftwares/ui-library/*": ["../../packages/ui-library/src/*"],
+      "@3asoftwares/types": ["../../packages/types/src"],
+      "@3asoftwares/types/*": ["../../packages/types/src/*"]
     }
   },
   "include": [

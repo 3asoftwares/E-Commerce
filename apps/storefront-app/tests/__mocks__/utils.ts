@@ -1,4 +1,4 @@
-// Mock for 3a-ecommerce-utils
+// Mock for @3asoftwares/utils
 export const storeAuth = jest.fn();
 export const clearAuth = jest.fn();
 export const getCurrentUser = jest.fn(() => null);

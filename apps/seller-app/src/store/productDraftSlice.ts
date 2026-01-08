@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { ProductDraft, ProductDraftState } from '3a-ecommerce-types';
+import type { ProductDraft, ProductDraftState } from '@3asoftwares/types';
 
 const initialState: ProductDraftState = {
   draft: null,

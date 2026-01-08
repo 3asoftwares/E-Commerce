@@ -8,8 +8,8 @@ import { connectDatabase } from './config/database';
 import { setupSwagger } from './config/swagger';
 import orderRoutes from './routes/orderRoutes';
 import { initializeWebSocket } from './websocket/orderSocket';
-import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '3a-ecommerce-utils';
-import { Logger } from '3a-ecommerce-utils/server';
+import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '@3asoftwares/utils';
+import { Logger } from '@3asoftwares/utils/server';
 
 dotenv.config({ path: __dirname + '/../.env' });
 

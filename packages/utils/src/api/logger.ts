@@ -5,7 +5,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { LogLevel } from '3a-ecommerce-types';
+import { LogLevel } from '@3asoftwares/types';
 
 export interface LogEntry {
   level: LogLevel;

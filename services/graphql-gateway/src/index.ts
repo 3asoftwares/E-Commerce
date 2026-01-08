@@ -7,8 +7,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { typeDefs } from './schema/typeDefs';
 import { resolvers } from './schema/resolvers';
-import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '3a-ecommerce-utils';
-import { Logger } from '3a-ecommerce-utils/server';
+import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '@3asoftwares/utils';
+import { Logger } from '@3asoftwares/utils/server';
 
 dotenv.config();
 

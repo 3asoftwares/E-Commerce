@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apolloClient } from '../apollo/client';
 import { GQL_QUERIES } from '../apollo/queries/queries';
-import { getAccessToken } from '3a-ecommerce-utils/client';
+import { getAccessToken } from '@3asoftwares/utils/client';
 
 import type {
   OrdersResponse,
   OrderResponse,
   CreateOrderResponse,
   CreateOrderInput as HookCreateOrderInput,
-} from '3a-ecommerce-types';
+} from '@3asoftwares/types';
 
 type CreateOrderInput = HookCreateOrderInput;
 

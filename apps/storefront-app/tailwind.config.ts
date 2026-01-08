@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-import baseConfig from '3a-ecommerce-utils/config/tailwind';
+import baseConfig from '@3asoftwares/utils/config/tailwind';
 
 export default {
   ...baseConfig,

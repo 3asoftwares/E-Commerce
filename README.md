@@ -108,9 +108,9 @@ e-commerce/
 
 | Package                    | Purpose                 | Key Exports                                |
 | -------------------------- | ----------------------- | ------------------------------------------ |
-| **3a-ecommerce-types**      | TypeScript definitions  | User, Product, Order, Cart types           |
-| **3a-ecommerce-ui-library** | React component library | Button, Badge, Modal, Spinner (Storybook)  |
-| **3a-ecommerce-utils**      | Shared utilities        | Logger, Validation, API helpers, Constants |
+| **@3asoftwares/types**      | TypeScript definitions  | User, Product, Order, Cart types           |
+| **@3asoftwares/ui** | React component library | Button, Badge, Modal, Spinner (Storybook)  |
+| **@3asoftwares/utils**      | Shared utilities        | Logger, Validation, API helpers, Constants |
 
 ### Complete Tech Stack
 
@@ -342,9 +342,9 @@ Backend Services (services/):
 - coupon-service (4005): Discount codes, Swagger
 
 Shared Packages (packages/):
-- 3a-ecommerce-types: User, Product, Order, Cart TypeScript interfaces
-- 3a-ecommerce-ui-library: Button, Badge, Modal, Spinner, Storybook 8
-- 3a-ecommerce-utils: Logger (server/client), validation, API helpers, constants
+- @3asoftwares/types: User, Product, Order, Cart TypeScript interfaces
+- @3asoftwares/ui: Button, Badge, Modal, Spinner, Storybook 8
+- @3asoftwares/utils: Logger (server/client), validation, API helpers, constants
 
 ## Current State
 - All services functional and connected via GraphQL gateway

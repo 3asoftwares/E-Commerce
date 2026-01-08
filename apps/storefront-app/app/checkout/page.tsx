@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { useCreateOrder, useAddresses, useAddAddress } from '@/lib/hooks';
-import { Button, Input, Radio, ToasterBox } from '3a-ecommerce-ui-library';
+import { Button, Input, Radio, ToasterBox } from '@3asoftwares/ui-library';
 import { apolloClient } from '@/lib/apollo/client';
 import { GQL_QUERIES } from '@/lib/apollo/queries/queries';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,7 +21,7 @@ import {
   faPlus,
   faSpinner,
 } from '@fortawesome/free-solid-svg-icons';
-import { formatPrice, Logger } from '3a-ecommerce-utils/client';
+import { formatPrice, Logger } from '@3asoftwares/utils/client';
 import { PageHeader } from '@/components';
 
 interface Address {

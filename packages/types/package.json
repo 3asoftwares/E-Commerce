@@ -1,5 +1,5 @@
 {
-  "name": "3a-ecommerce-types",
+  "name": "@3asoftwares/types",
   "version": "1.0.0",
   "description": "TypeScript type definitions for 3A Softwares E-Commerce",
   "main": "dist/index.js",
@@ -17,7 +17,7 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean --external 3a-ecommerce-utils",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean --external @3asoftwares/utils",
     "prepublishOnly": "npm run build",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"

@@ -98,6 +98,6 @@ NEXT_PUBLIC_GRAPHQL_URL=http://localhost:4000/graphql
 
 ## Dependencies on Shared Packages
 
-- `3a-ecommerce-types` - Shared TypeScript types
-- `3a-ecommerce-ui-library` - Shared UI components
-- `3a-ecommerce-utils` - Shared utilities
+- `@3asoftwares/types` - Shared TypeScript types
+- `@3asoftwares/ui-library` - Shared UI components
+- `@3asoftwares/utils` - Shared utilities

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getCurrentUser, storeAuth, clearAuth } from '3a-ecommerce-utils';
+import { getCurrentUser, storeAuth, clearAuth } from '@3asoftwares/utils';
 
 // Mock the cart store
 const mockItems = [{ id: 'prod1', name: 'Test', price: 10, quantity: 1 }];

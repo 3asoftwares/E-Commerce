@@ -1,4 +1,4 @@
-// Mock for 3a-ecommerce-types
+// Mock for @3asoftwares/types
 export interface User {
   id: string;
   _id?: string;

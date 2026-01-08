@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
 
 jobs:
   # ===========================================
@@ -75,25 +75,25 @@ jobs:
     if: needs.detect-changes.outputs.packages == 'true'
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
-      
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      
+
       - name: Build packages
         run: |
-          yarn workspace 3a-ecommerce-types build
-          yarn workspace 3a-ecommerce-utils build
-      
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+
       - name: Test packages
         run: |
-          yarn workspace 3a-ecommerce-types test --passWithNoTests
-          yarn workspace 3a-ecommerce-utils test --passWithNoTests
+          yarn workspace @3asoftwares/types test --passWithNoTests
+          yarn workspace @3asoftwares/utils test --passWithNoTests
 
   # ===========================================
   # TEST BACKEND SERVICES

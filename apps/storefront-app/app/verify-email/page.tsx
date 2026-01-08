@@ -3,8 +3,8 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '3a-ecommerce-ui-library';
-import { storeAuth, getStoredAuth } from '3a-ecommerce-utils/client';
+import { Button } from '@3asoftwares/ui-library';
+import { storeAuth, getStoredAuth } from '@3asoftwares/utils/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faShoppingBag,

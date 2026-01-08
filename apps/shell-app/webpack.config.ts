@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const { ModuleFederationPlugin } = require('webpack').container;
-const { createBaseWebpackConfig } = require('3a-ecommerce-utils/config/webpack');
+const { createBaseWebpackConfig } = require('@3asoftwares/utils/config/webpack');
 
 // Remote app URLs - configurable via environment variables
 const ADMIN_APP_URL = process.env.ADMIN_APP_URL || 'http://localhost:3001';
@@ -20,12 +20,12 @@ module.exports = {
   resolve: {
     ...baseConfig.resolve,
     alias: {
-      '3a-ecommerce-ui-library': path.resolve(
+      '@3asoftwares/ui-library': path.resolve(
         __dirname,
         '../../packages/ui-library/dist/ui-library.es.js'
       ),
-      '3a-ecommerce-utils': path.resolve(__dirname, '../../packages/utils/dist'),
-      '3a-ecommerce-types': path.resolve(__dirname, '../../packages/types/dist'),
+      '@3asoftwares/utils': path.resolve(__dirname, '../../packages/utils/dist'),
+      '@3asoftwares/types': path.resolve(__dirname, '../../packages/types/dist'),
     },
     fallback: {
       crypto: false,

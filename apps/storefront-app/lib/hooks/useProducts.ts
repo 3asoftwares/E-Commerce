@@ -7,8 +7,8 @@ import type {
   ProductsResponse,
   ProductResponse,
   CategoriesResponse
-} from '3a-ecommerce-types';
-import { ProductFilters } from '3a-ecommerce-types/hooks.types';
+} from '@3asoftwares/types';
+import { ProductFilters } from '@3asoftwares/types/hooks.types';
 
 export function useProducts(page: number = 1, limit: number = 20, filters?: ProductFilters) {
   return useQuery({

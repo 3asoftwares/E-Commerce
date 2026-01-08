@@ -17,7 +17,7 @@ import {
   faUndoAlt,
   faHeadset,
 } from '@fortawesome/free-solid-svg-icons';
-import { Button } from '3a-ecommerce-ui-library';
+import { Button } from '@3asoftwares/ui-library';
 import {
   ProductCard,
   ProductCardCompact,

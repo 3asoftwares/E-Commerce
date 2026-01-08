@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 import path from 'path';
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['3a-ecommerce-ui-library', '3a-ecommerce-types', '3a-ecommerce-utils'],
+  transpilePackages: ['@3asoftwares/ui-library', '@3asoftwares/types', '@3asoftwares/utils'],
   turbopack: {
     // Point to the monorepo root (2 levels up from storefront-app)
     root: path.resolve(__dirname, '..', '..'),

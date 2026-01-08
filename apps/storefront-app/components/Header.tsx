@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
-import { Button, Input } from '3a-ecommerce-ui-library';
+import { Button, Input } from '@3asoftwares/ui-library';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSearch,
@@ -17,7 +17,7 @@ import {
   faBars,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
-import { storeAuth, clearAuth as clearAuthCookies, getCurrentUser } from '3a-ecommerce-utils/client';
+import { storeAuth, clearAuth as clearAuthCookies, getCurrentUser } from '@3asoftwares/utils/client';
 
 export default function Header() {
   const router = useRouter();

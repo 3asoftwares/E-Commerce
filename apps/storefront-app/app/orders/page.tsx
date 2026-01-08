@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOrders } from '@/lib/hooks';
-import { Button } from '3a-ecommerce-ui-library';
-import { formatPrice } from '3a-ecommerce-utils/client';
+import { Button } from '@3asoftwares/ui-library';
+import { formatPrice } from '@3asoftwares/utils/client';
 import { useCartStore } from '@/store/cartStore';
 import {
   faClipboardList,

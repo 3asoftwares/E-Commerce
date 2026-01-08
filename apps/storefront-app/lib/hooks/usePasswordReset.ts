@@ -7,7 +7,7 @@ import type {
   ForgotPasswordResponse,
   ResetPasswordResponse,
   ValidateTokenResponse,
-} from '3a-ecommerce-types';
+} from '@3asoftwares/types';
 
 export function useForgotPassword() {
   const mutation = useMutation({

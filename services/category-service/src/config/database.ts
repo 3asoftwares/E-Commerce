@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { Logger } from '3a-ecommerce-utils/server';
+import { Logger } from '@3asoftwares/utils/server';
 
 dotenv.config();
 

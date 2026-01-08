@@ -1,4 +1,4 @@
-import { getCurrentUser } from '3a-ecommerce-utils';
+import { getCurrentUser } from '@3asoftwares/utils';
 
 // Mock store implementation for testing
 describe('Cart Store', () => {

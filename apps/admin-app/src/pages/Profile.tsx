@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/store';
 import { setUser } from '../store/authSlice';
-import { Button, Badge, Spinner } from '3a-ecommerce-ui-library';
+import { Button, Badge, Spinner } from '@3asoftwares/ui-library';
 import { graphqlRequest } from '../api/client';
 import {
   SEND_VERIFICATION_EMAIL_MUTATION,
@@ -10,7 +10,7 @@ import {
   storeAuth,
   getStoredAuth,
   Logger,
-} from '3a-ecommerce-utils';
+} from '@3asoftwares/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser,

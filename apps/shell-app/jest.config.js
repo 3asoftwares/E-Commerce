@@ -1,5 +1,5 @@
 /** @type {import('jest').Config} */
-const baseConfig = require('3a-ecommerce-utils/config/jest.frontend');
+const baseConfig = require('@3asoftwares/utils/config/jest.frontend');
 
 module.exports = {
   ...baseConfig,
@@ -15,8 +15,8 @@ module.exports = {
     ],
   },
   moduleNameMapper: {
-    '^3a-ecommerce-utils$': '<rootDir>/tests/__mocks__/utils.ts',
-    '^3a-ecommerce-ui-library$': '<rootDir>/tests/__mocks__/ui-library.tsx',
+    '^@3asoftwares/utils$': '<rootDir>/tests/__mocks__/utils.ts',
+    '^@3asoftwares/ui-library$': '<rootDir>/tests/__mocks__/ui-library.tsx',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   transformIgnorePatterns: ['node_modules/(?!(zustand|@fortawesome)/)'],

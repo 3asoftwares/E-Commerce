@@ -8,7 +8,7 @@ jest.mock('../../src/models/Review');
 jest.mock('../../src/models/Product');
 
 // Mock Logger
-jest.mock('3a-ecommerce-utils/server', () => ({
+jest.mock('@3asoftwares/utils/server', () => ({
   Logger: {
     info: jest.fn(),
     error: jest.fn(),

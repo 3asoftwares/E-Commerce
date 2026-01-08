@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken } from '3a-ecommerce-utils';
+import { getAccessToken } from '@3asoftwares/utils';
 
 const API_BASE = import.meta.env.VITE_AUTH_API_BASE || 'http://localhost:3010/api/auth';
 

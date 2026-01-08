@@ -50,9 +50,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '3a-ecommerce-ui-library': path.resolve(__dirname, '../../packages/ui-library/src'),
-      '3a-ecommerce-types': path.resolve(__dirname, '../../packages/types/src'),
-      '3a-ecommerce-utils': path.resolve(__dirname, '../../packages/utils/src'),
+      '@3asoftwares/ui-library': path.resolve(__dirname, '../../packages/ui-library/src'),
+      '@3asoftwares/types': path.resolve(__dirname, '../../packages/types/src'),
+      '@3asoftwares/utils': path.resolve(__dirname, '../../packages/utils/src'),
     },
   },
 });
