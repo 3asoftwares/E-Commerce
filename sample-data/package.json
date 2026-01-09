@@ -1,6 +1,6 @@
 {
   "name": "data-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sample data generator for E-Commerce platform",
   "type": "module",
   "main": "generate-data.js",
