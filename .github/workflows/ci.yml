@@ -109,6 +109,10 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
+      - name: Build shared packages
+        run: |
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
       - run: yarn workspace @3asoftwares/auth-service test --passWithNoTests
 
   test-product-service:
@@ -122,6 +126,10 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
+      - name: Build shared packages
+        run: |
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
       - run: yarn workspace @3asoftwares/product-service test --passWithNoTests
 
   test-order-service:
@@ -135,6 +143,10 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
+      - name: Build shared packages
+        run: |
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
       - run: yarn workspace @3asoftwares/order-service test --passWithNoTests
 
   # ===========================================
@@ -151,6 +163,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
+      - name: Build shared packages
+        run: |
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+          yarn workspace @3asoftwares/ui build:lib
       - run: yarn workspace @3asoftwares/storefront-app test --passWithNoTests
 
   test-admin-app:
@@ -164,6 +181,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
+      - name: Build shared packages
+        run: |
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+          yarn workspace @3asoftwares/ui build:lib
       - run: yarn workspace @3asoftwares/admin-app test --passWithNoTests
 
   test-seller-app:
@@ -177,6 +199,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
+      - name: Build shared packages
+        run: |
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+          yarn workspace @3asoftwares/ui build:lib
       - run: yarn workspace @3asoftwares/seller-app test --passWithNoTests
 
   # ===========================================
