@@ -18,7 +18,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { formatPrice } from '@3asoftwares/utils/client';
 import { PageHeader, EmptyState } from '@/components';
-import { Button } from '@3asoftwares/ui-library';
+import { Button } from '@3asoftwares/ui';
 import { handleImageError } from '@/components/ProductCard';
 
 export const dynamic = 'force-dynamic';

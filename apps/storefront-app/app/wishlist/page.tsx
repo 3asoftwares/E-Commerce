@@ -6,7 +6,7 @@ import { useToast } from '@/lib/hooks/useToast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faShoppingCart, faSmile } from '@fortawesome/free-solid-svg-icons';
 import { PageHeader, EmptyState } from '@/components';
-import { Button } from '@3asoftwares/ui-library';
+import { Button } from '@3asoftwares/ui';
 
 export const dynamic = 'force-dynamic';
 

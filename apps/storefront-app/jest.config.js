@@ -15,7 +15,7 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/$1',
     '^@3asoftwares/utils$': '<rootDir>/tests/__mocks__/utils.ts',
     '^@3asoftwares/utils/client$': '<rootDir>/tests/__mocks__/utils.ts',
-    '^@3asoftwares/ui-library$': '<rootDir>/tests/__mocks__/ui-library.tsx',
+    '^@3asoftwares/ui$': '<rootDir>/tests/__mocks__/ui-library.tsx',
     '^@3asoftwares/types$': '<rootDir>/tests/__mocks__/types.ts',
     '^@fortawesome/react-fontawesome$': '<rootDir>/tests/__mocks__/fontawesome.tsx',
   },

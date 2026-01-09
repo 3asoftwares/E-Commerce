@@ -8,7 +8,7 @@ const config: Config = {
   content: [
     './src/**/*.{js,ts,jsx,tsx}',
     './public/index.html',
-    './node_modules/@3asoftwares/ui-library/dist/**/*.{js,mjs}',
+    './node_modules/@3asoftwares/ui/dist/**/*.{js,mjs}',
   ],
 };
 

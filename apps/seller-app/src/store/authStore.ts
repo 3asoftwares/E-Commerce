@@ -5,7 +5,7 @@ import {
   clearAuth as clearAuthCookies,
   getStoredAuth,
   storeAuth,
-} from '@3asoftwares/utils';
+} from '@3asoftwares/utils/client';
 
 interface ExtendedSellerAuthStore extends SellerAuthStoreState {
   setAuthData: (user: any, token: string) => void;

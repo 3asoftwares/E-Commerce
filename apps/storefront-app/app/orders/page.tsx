@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOrders } from '@/lib/hooks';
-import { Button } from '@3asoftwares/ui-library';
+import { Button } from '@3asoftwares/ui';
 import { formatPrice } from '@3asoftwares/utils/client';
 import { useCartStore } from '@/store/cartStore';
 import {

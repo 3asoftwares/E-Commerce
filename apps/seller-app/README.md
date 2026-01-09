@@ -94,5 +94,5 @@ VITE_CLOUDINARY_UPLOAD_PRESET=your-preset
 ## Dependencies on Shared Packages
 
 - `@3asoftwares/types` - Shared TypeScript types
-- `@3asoftwares/ui-library` - Shared UI components
+- `@3asoftwares/ui` - Shared UI components
 - `@3asoftwares/utils` - Shared utilities

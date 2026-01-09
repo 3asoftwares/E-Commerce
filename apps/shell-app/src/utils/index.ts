@@ -1,4 +1,4 @@
-import { getCurrentUser, ADMIN_APP_URL, SELLER_APP_URL } from '@3asoftwares/utils';
+import { getCurrentUser, ADMIN_APP_URL, SELLER_APP_URL } from '@3asoftwares/utils/client';
 
 // Configuration for micro-frontend mode
 export const MFE_CONFIG = {

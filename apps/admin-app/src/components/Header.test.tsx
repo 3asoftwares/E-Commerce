@@ -22,7 +22,7 @@ vi.mock('@3asoftwares/utils', () => ({
 
 import { useUIStore } from '../store/uiStore';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { clearAuth } from '@3asoftwares/utils';
+import { clearAuth } from '@3asoftwares/utils/client';
 
 describe('Header Component', () => {
   const mockToggleTheme = vi.fn();

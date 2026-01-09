@@ -1,6 +1,6 @@
 # Publishing Packages to NPM
 
-This document describes how to publish the shared packages (`@3asoftwares/types`, `@3asoftwares/utils`, `@3asoftwares/ui-library`) to the npm registry.
+This document describes how to publish the shared packages (`@3asoftwares/types`, `@3asoftwares/utils`, `@3asoftwares/ui`) to the npm registry.
 
 ## Package Overview
 
@@ -8,7 +8,7 @@ This document describes how to publish the shared packages (`@3asoftwares/types`
 | ------------------------- | ------- | ---------------------------------- | ------------------------------------------ |
 | `@3asoftwares/types`      | 1.0.1   | TypeScript type definitions        | None                                       |
 | `@3asoftwares/utils`      | 1.0.2   | Utility functions & shared configs | `@3asoftwares/types`                       |
-| `@3asoftwares/ui-library` | 1.0.0   | React UI Component Library         | `@3asoftwares/utils`, `react`, `react-dom` |
+| `@3asoftwares/ui` | 1.0.0   | React UI Component Library         | `@3asoftwares/utils`, `react`, `react-dom` |
 
 ## Prerequisites
 
@@ -46,7 +46,7 @@ For security, enable Two-Factor Authentication on your npm account:
 
 1. **@3asoftwares/types** (no dependencies)
 2. **@3asoftwares/utils** (depends on types)
-3. **@3asoftwares/ui-library** (depends on utils)
+3. **@3asoftwares/ui** (depends on utils)
 
 ---
 
@@ -97,7 +97,7 @@ npm publish --dry-run
 npm publish --access public
 ```
 
-### Step 3: Publish @3asoftwares/ui-library
+### Step 3: Publish @3asoftwares/ui
 
 ```powershell
 # Navigate to ui-library package
@@ -172,7 +172,7 @@ npm publish --access public
 Set-Location ../..
 
 # UI Library
-Write-Host "`n📦 Publishing @3asoftwares/ui-library..." -ForegroundColor Yellow
+Write-Host "`n📦 Publishing @3asoftwares/ui..." -ForegroundColor Yellow
 Set-Location packages/ui-library
 npm run build:lib
 npm publish --access public
@@ -238,7 +238,7 @@ src/
     └── tsconfig.base.json
 ```
 
-### @3asoftwares/ui-library
+### @3asoftwares/ui
 
 **Exports:**
 
@@ -269,7 +269,7 @@ npm install @3asoftwares/types
 npm install @3asoftwares/utils
 
 # Install ui-library
-npm install @3asoftwares/ui-library
+npm install @3asoftwares/ui
 ```
 
 ### Using in Code
@@ -284,8 +284,8 @@ import { userSchema, productSchema } from '@3asoftwares/utils/client';
 import { validateUser } from '@3asoftwares/utils/server';
 
 // UI Library
-import { Button, Input, Modal } from '@3asoftwares/ui-library';
-import '@3asoftwares/ui-library/styles.css';
+import { Button, Input, Modal } from '@3asoftwares/ui';
+import '@3asoftwares/ui/styles.css';
 
 // Config files (in vite.config.ts)
 import { createLibraryViteConfig } from '@3asoftwares/utils/config/vite';
@@ -322,7 +322,7 @@ import { createLibraryViteConfig } from '@3asoftwares/utils/config/vite';
 # View package info
 npm info @3asoftwares/types
 npm info @3asoftwares/utils
-npm info @3asoftwares/ui-library
+npm info @3asoftwares/ui
 
 # Check latest version
 npm show @3asoftwares/types version
@@ -372,7 +372,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @3asoftwares/ui-library
+      - name: Publish @3asoftwares/ui
         working-directory: packages/ui-library
         run: |
           npm run build:lib

@@ -9,7 +9,7 @@ import {
   faCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import { formatPrice } from '@3asoftwares/utils/client';
-import { Button } from '@3asoftwares/ui-library';
+import { Button } from '@3asoftwares/ui';
 import { useCartStore } from '@/store/cartStore';
 
 interface ProductCardProps {

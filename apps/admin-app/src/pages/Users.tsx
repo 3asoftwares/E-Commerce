@@ -10,7 +10,7 @@ import {
   Select,
   Confirm,
   ToasterBox,
-} from '@3asoftwares/ui-library';
+} from '@3asoftwares/ui';
 import type { UserGraphQL as User } from '@3asoftwares/types';
 
 interface ToastState {

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import CategoryModal from './CategoryModal';
 import { useCategories } from '@/lib/hooks/useCategories';
-import { Input } from '@3asoftwares/ui-library';
+import { Input } from '@3asoftwares/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 

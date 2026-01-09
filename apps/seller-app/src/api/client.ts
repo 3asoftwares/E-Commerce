@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SERVICE_URLS, SHELL_APP_URL, getAccessToken } from '@3asoftwares/utils';
+import { SERVICE_URLS, SHELL_APP_URL, getAccessToken } from '@3asoftwares/utils/client';
 
 const AUTH_SERVICE = process.env.VITE_AUTH_SERVICE || SERVICE_URLS.AUTH_SERVICE;
 const PRODUCT_SERVICE = process.env.VITE_PRODUCT_SERVICE || SERVICE_URLS.PRODUCT_SERVICE;

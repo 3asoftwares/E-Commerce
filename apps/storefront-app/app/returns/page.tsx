@@ -2,7 +2,7 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo, faCheckCircle, faBoxOpen, faClock, faShieldAlt, faDollarSign } from '@fortawesome/free-solid-svg-icons';
-import { Button } from '@3asoftwares/ui-library';
+import { Button } from '@3asoftwares/ui';
 
 export default function ReturnsPage() {
   return (

@@ -1,12 +1,10 @@
 import type { NextConfig } from 'next';
-import path from 'path';
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@3asoftwares/ui-library', '@3asoftwares/types', '@3asoftwares/utils'],
-  turbopack: {
-    // Point to the monorepo root (2 levels up from storefront-app)
-    root: path.resolve(__dirname, '..', '..'),
-  },
+  output: 'standalone',
+  transpilePackages: ['@3asoftwares/ui', '@3asoftwares/types', '@3asoftwares/utils'],
+  // Enable turbopack with empty config to silence warning
+  turbopack: {},
   // Fallback for Node.js modules that can't be bundled for browser
   webpack: (config, { isServer }) => {
     if (!isServer) {

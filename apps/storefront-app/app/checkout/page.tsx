@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { useCreateOrder, useAddresses, useAddAddress } from '@/lib/hooks';
-import { Button, Input, Radio, ToasterBox } from '@3asoftwares/ui-library';
+import { Button, Input, Radio, ToasterBox } from '@3asoftwares/ui';
 import { apolloClient } from '@/lib/apollo/client';
 import { GQL_QUERIES } from '@/lib/apollo/queries/queries';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

@@ -6,6 +6,6 @@ export default {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@3asoftwares/ui-library/dist/**/*.{js,mjs}',
+    './node_modules/@3asoftwares/ui/dist/**/*.{js,mjs}',
   ],
 };

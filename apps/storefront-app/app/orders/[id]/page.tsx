@@ -4,7 +4,7 @@ import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOrder, useCancelOrder } from '@/lib/hooks';
 import { formatPrice } from '@3asoftwares/utils/client';
-import { Button, Confirm } from '@3asoftwares/ui-library';
+import { Button, Confirm } from '@3asoftwares/ui';
 import {
   faClipboard,
   faCheckCircle,

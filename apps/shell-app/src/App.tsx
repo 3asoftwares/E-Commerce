@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Suspense } from 'react';
-import { clearAuth, getCurrentUser } from '@3asoftwares/utils';
-import { Modal, Header, ToasterBox } from '@3asoftwares/ui-library';
+import { clearAuth, getCurrentUser } from '@3asoftwares/utils/client';
+import { Modal, Header, ToasterBox } from '@3asoftwares/ui';
 import { useUIStore } from './store/uiStore';
 import { useTokenValidator } from './store/useTokenValidator';
 import { changeTheme, renderApp } from './utils';

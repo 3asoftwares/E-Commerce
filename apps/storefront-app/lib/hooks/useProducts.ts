@@ -6,9 +6,9 @@ import { GQL_QUERIES } from '../apollo/queries/queries';
 import type {
   ProductsResponse,
   ProductResponse,
-  CategoriesResponse
+  CategoriesResponse,
+  HookProductFilters as ProductFilters,
 } from '@3asoftwares/types';
-import { ProductFilters } from '@3asoftwares/types/hooks.types';
 
 export function useProducts(page: number = 1, limit: number = 20, filters?: ProductFilters) {
   return useQuery({

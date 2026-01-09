@@ -27,7 +27,7 @@ import {
   CREATE_COUPON_MUTATION,
   UPDATE_COUPON_MUTATION,
   DELETE_COUPON_MUTATION,
-} from '@3asoftwares/utils';
+} from '@3asoftwares/utils/client';
 
 export const useDashboardStats = () => {
   return useQuery({

@@ -7,7 +7,7 @@ const config: Config = {
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@3asoftwares/ui-library/dist/**/*.{js,mjs}',
+    './node_modules/@3asoftwares/ui/dist/**/*.{js,mjs}',
   ],
 };
 

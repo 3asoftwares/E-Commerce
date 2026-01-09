@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faRedo, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ProductCard, ProductCardSkeleton } from '@/components';
-import { Button, Input, Select } from '@3asoftwares/ui-library';
+import { Button, Input, Select } from '@3asoftwares/ui';
 
 type Product = ProductGraphQL;
 
