@@ -1,9 +1,12 @@
-# Deploy to Vercel on merge to main
+# Deploy to Vercel on merge to main (with 6-hour throttle)
 name: Deploy to Vercel
 
 on:
   push:
     branches: [main]
+  # Scheduled deployment every 6 hours (if there are pending changes)
+  schedule:
+    - cron: '0 */6 * * *'  # Run every 6 hours
   workflow_dispatch:
     inputs:
       app:
@@ -16,6 +19,11 @@ on:
           - seller-app
           - shell-app
           - all
+      force_deploy:
+        description: 'Force deployment (ignore 6-hour throttle)'
+        required: false
+        type: boolean
+        default: false
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -23,16 +31,151 @@ env:
   VERCEL_PROJECT_ID_ADMIN: ${{ secrets.VERCEL_PROJECT_ID_ADMIN }}
   VERCEL_PROJECT_ID_SELLER: ${{ secrets.VERCEL_PROJECT_ID_SELLER }}
   VERCEL_PROJECT_ID_SHELL: ${{ secrets.VERCEL_PROJECT_ID_SHELL }}
+  # 6 hours in seconds
+  DEPLOYMENT_THROTTLE_SECONDS: 21600
 
 jobs:
   # ===========================================
-  # DEPLOY STOREFRONT APP
+  # DETECT CHANGES - Only deploy what changed
+  # ===========================================
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      storefront-app: ${{ steps.changes.outputs.storefront-app }}
+      admin-app: ${{ steps.changes.outputs.admin-app }}
+      seller-app: ${{ steps.changes.outputs.seller-app }}
+      shell-app: ${{ steps.changes.outputs.shell-app }}
+      any-changes: ${{ steps.changes.outputs.any-changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for comparing changes
+
+      - name: Detect changed files
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            storefront-app:
+              - 'apps/storefront-app/**'
+              - 'packages/**'
+            admin-app:
+              - 'apps/admin-app/**'
+              - 'packages/**'
+            seller-app:
+              - 'apps/seller-app/**'
+              - 'packages/**'
+            shell-app:
+              - 'apps/shell-app/**'
+              - 'packages/**'
+
+      - name: Check if any app changed
+        id: any
+        run: |
+          if [ "${{ steps.changes.outputs.storefront-app }}" == "true" ] || \
+             [ "${{ steps.changes.outputs.admin-app }}" == "true" ] || \
+             [ "${{ steps.changes.outputs.seller-app }}" == "true" ] || \
+             [ "${{ steps.changes.outputs.shell-app }}" == "true" ]; then
+            echo "any-changes=true" >> $GITHUB_OUTPUT
+            echo "✅ Changes detected in one or more apps"
+          else
+            echo "any-changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No app changes detected - skipping deployment"
+          fi
+
+      - name: Summary of changes
+        run: |
+          echo "📋 Change Detection Summary:"
+          echo "  - Storefront App: ${{ steps.changes.outputs.storefront-app }}"
+          echo "  - Admin App: ${{ steps.changes.outputs.admin-app }}"
+          echo "  - Seller App: ${{ steps.changes.outputs.seller-app }}"
+          echo "  - Shell App: ${{ steps.changes.outputs.shell-app }}"
+
+  # ===========================================
+  # CHECK DEPLOYMENT THROTTLE (6-hour limit)
+  # ===========================================
+  check-throttle:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.any-changes == 'true' || github.event_name == 'workflow_dispatch'
+    outputs:
+      should_deploy: ${{ steps.check.outputs.should_deploy }}
+      last_deploy_time: ${{ steps.check.outputs.last_deploy_time }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore last deployment timestamp
+        id: cache-timestamp
+        uses: actions/cache/restore@v4
+        with:
+          path: .last-deploy-timestamp
+          key: deploy-timestamp-${{ github.ref }}
+          restore-keys: |
+            deploy-timestamp-
+
+      - name: Check if deployment is allowed
+        id: check
+        run: |
+          CURRENT_TIME=$(date +%s)
+          THROTTLE_SECONDS=${{ env.DEPLOYMENT_THROTTLE_SECONDS }}
+          FORCE_DEPLOY="${{ github.event.inputs.force_deploy }}"
+          
+          # If force deploy is enabled, always allow
+          if [ "$FORCE_DEPLOY" == "true" ]; then
+            echo "🚀 Force deploy enabled - bypassing throttle"
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "last_deploy_time=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check if timestamp file exists
+          if [ -f .last-deploy-timestamp ]; then
+            LAST_DEPLOY=$(cat .last-deploy-timestamp)
+            TIME_DIFF=$((CURRENT_TIME - LAST_DEPLOY))
+            HOURS_SINCE=$((TIME_DIFF / 3600))
+            MINUTES_SINCE=$(((TIME_DIFF % 3600) / 60))
+            
+            echo "⏱️ Last deployment: $HOURS_SINCE hours and $MINUTES_SINCE minutes ago"
+            echo "last_deploy_time=$LAST_DEPLOY" >> $GITHUB_OUTPUT
+            
+            if [ $TIME_DIFF -lt $THROTTLE_SECONDS ]; then
+              REMAINING=$((THROTTLE_SECONDS - TIME_DIFF))
+              REMAINING_HOURS=$((REMAINING / 3600))
+              REMAINING_MINS=$(((REMAINING % 3600) / 60))
+              echo "⏳ Deployment throttled. Next deployment allowed in ${REMAINING_HOURS}h ${REMAINING_MINS}m"
+              echo "should_deploy=false" >> $GITHUB_OUTPUT
+            else
+              echo "✅ Throttle period passed - deployment allowed"
+              echo "should_deploy=true" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "📝 No previous deployment found - first deployment allowed"
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "last_deploy_time=0" >> $GITHUB_OUTPUT
+          fi
+
+  # ===========================================
+  # DEPLOY STOREFRONT APP (only if changed)
   # ===========================================
   deploy-storefront:
     runs-on: ubuntu-latest
-    if: github.event.inputs.app == 'storefront-app' || github.event.inputs.app == 'all' || github.event_name == 'push'
+    needs: [detect-changes, check-throttle]
+    if: |
+      needs.check-throttle.outputs.should_deploy == 'true' && 
+      (
+        github.event.inputs.app == 'storefront-app' || 
+        github.event.inputs.app == 'all' || 
+        (github.event_name == 'push' && needs.detect-changes.outputs.storefront-app == 'true') ||
+        (github.event_name == 'schedule' && needs.detect-changes.outputs.storefront-app == 'true')
+      )
     steps:
       - uses: actions/checkout@v4
+
+      - name: Log deployment reason
+        run: |
+          echo "🚀 Deploying Storefront App"
+          echo "   Trigger: ${{ github.event_name }}"
+          echo "   Changed: ${{ needs.detect-changes.outputs.storefront-app }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -57,13 +200,27 @@ jobs:
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
   # ===========================================
-  # DEPLOY ADMIN APP
+  # DEPLOY ADMIN APP (only if changed)
   # ===========================================
   deploy-admin:
     runs-on: ubuntu-latest
-    if: github.event.inputs.app == 'admin-app' || github.event.inputs.app == 'all'
+    needs: [detect-changes, check-throttle]
+    if: |
+      needs.check-throttle.outputs.should_deploy == 'true' && 
+      (
+        github.event.inputs.app == 'admin-app' || 
+        github.event.inputs.app == 'all' || 
+        (github.event_name == 'push' && needs.detect-changes.outputs.admin-app == 'true') ||
+        (github.event_name == 'schedule' && needs.detect-changes.outputs.admin-app == 'true')
+      )
     steps:
       - uses: actions/checkout@v4
+
+      - name: Log deployment reason
+        run: |
+          echo "🚀 Deploying Admin App"
+          echo "   Trigger: ${{ github.event_name }}"
+          echo "   Changed: ${{ needs.detect-changes.outputs.admin-app }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -80,13 +237,27 @@ jobs:
           VERCEL_PROJECT_ID: ${{ env.VERCEL_PROJECT_ID_ADMIN }}
 
   # ===========================================
-  # DEPLOY SELLER APP
+  # DEPLOY SELLER APP (only if changed)
   # ===========================================
   deploy-seller:
     runs-on: ubuntu-latest
-    if: github.event.inputs.app == 'seller-app' || github.event.inputs.app == 'all'
+    needs: [detect-changes, check-throttle]
+    if: |
+      needs.check-throttle.outputs.should_deploy == 'true' && 
+      (
+        github.event.inputs.app == 'seller-app' || 
+        github.event.inputs.app == 'all' || 
+        (github.event_name == 'push' && needs.detect-changes.outputs.seller-app == 'true') ||
+        (github.event_name == 'schedule' && needs.detect-changes.outputs.seller-app == 'true')
+      )
     steps:
       - uses: actions/checkout@v4
+
+      - name: Log deployment reason
+        run: |
+          echo "🚀 Deploying Seller App"
+          echo "   Trigger: ${{ github.event_name }}"
+          echo "   Changed: ${{ needs.detect-changes.outputs.seller-app }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -101,3 +272,105 @@ jobs:
         run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_PROJECT_ID: ${{ env.VERCEL_PROJECT_ID_SELLER }}
+
+  # ===========================================
+  # DEPLOY SHELL APP (only if changed)
+  # ===========================================
+  deploy-shell:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, check-throttle]
+    if: |
+      needs.check-throttle.outputs.should_deploy == 'true' && 
+      (
+        github.event.inputs.app == 'shell-app' || 
+        github.event.inputs.app == 'all' || 
+        (github.event_name == 'push' && needs.detect-changes.outputs.shell-app == 'true') ||
+        (github.event_name == 'schedule' && needs.detect-changes.outputs.shell-app == 'true')
+      )
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log deployment reason
+        run: |
+          echo "🚀 Deploying Shell App"
+          echo "   Trigger: ${{ github.event_name }}"
+          echo "   Changed: ${{ needs.detect-changes.outputs.shell-app }}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel
+        working-directory: apps/shell-app
+        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_PROJECT_ID: ${{ env.VERCEL_PROJECT_ID_SHELL }}
+
+  # ===========================================
+  # UPDATE DEPLOYMENT TIMESTAMP
+  # ===========================================
+  update-timestamp:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, check-throttle, deploy-storefront, deploy-admin, deploy-seller, deploy-shell]
+    if: |
+      always() && 
+      needs.check-throttle.outputs.should_deploy == 'true' &&
+      (needs.deploy-storefront.result == 'success' || needs.deploy-admin.result == 'success' || needs.deploy-seller.result == 'success' || needs.deploy-shell.result == 'success')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Save deployment timestamp
+        run: |
+          CURRENT_TIME=$(date +%s)
+          echo $CURRENT_TIME > .last-deploy-timestamp
+          echo "📝 Saved deployment timestamp: $(date -d @$CURRENT_TIME)"
+
+      - name: Cache deployment timestamp
+        uses: actions/cache/save@v4
+        with:
+          path: .last-deploy-timestamp
+          key: deploy-timestamp-${{ github.ref }}-${{ github.run_id }}
+
+  # ===========================================
+  # NOTIFY IF NO CHANGES
+  # ===========================================
+  notify-no-changes:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.any-changes == 'false' && github.event_name != 'workflow_dispatch'
+    steps:
+      - name: Notify no changes detected
+        run: |
+          echo "ℹ️ =============================================="
+          echo "ℹ️ NO DEPLOYMENT NEEDED"
+          echo "ℹ️ =============================================="
+          echo "ℹ️ No changes detected in any app."
+          echo "ℹ️ Deployment skipped to save resources."
+          echo "ℹ️ =============================================="
+
+  # ===========================================
+  # NOTIFY IF THROTTLED
+  # ===========================================
+  notify-throttled:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, check-throttle]
+    if: needs.check-throttle.outputs.should_deploy == 'false' && needs.detect-changes.outputs.any-changes == 'true'
+    steps:
+      - name: Notify deployment throttled
+        run: |
+          echo "⏳ =============================================="
+          echo "⏳ DEPLOYMENT THROTTLED"
+          echo "⏳ =============================================="
+          echo "⏳ Deployments are limited to once every 6 hours"
+          echo "⏳ to avoid hitting Vercel's free tier limits."
+          echo "⏳"
+          echo "⏳ Your changes will be deployed in the next"
+          echo "⏳ scheduled deployment cycle."
+          echo "⏳"
+          echo "⏳ To force deployment now, manually trigger the"
+          echo "⏳ workflow with 'force_deploy' option enabled."
+          echo "⏳ =============================================="
