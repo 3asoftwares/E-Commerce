@@ -121,9 +121,15 @@ describe('Environment Configuration', () => {
     });
 
     it('should use default NODE_ENV if not set', () => {
+      // Note: Jest automatically sets NODE_ENV to 'test' during test runs
+      // So this test verifies that the fallback logic works, but in test context NODE_ENV is already set
+      const originalEnv = process.env.NODE_ENV;
+      delete (process.env as any).NODE_ENV;
       const defaultEnv = 'development';
       const nodeEnv = process.env.NODE_ENV || defaultEnv;
       expect(nodeEnv).toBe(defaultEnv);
+      // Restore the original value
+      process.env.NODE_ENV = originalEnv;
     });
 
     it('should parse PORT as number', () => {

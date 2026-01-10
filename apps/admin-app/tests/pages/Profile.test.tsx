@@ -12,11 +12,31 @@ jest.mock('../../src/api/client', () => ({
   graphqlRequest: jest.fn(),
 }));
 
-// Mock utils
-jest.mock('@3asoftwares/utils', () => ({
-  SEND_VERIFICATION_EMAIL_MUTATION: 'SEND_VERIFICATION_EMAIL_MUTATION',
+// Mock utils/client
+jest.mock('@3asoftwares/utils/client', () => ({
+  SEND_VERIFICATION_EMAIL_MUTATION: `
+  mutation SendVerificationEmail($source: String) {
+    sendVerificationEmail(source: $source) {
+      success
+      message
+    }
+  }
+`,
   VERIFY_EMAIL_MUTATION: 'VERIFY_EMAIL_MUTATION',
-  GET_ME_QUERY: 'GET_ME_QUERY',
+  GET_ME_QUERY: `
+  query GetMe {
+    me {
+      id
+      name
+      email
+      role
+      isActive
+      emailVerified
+      createdAt
+      lastLogin
+    }
+  }
+`,
   storeAuth: jest.fn(),
   getStoredAuth: jest.fn(() => ({ token: 'test-token' })),
   Logger: {
@@ -193,9 +213,10 @@ describe('Profile Page', () => {
     fireEvent.click(sendButton);
 
     await waitFor(() => {
-      expect(mockGraphqlRequest).toHaveBeenCalledWith('SEND_VERIFICATION_EMAIL_MUTATION', {
-        source: 'admin',
-      });
+      expect(mockGraphqlRequest).toHaveBeenCalledWith(
+        expect.stringContaining('sendVerificationEmail'),
+        { source: 'admin' }
+      );
     });
   });
 

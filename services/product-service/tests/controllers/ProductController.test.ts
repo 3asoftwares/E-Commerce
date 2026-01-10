@@ -148,7 +148,7 @@ describe('ProductController', () => {
 
       expect(Product.find).toHaveBeenCalledWith(
         expect.objectContaining({
-          category: 'Electronics',
+          category: expect.objectContaining({ $regex: expect.any(RegExp) }),
         })
       );
     });

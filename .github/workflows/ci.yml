@@ -90,11 +90,13 @@ jobs:
         run: |
           yarn workspace @3asoftwares/types build
           yarn workspace @3asoftwares/utils build
+          yarn workspace @3asoftwares/ui build:lib
 
       - name: Test packages
         run: |
           yarn workspace @3asoftwares/types test --passWithNoTests
           yarn workspace @3asoftwares/utils test --passWithNoTests
+          yarn workspace @3asoftwares/ui test --passWithNoTests
 
   # ===========================================
   # TEST BACKEND SERVICES
@@ -149,6 +151,40 @@ jobs:
           yarn workspace @3asoftwares/types build
           yarn workspace @3asoftwares/utils build
       - run: yarn workspace @3asoftwares/order-service test --passWithNoTests
+
+  test-category-service:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-packages]
+    if: always() && needs.detect-changes.outputs.category-service == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - name: Build shared packages
+        run: |
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+      - run: yarn workspace @3asoftwares/category-service test --passWithNoTests
+
+  test-coupon-service:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-packages]
+    if: always() && needs.detect-changes.outputs.coupon-service == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - name: Build shared packages
+        run: |
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+      - run: yarn workspace @3asoftwares/coupon-service test --passWithNoTests
 
   # ===========================================
   # TEST FRONTEND APPS
@@ -206,6 +242,24 @@ jobs:
           yarn workspace @3asoftwares/utils build
           yarn workspace @3asoftwares/ui build:lib
       - run: yarn workspace @3asoftwares/seller-app test --passWithNoTests
+
+  test-shell-app:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-packages]
+    if: always() && needs.detect-changes.outputs.shell-app == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - name: Build shared packages
+        run: |
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+          yarn workspace @3asoftwares/ui build:lib
+      - run: yarn workspace @3asoftwares/shell-app test --passWithNoTests
 
   # ===========================================
   # BUILD CHECK (ensures everything compiles)

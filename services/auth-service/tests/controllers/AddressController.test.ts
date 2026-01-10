@@ -100,6 +100,8 @@ describe('AddressController', () => {
 
   describe('addAddress', () => {
     const validAddressData = {
+      name: 'John Doe',
+      mobile: '+1234567890',
       street: '123 Main St',
       city: 'New York',
       state: 'NY',
@@ -154,7 +156,7 @@ describe('AddressController', () => {
       expect(responseJson).toHaveBeenCalledWith(
         expect.objectContaining({
           success: false,
-          message: 'All address fields are required',
+          message: 'Name, mobile, and all address fields are required',
         })
       );
     });

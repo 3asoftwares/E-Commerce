@@ -88,3 +88,31 @@ export const Select: React.FC<{
     ))}
   </select>
 );
+
+// Mock Textarea component
+export const Textarea: React.FC<{
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  placeholder?: string;
+  className?: string;
+  name?: string;
+  id?: string;
+  disabled?: boolean;
+  rows?: number;
+  label?: string;
+}> = ({ value, onChange, placeholder, className, name, id, disabled, rows, label }) => (
+  <div data-testid="mock-textarea-wrapper">
+    {label && <label>{label}</label>}
+    <textarea
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className={className}
+      name={name}
+      id={id}
+      disabled={disabled}
+      rows={rows}
+      data-testid="mock-textarea"
+    />
+  </div>
+);

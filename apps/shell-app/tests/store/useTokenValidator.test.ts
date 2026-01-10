@@ -1,7 +1,7 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 
 // Mock the dependencies before importing the hook
-jest.mock('@3asoftwares/utils', () => ({
+jest.mock('@3asoftwares/utils/client', () => ({
   getAccessToken: jest.fn(),
   clearAuth: jest.fn(),
   storeAuth: jest.fn(),
@@ -14,7 +14,7 @@ jest.mock('../../src/services/authService', () => ({
 }));
 
 import { useTokenValidator } from '../../src/store/useTokenValidator';
-import { getAccessToken, clearAuth, storeAuth, getStoredAuth } from '@3asoftwares/utils';
+import { getAccessToken, clearAuth, storeAuth, getStoredAuth } from '@3asoftwares/utils/client';
 import { getProfile, logout } from '../../src/services/authService';
 
 const mockGetAccessToken = getAccessToken as jest.Mock;
@@ -141,16 +141,17 @@ describe('useTokenValidator', () => {
     });
   });
 
-  describe('startValidation and stopValidation', () => {
-    it('should start periodic validation', async () => {
+  describe('automatic validation', () => {
+    it('should start periodic validation automatically when token exists', async () => {
       mockGetAccessToken.mockReturnValue('valid-token');
       mockGetProfile.mockResolvedValue({ data: { user: { id: '1' } } });
       mockGetStoredAuth.mockReturnValue({ token: 'valid-token' });
 
-      const { result } = renderHook(() => useTokenValidator());
+      renderHook(() => useTokenValidator());
 
-      act(() => {
-        result.current.startValidation();
+      // Wait for initial validation
+      await act(async () => {
+        await Promise.resolve();
       });
 
       // Advance timers by 5 minutes (TOKEN_CHECK_INTERVAL)
@@ -161,51 +162,38 @@ describe('useTokenValidator', () => {
       expect(mockGetProfile).toHaveBeenCalled();
     });
 
-    it('should stop periodic validation', async () => {
-      mockGetAccessToken.mockReturnValue('valid-token');
-      mockGetProfile.mockResolvedValue({ data: { user: { id: '1' } } });
+    it('should not start validation when no token exists', async () => {
+      mockGetAccessToken.mockReturnValue(null);
 
-      const { result } = renderHook(() => useTokenValidator());
-
-      act(() => {
-        result.current.startValidation();
-        result.current.stopValidation();
-      });
-
-      // Clear previous calls
-      mockGetProfile.mockClear();
+      renderHook(() => useTokenValidator());
 
       // Advance timers
       act(() => {
         jest.advanceTimersByTime(10 * 60 * 1000);
       });
 
-      // Should not have been called after stopping
+      // Should not have been called without a token
       expect(mockGetProfile).not.toHaveBeenCalled();
     });
   });
 
-  describe('logout', () => {
-    it('should call logout service and clear auth', async () => {
+  describe('checkAndValidate', () => {
+    it('should validate and handle invalid token', async () => {
+      mockGetAccessToken.mockReturnValue('expired-token');
+      mockGetProfile.mockRejectedValue(new Error('401 Unauthorized'));
       mockLogout.mockResolvedValue({ message: 'Logged out' });
 
-      const { result } = renderHook(() => useTokenValidator());
-
-      await act(async () => {
-        await result.current.logout();
+      // Mock window.location.reload
+      const reloadMock = jest.fn();
+      Object.defineProperty(window, 'location', {
+        value: { reload: reloadMock },
+        writable: true,
       });
 
-      expect(mockLogout).toHaveBeenCalled();
-      expect(mockClearAuth).toHaveBeenCalled();
-    });
-
-    it('should clear auth even if logout service fails', async () => {
-      mockLogout.mockRejectedValue(new Error('Network error'));
-
       const { result } = renderHook(() => useTokenValidator());
 
       await act(async () => {
-        await result.current.logout();
+        await result.current.checkAndValidate();
       });
 
       expect(mockClearAuth).toHaveBeenCalled();
@@ -213,13 +201,16 @@ describe('useTokenValidator', () => {
   });
 
   describe('cleanup', () => {
-    it('should stop validation on unmount', () => {
+    it('should stop validation on unmount', async () => {
       mockGetAccessToken.mockReturnValue('valid-token');
+      mockGetProfile.mockResolvedValue({ data: { user: { id: '1' } } });
+      mockGetStoredAuth.mockReturnValue({ token: 'valid-token' });
 
-      const { result, unmount } = renderHook(() => useTokenValidator());
+      const { unmount } = renderHook(() => useTokenValidator());
 
-      act(() => {
-        result.current.startValidation();
+      // Wait for initial setup
+      await act(async () => {
+        await Promise.resolve();
       });
 
       unmount();
