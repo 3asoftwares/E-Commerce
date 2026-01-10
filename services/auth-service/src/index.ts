@@ -1,6 +1,11 @@
-import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+
+// Load environment variables from .env file FIRST before any other imports
+const envPath = path.resolve(__dirname, '../.env');
+dotenv.config({ path: envPath });
+
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -11,10 +16,6 @@ import userRoutes from './routes/userRoutes';
 import addressRoutes from './routes/addressRoutes';
 import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '@3asoftwares/utils';
 import { Logger } from '@3asoftwares/utils/server';
-
-// Load environment variables from .env file
-const envPath = path.resolve(__dirname, '../.env');
-dotenv.config({ path: envPath });
 
 // Check if running on Vercel (serverless environment)
 const isVercel = process.env.VERCEL === '1';

@@ -1,6 +1,11 @@
-import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+
+// Load environment variables from .env file FIRST before any other imports
+const envPath = path.resolve(__dirname, '../.env');
+dotenv.config({ path: envPath });
+
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -10,10 +15,6 @@ import productRoutes from './routes/productRoutes';
 import reviewRoutes from './routes/reviewRoutes';
 import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '@3asoftwares/utils';
 import { Logger } from '@3asoftwares/utils/server';
-
-// Load environment variables from .env file
-const envPath = path.resolve(__dirname, '../.env');
-dotenv.config({ path: envPath });
 
 // Configure logger for Product service
 Logger.configure({

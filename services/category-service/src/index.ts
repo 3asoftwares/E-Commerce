@@ -1,6 +1,11 @@
-import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+
+// Load environment variables from .env file FIRST before any other imports
+const envPath = path.resolve(__dirname, '../.env');
+dotenv.config({ path: envPath });
+
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -9,10 +14,6 @@ import { setupSwagger } from './config/swagger';
 import categoryRoutes from './routes/categoryRoutes';
 import { DEFAULT_CORS_ORIGINS, PORT_CONFIG } from '@3asoftwares/utils';
 import { Logger } from '@3asoftwares/utils/server';
-
-// Load environment variables from .env file
-const envPath = path.resolve(__dirname, '../.env');
-dotenv.config({ path: envPath });
 
 // Configure logger for category service
 Logger.configure({

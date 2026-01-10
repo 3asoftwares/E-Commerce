@@ -95,17 +95,18 @@ export default function ProductsPage() {
     }
 
     if (categoryQuery) {
-      // Match category case-insensitively against fetched categories
+      // Match category by slug or name (case-insensitive)
       const decodedCategory = decodeURIComponent(categoryQuery);
       const matchedCategory = categoryList.find(
-        (cat: { name: string }) => cat.name.toLowerCase() === decodedCategory.toLowerCase()
+        (cat: { name: string; slug?: string }) =>
+          cat.slug?.toLowerCase() === decodedCategory.toLowerCase() ||
+          cat.name.toLowerCase() === decodedCategory.toLowerCase()
       );
       if (matchedCategory) {
         setCategory(matchedCategory.name);
       } else if (categoryList.length === 0) {
-        const formattedCategory =
-          decodedCategory.charAt(0).toUpperCase() + decodedCategory.slice(1).toLowerCase();
-        setCategory(formattedCategory);
+        // Categories not loaded yet, keep the raw value temporarily
+        setCategory(decodedCategory);
       } else {
         setCategory('All');
       }
