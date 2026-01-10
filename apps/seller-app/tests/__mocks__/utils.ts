@@ -1,4 +1,4 @@
-// Mock for @3asoftwares/utils
+// Mock for 3asoftwares/utils
 export const SHELL_APP_URL = 'http://localhost:3000';
 export const API_BASE_URL = 'http://localhost:4000';
 export const AUTH_SERVICE_BASE_URL = 'http://localhost:4000/api/auth';

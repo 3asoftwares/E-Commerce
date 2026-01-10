@@ -18,10 +18,10 @@ import {
   Select,
   Confirm,
   ToasterBox,
-} from '@3asoftwares/ui';
+} from '3asoftwares/ui';
 
-import type { ProductGraphQL as Product, CreateProductInput } from '@3asoftwares/types';
-import { formatIndianCompact } from '@3asoftwares/utils/client';
+import type { ProductGraphQL as Product, CreateProductInput } from '3asoftwares/types';
+import { formatIndianCompact } from '3asoftwares/utils/client';
 import { ImageUpload } from '../components/ImageUpload';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';

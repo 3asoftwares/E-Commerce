@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { Logger } from '@3asoftwares/utils/server';
+import { Logger } from '3asoftwares/utils/server';
 
 interface EmailOptions {
   to: string;
@@ -75,7 +75,7 @@ export const sendEmail = async (
     const transport = await getTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || '"3A E-Commerce" <noreply@3asoftwares.com>',
+      from: process.env.EMAIL_FROM || '"3A E-Commerce" <noreply3asoftwares.com>',
       to: options.to,
       subject: options.subject,
       html: options.html,

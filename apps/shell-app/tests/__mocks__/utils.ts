@@ -1,4 +1,4 @@
-// Mock for @3asoftwares/utils
+// Mock for 3asoftwares/utils
 export const getCurrentUser = jest.fn(() => null);
 export const getAccessToken = jest.fn(() => null);
 export const clearAuth = jest.fn();

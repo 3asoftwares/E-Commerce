@@ -224,8 +224,8 @@ Use the provided PR template and fill in all sections:
 yarn test
 
 # Run specific workspace tests
-yarn workspace @3asoftwares/storefront-app test
-yarn workspace @3asoftwares/auth-service test
+yarn workspace 3asoftwares/storefront-app test
+yarn workspace 3asoftwares/auth-service test
 
 # Run with coverage
 yarn test --coverage

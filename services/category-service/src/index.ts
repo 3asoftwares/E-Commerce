@@ -12,8 +12,8 @@ import morgan from 'morgan';
 import { connectDatabase } from './config/database';
 import { setupSwagger } from './config/swagger';
 import categoryRoutes from './routes/categoryRoutes';
-import { DEFAULT_CORS_ORIGINS, PORT_CONFIG } from '@3asoftwares/utils';
-import { Logger } from '@3asoftwares/utils/server';
+import { DEFAULT_CORS_ORIGINS, PORT_CONFIG } from '3asoftwares/utils';
+import { Logger } from '3asoftwares/utils/server';
 
 // Configure logger for category service
 Logger.configure({

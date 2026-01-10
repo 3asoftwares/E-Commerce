@@ -18,7 +18,7 @@ on:
 
 jobs:
   # ===========================================
-  # PUBLISH @3asoftwares/ecommerce-types
+  # PUBLISH 3asoftwares/ecommerce-types
   # ===========================================
   publish-types:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # ===========================================
-  # PUBLISH @3asoftwares/ecommerce-utils
+  # PUBLISH 3asoftwares/ecommerce-utils
   # ===========================================
   publish-utils:
     runs-on: ubuntu-latest
@@ -77,7 +77,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # ===========================================
-  # PUBLISH @3asoftwares/ecommerce-ui-library
+  # PUBLISH 3asoftwares/ecommerce-ui-library
   # ===========================================
   publish-ui-library:
     runs-on: ubuntu-latest

@@ -1,6 +1,6 @@
 
 
-import { Product } from '@3asoftwares/types';
+import { Product } from '3asoftwares/types';
 
 export interface ProductCardProps {
   product: Product;

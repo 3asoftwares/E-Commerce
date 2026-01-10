@@ -23,7 +23,7 @@ jest.mock('axios', () => ({
 }));
 
 // Mock utils
-jest.mock('@3asoftwares/utils', () => ({
+jest.mock('3asoftwares/utils', () => ({
   getAccessToken: jest.fn(() => 'mock-token'),
 }));
 

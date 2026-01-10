@@ -1,7 +1,6 @@
 export const SHELL_APP_URL = 'http://localhost:3000';
 export const ADMIN_APP_URL = 'http://localhost:3001';
 export const SELLER_APP_URL = 'http://localhost:3002';
-export const STOREFRONT_APP_URL = 'http://localhost:3003';
 
 // PORT CONFIGURATIONS
 export const PORT_CONFIG = {
@@ -11,10 +10,9 @@ export const PORT_CONFIG = {
   PRODUCT: 3014,
   ORDER: 3015,
   GRAPHQL: 4000,
-  STOREFRONT: 3000,
+  SHELL: 3000,
   ADMIN: 3001,
   SELLER: 3002,
-  SHELL: 3003,
 };
 
 // SERVICE URLS
@@ -38,7 +36,6 @@ export const DEFAULT_CORS_ORIGINS = [
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:3002',
-  'http://localhost:3003',
   'http://localhost:8081',
 ];
 

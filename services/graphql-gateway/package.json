@@ -1,5 +1,5 @@
 {
-  "name": "@3asoftwares/graphql-gateway",
+  "name": "3asoftwares/graphql-gateway",
   "license": "ISC",
   "version": "1.0.2",
   "description": "GraphQL Gateway aggregating all backend services",
@@ -11,7 +11,7 @@
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
-    "@3asoftwares/utils": "^1.0.7",
+    "3asoftwares/utils": "^1.0.7",
     "@apollo/server": "^4.10.0",
     "@as-integrations/next": "^3.0.0",
     "graphql": "^16.8.1",

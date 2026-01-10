@@ -57,7 +57,6 @@ services:
       - '3000:3000' # Shell App
       - '3001:3001' # Admin App
       - '3002:3002' # Seller App
-      - '3003:3003' # Storefront
       - '3011:3011' # Auth Service
       - '3012:3012' # Category Service
       - '3013:3013' # Coupon Service
@@ -71,7 +70,7 @@ services:
       NODE_ENV: development
       MONGODB_URL: mongodb://admin:password@mongodb:27017/ecommerce?authSource=admin
       REDIS_URL: redis://redis:6379
-      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:8081,http://localhost:8082
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:8081,http://localhost:8082
       AUTH_SERVICE_URL: http://localhost:3011
       CATEGORY_SERVICE_URL: http://localhost:3012
       COUPON_SERVICE_URL: http://localhost:3013
@@ -91,7 +90,6 @@ services:
       - /app/apps/admin-app/node_modules
       - /app/apps/seller-app/node_modules
       - /app/apps/shell-app/node_modules
-      - /app/apps/storefront-app/node_modules
       - /app/packages/types/node_modules
       - /app/packages/ui-library/node_modules
       - /app/packages/utils/node_modules

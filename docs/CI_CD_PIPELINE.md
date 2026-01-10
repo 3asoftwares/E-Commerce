@@ -117,7 +117,7 @@ jobs:
         run: yarn build:packages
 
       - name: Run tests with coverage
-        run: yarn workspace @3asoftwares/${{ matrix.project }} test --coverage
+        run: yarn workspace 3asoftwares/${{ matrix.project }} test --coverage
         continue-on-error: true
 
       - name: Upload coverage report

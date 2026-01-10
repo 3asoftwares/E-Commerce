@@ -7,7 +7,7 @@ import {
   GET_ME_QUERY,
   LOGOUT_MUTATION,
   SHELL_APP_URL,
-} from '@3asoftwares/utils/client';
+} from '3asoftwares/utils/client';
 import { graphqlClient } from '../api/client';
 import { useAppDispatch } from './store';
 import { logout, setUser } from './authSlice';

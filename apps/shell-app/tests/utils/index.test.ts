@@ -1,8 +1,8 @@
 import { renderApp, changeTheme, MFE_CONFIG } from '../../src/utils';
-import { getCurrentUser } from '@3asoftwares/utils/client';
+import { getCurrentUser } from '3asoftwares/utils/client';
 
 // Mock utils/client
-jest.mock('@3asoftwares/utils/client', () => ({
+jest.mock('3asoftwares/utils/client', () => ({
   getCurrentUser: jest.fn(),
   ADMIN_APP_URL: 'http://localhost:3001',
   SELLER_APP_URL: 'http://localhost:3002',

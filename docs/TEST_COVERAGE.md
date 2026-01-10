@@ -88,25 +88,25 @@ yarn test:watch
 
 ```bash
 # Frontend apps
-yarn workspace @3asoftwares/admin-app test
-yarn workspace @3asoftwares/seller-app test
-yarn workspace @3asoftwares/shell-app test
-yarn workspace @3asoftwares/storefront-app test
+yarn workspace 3asoftwares/admin-app test
+yarn workspace 3asoftwares/seller-app test
+yarn workspace 3asoftwares/shell-app test
+yarn workspace 3asoftwares/storefront-app test
 
 # Backend services
-yarn workspace @3asoftwares/auth-service test
-yarn workspace @3asoftwares/product-service test
-yarn workspace @3asoftwares/order-service test
-yarn workspace @3asoftwares/category-service test
-yarn workspace @3asoftwares/coupon-service test
-yarn workspace @3asoftwares/graphql-gateway test
+yarn workspace 3asoftwares/auth-service test
+yarn workspace 3asoftwares/product-service test
+yarn workspace 3asoftwares/order-service test
+yarn workspace 3asoftwares/category-service test
+yarn workspace 3asoftwares/coupon-service test
+yarn workspace 3asoftwares/graphql-gateway test
 ```
 
 ### With Coverage
 
 ```bash
 # Generate coverage report
-yarn workspace @3asoftwares/admin-app test --coverage
+yarn workspace 3asoftwares/admin-app test --coverage
 
 # Generate coverage with specific reporter
 yarn test --coverage --coverageReporters=lcov --coverageReporters=text

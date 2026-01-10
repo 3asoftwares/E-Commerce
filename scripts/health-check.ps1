@@ -41,8 +41,7 @@ $services = @(
 $frontendApps = @(
     @{ Name = "shell-app"; Port = 3000; Type = "webpack" },
     @{ Name = "admin-app"; Port = 3001; Type = "vite" },
-    @{ Name = "seller-app"; Port = 3002; Type = "vite" },
-    @{ Name = "storefront-app"; Port = 3003; Type = "next" }
+    @{ Name = "seller-app"; Port = 3002; Type = "vite" }
 )
 
 # Package configurations

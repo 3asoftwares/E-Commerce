@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Select } from '@3asoftwares/ui';
+import { Button, Input, Select } from '3asoftwares/ui';
 import {
   login as loginService,
   register as registerService,
   forgotPassword as forgotPasswordService,
   resetPassword as resetPasswordService,
 } from '../services/authService';
-import { storeAuth } from '@3asoftwares/utils/client';
+import { storeAuth } from '3asoftwares/utils/client';
 import { renderApp } from '../utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle, faSpinner } from '@fortawesome/free-solid-svg-icons';

@@ -13,8 +13,8 @@ import { connectDatabase } from './config/database';
 import { setupSwagger } from './config/swagger';
 import productRoutes from './routes/productRoutes';
 import reviewRoutes from './routes/reviewRoutes';
-import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '@3asoftwares/utils';
-import { Logger } from '@3asoftwares/utils/server';
+import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '3asoftwares/utils';
+import { Logger } from '3asoftwares/utils/server';
 
 // Configure logger for Product service
 Logger.configure({

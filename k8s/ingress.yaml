@@ -28,37 +28,11 @@ metadata:
 spec:
   tls:
     - hosts:
-        - yourdomain.com
-        - www.yourdomain.com
         - api.yourdomain.com
         - admin.yourdomain.com
         - seller.yourdomain.com
       secretName: ecommerce-tls
   rules:
-    # Main Storefront
-    - host: yourdomain.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: storefront
-                port:
-                  number: 3003
-
-    # WWW redirect handled by ingress
-    - host: www.yourdomain.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: storefront
-                port:
-                  number: 3003
-
     # API Gateway
     - host: api.yourdomain.com
       http:

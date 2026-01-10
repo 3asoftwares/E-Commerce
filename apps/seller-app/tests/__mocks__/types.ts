@@ -1,4 +1,4 @@
-// Mock for @3asoftwares/types
+// Mock for 3asoftwares/types
 export interface SellerUser {
   id: string;
   _id?: string;

@@ -31,6 +31,6 @@ module.exports = {
   testTimeout: 10000,
   verbose: true,
   moduleNameMapper: {
-    '^@3asoftwares/utils/server$': '<rootDir>/tests/__mocks__/utils.ts',
+    '^3asoftwares/utils/server$': '<rootDir>/tests/__mocks__/utils.ts',
   },
 };

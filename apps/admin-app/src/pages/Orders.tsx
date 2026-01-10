@@ -6,10 +6,10 @@ import {
   useCancelOrder,
   useOrder,
 } from '../api/queries';
-import { Button, Modal, Badge, Table, Spinner, Pagination, Select, Confirm } from '@3asoftwares/ui';
-import type { OrderGraphQL as Order, OrderStatus, PaymentStatus } from '@3asoftwares/types';
-import { PaymentMethodReverse } from '@3asoftwares/types';
-import { formatIndianCompact } from '@3asoftwares/utils/client';
+import { Button, Modal, Badge, Table, Spinner, Pagination, Select, Confirm } from '3asoftwares/ui';
+import type { OrderGraphQL as Order, OrderStatus, PaymentStatus } from '3asoftwares/types';
+import { PaymentMethodReverse } from '3asoftwares/types';
+import { formatIndianCompact } from '3asoftwares/utils/client';
 
 export const Orders: React.FC = () => {
   const [page, setPage] = useState(1);

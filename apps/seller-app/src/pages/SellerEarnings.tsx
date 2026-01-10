@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Spinner } from '@3asoftwares/ui';
-import { formatIndianCompact } from '@3asoftwares/utils/client';
+import { Spinner } from '3asoftwares/ui';
+import { formatIndianCompact } from '3asoftwares/utils/client';
 import { orderApi, handleApiError } from '../api/client';
 import { useSellerAuthStore } from '../store/authStore';
 

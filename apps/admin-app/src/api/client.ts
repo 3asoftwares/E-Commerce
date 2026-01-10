@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SERVICE_URLS, GET_USER_BY_ID_QUERY, getAccessToken } from '@3asoftwares/utils/client';
+import { SERVICE_URLS, GET_USER_BY_ID_QUERY, getAccessToken } from '3asoftwares/utils/client';
 
 const GRAPHQL_URL = process.env.VITE_GRAPHQL_URL || SERVICE_URLS.GRAPHQL_GATEWAY;
 

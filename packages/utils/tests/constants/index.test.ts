@@ -23,10 +23,9 @@ describe('Constants', () => {
     });
 
     it('should have all app ports defined', () => {
-      expect(PORT_CONFIG.STOREFRONT).toBe(3000);
+      expect(PORT_CONFIG.SHELL).toBe(3000);
       expect(PORT_CONFIG.ADMIN).toBe(3001);
       expect(PORT_CONFIG.SELLER).toBe(3002);
-      expect(PORT_CONFIG.SHELL).toBe(3003);
     });
   });
 

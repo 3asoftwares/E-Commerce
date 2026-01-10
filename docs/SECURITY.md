@@ -215,7 +215,7 @@ export const PASSWORD_REQUIREMENTS = {
 ```typescript
 // src/config/cors.ts
 import cors from 'cors';
-import { ALLOWED_ORIGINS } from '@3asoftwares/utils';
+import { ALLOWED_ORIGINS } from '3asoftwares/utils';
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Header as UIHeader } from '@3asoftwares/ui';
+import { Header as UIHeader } from '3asoftwares/ui';
 import { useUIStore } from '../store/uiStore';
 import { useAppDispatch, useAppSelector } from '../store/store';
 import { logout } from '../store/authSlice';
-import { SHELL_APP_URL, clearAuth } from '@3asoftwares/utils/client';
+import { SHELL_APP_URL, clearAuth } from '3asoftwares/utils/client';
 
 export const Header: React.FC = () => {
   const { theme, toggleTheme, language, setLanguage } = useUIStore();

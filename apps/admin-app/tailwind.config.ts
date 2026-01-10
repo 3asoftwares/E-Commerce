@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-const baseConfig = require('@3asoftwares/utils/config/tailwind');
+const baseConfig = require('3asoftwares/utils/config/tailwind');
 
 const config: Config = {
   ...baseConfig,
@@ -7,7 +7,7 @@ const config: Config = {
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@3asoftwares/ui/dist/**/*.{js,mjs}',
+    './node_modules/3asoftwares/ui/dist/**/*.{js,mjs}',
   ],
 };
 

@@ -17,7 +17,6 @@ Fixes #
 
 ## 📦 Apps/Services Affected
 <!-- Check all that apply -->
-- [ ] Storefront App
 - [ ] Admin App
 - [ ] Seller App
 - [ ] Shell App

@@ -12,7 +12,7 @@ export default defineConfig([
     dts: true,
     clean: true,
     splitting: false,
-    external: ['express', 'express-validator', '@3asoftwares/types'],
+    external: ['express', 'express-validator', '3asoftwares/types'],
   },
   // Config files - must externalize dependencies to avoid bundling issues
   {
@@ -45,7 +45,7 @@ export default defineConfig([
       'daisyui',
       // Common
       'path',
-      '@3asoftwares/types',
+      '3asoftwares/types',
     ],
   },
 ]);

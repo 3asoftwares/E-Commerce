@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ProductCard } from '../components/ProductCard';
-import { ProductStatus } from '@3asoftwares/types';
+import { ProductStatus } from '3asoftwares/types';
 
 const meta = {
   title: 'Data Display/ProductCard',

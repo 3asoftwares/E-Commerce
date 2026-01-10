@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Modal } from '@3asoftwares/ui';
+import { Button, Modal } from '3asoftwares/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCog,
@@ -221,10 +221,10 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onSignupClick }) => {
               <div className="flex-1">
                 <h4 className="font-bold text-gray-900 dark:text-white mb-1">Email</h4>
                 <a
-                  href="mailto:support@3asoftwares.com"
+                  href="mailto:support3asoftwares.com"
                   className="text-blue-600 dark:text-blue-400 hover:underline font-semibold"
                 >
-                  support@3asoftwares.com
+                  support3asoftwares.com
                 </a>
               </div>
             </div>

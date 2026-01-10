@@ -28,12 +28,6 @@
       "path": "./apps/shell-app"
     },
     {
-      "path": "./apps/storefront-app"
-    },
-    {
-      "path": "./apps/mobile-app"
-    },
-    {
       "path": "./packages/types"
     },
     {

@@ -72,7 +72,7 @@ services:
       # Redis
       REDIS_URL: redis://redis:6379
       # CORS
-      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:8081,http://localhost:8082
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:8081,http://localhost:8082
       # Service URLs (internal Docker network)
       AUTH_SERVICE_URL: http://backend:3011
       PRODUCT_SERVICE_URL: http://backend:3011
@@ -115,7 +115,6 @@ services:
       - '3000:3000' # Shell App
       - '3001:3001' # Admin App
       - '3002:3002' # Seller App
-      - '3003:3003' # Storefront
       - '6006:6006' # Storybook
     environment:
       NODE_ENV: development
@@ -133,7 +132,6 @@ services:
       - /app/apps/admin-app/node_modules
       - /app/apps/seller-app/node_modules
       - /app/apps/shell-app/node_modules
-      - /app/apps/storefront-app/node_modules
       - /app/packages/types/node_modules
       - /app/packages/ui-library/node_modules
       - /app/packages/utils/node_modules

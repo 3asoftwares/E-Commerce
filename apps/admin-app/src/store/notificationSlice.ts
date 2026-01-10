@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { AdminNotification, NotificationState } from '@3asoftwares/types';
+import type { AdminNotification, NotificationState } from '3asoftwares/types';
 
 const initialState: NotificationState = {
   notifications: [],

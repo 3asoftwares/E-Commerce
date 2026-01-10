@@ -51,7 +51,7 @@ function Switch-ToLocal {
     }
     
     # Copy .env.local to .env for each app
-    $apps = @("admin-app", "seller-app", "shell-app", "storefront-app")
+    $apps = @("admin-app", "seller-app", "shell-app")
     foreach ($app in $apps) {
         $envLocal = "apps/$app/.env.local"
         $envTarget = "apps/$app/.env"
@@ -92,7 +92,7 @@ function Switch-ToProduction {
     }
     
     # Copy .env.production to .env for each app
-    $apps = @("admin-app", "seller-app", "shell-app", "storefront-app")
+    $apps = @("admin-app", "seller-app", "shell-app")
     foreach ($app in $apps) {
         $envProd = "apps/$app/.env.production"
         $envTarget = "apps/$app/.env"
@@ -130,7 +130,7 @@ function Show-Status {
         Write-Host "Root .env: MISSING" -ForegroundColor Red
     }
     
-    $apps = @("admin-app", "seller-app", "shell-app", "storefront-app")
+    $apps = @("admin-app", "seller-app", "shell-app")
     foreach ($app in $apps) {
         if (Test-Path "apps/$app/.env") {
             Write-Host "apps/$app/.env: EXISTS" -ForegroundColor Green

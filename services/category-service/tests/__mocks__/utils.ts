@@ -1,4 +1,4 @@
-// Mock for @3asoftwares/utils/server
+// Mock for 3asoftwares/utils/server
 export const Logger = {
   info: jest.fn(),
   warn: jest.fn(),

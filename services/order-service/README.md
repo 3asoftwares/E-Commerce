@@ -126,4 +126,4 @@ Swagger UI available at: `http://localhost:4003/api-docs`
 
 ## Dependencies on Shared Packages
 
-- `@3asoftwares/utils` - Shared utilities and Logger
+- `3asoftwares/utils` - Shared utilities and Logger

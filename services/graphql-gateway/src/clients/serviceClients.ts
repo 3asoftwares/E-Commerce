@@ -1,6 +1,6 @@
 
 
-import { SERVICE_URLS } from '@3asoftwares/utils';
+import { SERVICE_URLS } from '3asoftwares/utils';
 import axios, { AxiosInstance } from 'axios';
 
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || SERVICE_URLS.AUTH_SERVICE;

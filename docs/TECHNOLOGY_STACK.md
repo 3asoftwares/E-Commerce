@@ -144,7 +144,7 @@
 
 ## 📦 Shared Packages
 
-### @3asoftwares/types
+### 3asoftwares/types
 
 | Category       | Technology                  |
 | -------------- | --------------------------- |
@@ -152,7 +152,7 @@
 | **Build Tool** | tsup 8.0                    |
 | **Testing**    | Vitest 1.6 (resolved)       |
 
-### @3asoftwares/utils
+### 3asoftwares/utils
 
 | Category       | Technology                           |
 | -------------- | ------------------------------------ |
@@ -162,7 +162,7 @@
 | **Exports**    | Client/Server split bundles          |
 | **Configs**    | Jest, PostCSS, Tailwind, Vite, Vitest, Webpack |
 
-### @3asoftwares/ui
+### 3asoftwares/ui
 
 | Category          | Technology                |
 | ----------------- | ------------------------- |
@@ -275,9 +275,9 @@
 ├─────────────────────────────────────────────────────────────────┤
 │  SHARED PACKAGES             │  INFRASTRUCTURE                 │
 │  ────────────────            │  ──────────────                 │
-│  • @3asoftwares/types        │  • Docker + Docker Compose      │
-│  • @3asoftwares/utils        │  • Kubernetes (K8s)             │
-│  • @3asoftwares/ui           │  • NGINX (Reverse Proxy/LB)     │
+│  • 3asoftwares/types        │  • Docker + Docker Compose      │
+│  • 3asoftwares/utils        │  • Kubernetes (K8s)             │
+│  • 3asoftwares/ui           │  • NGINX (Reverse Proxy/LB)     │
 │  • Storybook 8.x             │  • GitHub Actions CI/CD         │
 │  • tsup 8.0 Build Tool       │  • Vercel (Full Stack Deploy)   │
 ├─────────────────────────────────────────────────────────────────┤

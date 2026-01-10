@@ -136,12 +136,12 @@ jobs:
 
       - name: Build shared packages
         run: |
-          yarn workspace @3asoftwares/types build
-          yarn workspace @3asoftwares/utils build
-          yarn workspace @3asoftwares/ui build:lib
+          yarn workspace 3asoftwares/types build
+          yarn workspace 3asoftwares/utils build
+          yarn workspace 3asoftwares/ui build:lib
 
       - name: Run tests
-        run: yarn workspace @3asoftwares/admin-app test --coverage
+        run: yarn workspace 3asoftwares/admin-app test --coverage
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
@@ -178,9 +178,9 @@ jobs:
 
       - name: Build packages
         run: |
-          yarn workspace @3asoftwares/types build
-          yarn workspace @3asoftwares/utils build
-          yarn workspace @3asoftwares/ui build:lib
+          yarn workspace 3asoftwares/types build
+          yarn workspace 3asoftwares/utils build
+          yarn workspace 3asoftwares/ui build:lib
 
       - name: Publish to npm
         run: |

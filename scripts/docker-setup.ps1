@@ -174,7 +174,6 @@ function Show-Status {
     Write-Host "  Shell App:       http://localhost:3000" -ForegroundColor White
     Write-Host "  Admin App:       http://localhost:3001" -ForegroundColor White
     Write-Host "  Seller App:      http://localhost:3002" -ForegroundColor White
-    Write-Host "  Storefront:      http://localhost:3003" -ForegroundColor White
     Write-Host "  GraphQL Gateway: http://localhost:4000/graphql" -ForegroundColor White
     Write-Host "  Storybook:       http://localhost:6006" -ForegroundColor White
     Write-Host ""

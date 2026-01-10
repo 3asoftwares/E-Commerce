@@ -1,14 +1,14 @@
 # Publishing Packages to NPM
 
-This document describes how to publish the shared packages (`@3asoftwares/types`, `@3asoftwares/utils`, `@3asoftwares/ui`) to the npm registry.
+This document describes how to publish the shared packages (`3asoftwares/types`, `3asoftwares/utils`, `3asoftwares/ui`) to the npm registry.
 
 ## Package Overview
 
 | Package                   | Version | Description                        | Dependencies                               |
 | ------------------------- | ------- | ---------------------------------- | ------------------------------------------ |
-| `@3asoftwares/types`      | 1.0.1   | TypeScript type definitions        | None                                       |
-| `@3asoftwares/utils`      | 1.0.2   | Utility functions & shared configs | `@3asoftwares/types`                       |
-| `@3asoftwares/ui` | 1.0.0   | React UI Component Library         | `@3asoftwares/utils`, `react`, `react-dom` |
+| `3asoftwares/types`      | 1.0.1   | TypeScript type definitions        | None                                       |
+| `3asoftwares/utils`      | 1.0.2   | Utility functions & shared configs | `3asoftwares/types`                       |
+| `3asoftwares/ui` | 1.0.0   | React UI Component Library         | `3asoftwares/utils`, `react`, `react-dom` |
 
 ## Prerequisites
 
@@ -26,7 +26,7 @@ npm whoami
 
 ### 2. Organization Setup
 
-Since packages use the `@3asoftwares` scope, you need to either:
+Since packages use the `3asoftwares` scope, you need to either:
 
 - **Option A**: Create an npm organization named `3asoftwares` at https://www.npmjs.com/org/create
 - **Option B**: Change the package scope to your own organization/username
@@ -44,15 +44,15 @@ For security, enable Two-Factor Authentication on your npm account:
 
 **Important**: Packages must be published in dependency order:
 
-1. **@3asoftwares/types** (no dependencies)
-2. **@3asoftwares/utils** (depends on types)
-3. **@3asoftwares/ui** (depends on utils)
+1. **3asoftwares/types** (no dependencies)
+2. **3asoftwares/utils** (depends on types)
+3. **3asoftwares/ui** (depends on utils)
 
 ---
 
 ## Step-by-Step Publishing Guide
 
-### Step 1: Publish @3asoftwares/types
+### Step 1: Publish 3asoftwares/types
 
 ```powershell
 # Navigate to types package
@@ -74,7 +74,7 @@ npm publish --dry-run
 npm publish --access public
 ```
 
-### Step 2: Publish @3asoftwares/utils
+### Step 2: Publish 3asoftwares/utils
 
 ```powershell
 # Navigate to utils package
@@ -97,7 +97,7 @@ npm publish --dry-run
 npm publish --access public
 ```
 
-### Step 3: Publish @3asoftwares/ui
+### Step 3: Publish 3asoftwares/ui
 
 ```powershell
 # Navigate to ui-library package
@@ -155,24 +155,24 @@ Create a script to publish all packages in order:
 # publish-all.ps1
 $ErrorActionPreference = "Stop"
 
-Write-Host "Publishing @3asoftwares packages..." -ForegroundColor Cyan
+Write-Host "Publishing 3asoftwares packages..." -ForegroundColor Cyan
 
 # Types
-Write-Host "`n📦 Publishing @3asoftwares/types..." -ForegroundColor Yellow
+Write-Host "`n📦 Publishing 3asoftwares/types..." -ForegroundColor Yellow
 Set-Location packages/types
 npm run build
 npm publish --access public
 Set-Location ../..
 
 # Utils
-Write-Host "`n📦 Publishing @3asoftwares/utils..." -ForegroundColor Yellow
+Write-Host "`n📦 Publishing 3asoftwares/utils..." -ForegroundColor Yellow
 Set-Location packages/utils
 npm run build
 npm publish --access public
 Set-Location ../..
 
 # UI Library
-Write-Host "`n📦 Publishing @3asoftwares/ui..." -ForegroundColor Yellow
+Write-Host "`n📦 Publishing 3asoftwares/ui..." -ForegroundColor Yellow
 Set-Location packages/ui-library
 npm run build:lib
 npm publish --access public
@@ -185,7 +185,7 @@ Write-Host "`n✅ All packages published successfully!" -ForegroundColor Green
 
 ## Package Contents
 
-### @3asoftwares/types
+### 3asoftwares/types
 
 **Exports:**
 
@@ -202,21 +202,21 @@ dist/
 └── index.d.ts     # Type definitions
 ```
 
-### @3asoftwares/utils
+### 3asoftwares/utils
 
 **Exports:**
 | Export Path | Description |
 |------------|-------------|
-| `@3asoftwares/utils` | Main utilities (formatters, helpers) |
-| `@3asoftwares/utils/client` | Client-side validation schemas |
-| `@3asoftwares/utils/server` | Server-side Express validators |
-| `@3asoftwares/utils/config/vite` | Vite configuration factory |
-| `@3asoftwares/utils/config/webpack` | Webpack configuration factory |
-| `@3asoftwares/utils/config/tailwind` | Tailwind CSS configuration |
-| `@3asoftwares/utils/config/vitest` | Vitest configuration |
-| `@3asoftwares/utils/config/jest.backend` | Jest config for backend |
-| `@3asoftwares/utils/config/jest.frontend` | Jest config for frontend |
-| `@3asoftwares/utils/config/postcss` | PostCSS configuration |
+| `3asoftwares/utils` | Main utilities (formatters, helpers) |
+| `3asoftwares/utils/client` | Client-side validation schemas |
+| `3asoftwares/utils/server` | Server-side Express validators |
+| `3asoftwares/utils/config/vite` | Vite configuration factory |
+| `3asoftwares/utils/config/webpack` | Webpack configuration factory |
+| `3asoftwares/utils/config/tailwind` | Tailwind CSS configuration |
+| `3asoftwares/utils/config/vitest` | Vitest configuration |
+| `3asoftwares/utils/config/jest.backend` | Jest config for backend |
+| `3asoftwares/utils/config/jest.frontend` | Jest config for frontend |
+| `3asoftwares/utils/config/postcss` | PostCSS configuration |
 
 **Files included:**
 
@@ -238,7 +238,7 @@ src/
     └── tsconfig.base.json
 ```
 
-### @3asoftwares/ui
+### 3asoftwares/ui
 
 **Exports:**
 
@@ -263,32 +263,32 @@ dist/
 
 ```bash
 # Install types
-npm install @3asoftwares/types
+npm install 3asoftwares/types
 
 # Install utils
-npm install @3asoftwares/utils
+npm install 3asoftwares/utils
 
 # Install ui-library
-npm install @3asoftwares/ui
+npm install 3asoftwares/ui
 ```
 
 ### Using in Code
 
 ```typescript
 // Types
-import { User, Product, Order } from '@3asoftwares/types';
+import { User, Product, Order } from '3asoftwares/types';
 
 // Utils
-import { formatCurrency, formatDate } from '@3asoftwares/utils';
-import { userSchema, productSchema } from '@3asoftwares/utils/client';
-import { validateUser } from '@3asoftwares/utils/server';
+import { formatCurrency, formatDate } from '3asoftwares/utils';
+import { userSchema, productSchema } from '3asoftwares/utils/client';
+import { validateUser } from '3asoftwares/utils/server';
 
 // UI Library
-import { Button, Input, Modal } from '@3asoftwares/ui';
-import '@3asoftwares/ui/styles.css';
+import { Button, Input, Modal } from '3asoftwares/ui';
+import '3asoftwares/ui/styles.css';
 
 // Config files (in vite.config.ts)
-import { createLibraryViteConfig } from '@3asoftwares/utils/config/vite';
+import { createLibraryViteConfig } from '3asoftwares/utils/config/vite';
 ```
 
 ---
@@ -320,12 +320,12 @@ import { createLibraryViteConfig } from '@3asoftwares/utils/config/vite';
 
 ```bash
 # View package info
-npm info @3asoftwares/types
-npm info @3asoftwares/utils
-npm info @3asoftwares/ui
+npm info 3asoftwares/types
+npm info 3asoftwares/utils
+npm info 3asoftwares/ui
 
 # Check latest version
-npm show @3asoftwares/types version
+npm show 3asoftwares/types version
 ```
 
 ---
@@ -356,7 +356,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Publish @3asoftwares/types
+      - name: Publish 3asoftwares/types
         working-directory: packages/types
         run: |
           npm run build
@@ -364,7 +364,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @3asoftwares/utils
+      - name: Publish 3asoftwares/utils
         working-directory: packages/utils
         run: |
           npm run build
@@ -372,7 +372,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @3asoftwares/ui
+      - name: Publish 3asoftwares/ui
         working-directory: packages/ui-library
         run: |
           npm run build:lib

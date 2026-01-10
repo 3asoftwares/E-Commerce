@@ -16,18 +16,18 @@ This package is consumed as a workspace dependency:
 ```json
 {
   "dependencies": {
-    "@3asoftwares/utils": "^1.0.0"
+    "3asoftwares/utils": "^1.0.0"
   }
 }
 ```
 
 ## Exports
 
-### Main Export (`@3asoftwares/utils`)
+### Main Export (`3asoftwares/utils`)
 
 For frontend applications - browser-safe utilities only.
 
-### Server Export (`@3asoftwares/utils/server`)
+### Server Export (`3asoftwares/utils/server`)
 
 For backend services - includes file system Logger and Express middleware.
 
@@ -117,7 +117,7 @@ For backend services - includes file system Logger and Express middleware.
 ### Frontend
 
 ```typescript
-import { Logger } from '@3asoftwares/utils';
+import { Logger } from '3asoftwares/utils';
 
 Logger.info('User logged in', { userId: '123' }, 'Auth');
 Logger.error('API call failed', error, 'API');
@@ -126,7 +126,7 @@ Logger.error('API call failed', error, 'API');
 ### Backend
 
 ```typescript
-import { Logger } from '@3asoftwares/utils/server';
+import { Logger } from '3asoftwares/utils/server';
 
 Logger.configure({
   enableFile: true,

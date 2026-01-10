@@ -284,37 +284,6 @@ services:
       retries: 3
 
   # =========================================
-  # FRONTEND APPLICATIONS
-  # =========================================
-
-  # Storefront (Next.js SSR)
-  storefront:
-    build:
-      context: .
-      dockerfile: ./apps/storefront-app/Dockerfile.prod
-    container_name: ecommerce-storefront-prod
-    restart: always
-    environment:
-      NODE_ENV: production
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
-      NEXT_PUBLIC_AUTH_URL: ${NEXT_PUBLIC_AUTH_URL}
-    depends_on:
-      - graphql-gateway
-    networks:
-      - ecommerce-prod-network
-    deploy:
-      replicas: 2
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-    healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3003/']
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # =========================================
   # REVERSE PROXY / LOAD BALANCER
   # =========================================
 
@@ -332,7 +301,6 @@ services:
       - ./apps/seller-app/dist:/usr/share/nginx/html/seller:ro
     depends_on:
       - graphql-gateway
-      - storefront
     networks:
       - ecommerce-prod-network
     deploy:

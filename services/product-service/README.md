@@ -104,4 +104,4 @@ JWT_SECRET=your-jwt-secret
 
 ## Dependencies on Shared Packages
 
-- `@3asoftwares/utils` - Shared utilities and Logger
+- `3asoftwares/utils` - Shared utilities and Logger

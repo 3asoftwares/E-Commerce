@@ -129,8 +129,8 @@ kubectl -n ecommerce logs -f deployment/graphql-gateway
 # GraphQL Gateway
 kubectl -n ecommerce port-forward svc/graphql-gateway 4000:4000
 
-# Storefront
-kubectl -n ecommerce port-forward svc/storefront 3003:3003
+# Shell App
+kubectl -n ecommerce port-forward svc/shell-app 3000:3000
 
 # MongoDB
 kubectl -n ecommerce port-forward svc/mongodb 27017:27017

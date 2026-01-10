@@ -253,65 +253,6 @@ spec:
 
 ---
 # ============================================
-# STOREFRONT (NEXT.JS)
-# ============================================
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: storefront
-  namespace: ecommerce
-  labels:
-    app: storefront
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: storefront
-  template:
-    metadata:
-      labels:
-        app: storefront
-    spec:
-      containers:
-        - name: storefront
-          image: ghcr.io/your-org/ecommerce/storefront:latest
-          ports:
-            - containerPort: 3003
-          env:
-            - name: NODE_ENV
-              value: 'production'
-            - name: NEXT_PUBLIC_SERVICE_URL
-              value: 'https://api.yourdomain.com/graphql'
-          resources:
-            requests:
-              cpu: '100m'
-              memory: '256Mi'
-            limits:
-              cpu: '500m'
-              memory: '512Mi'
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 3003
-            initialDelaySeconds: 30
-            periodSeconds: 10
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: storefront
-  namespace: ecommerce
-spec:
-  selector:
-    app: storefront
-  ports:
-    - port: 3003
-      targetPort: 3003
-  type: ClusterIP
-
----
-# ============================================
 # INGRESS (NGINX INGRESS CONTROLLER)
 # ============================================
 apiVersion: networking.k8s.io/v1
@@ -326,22 +267,11 @@ metadata:
 spec:
   tls:
     - hosts:
-        - yourdomain.com
         - api.yourdomain.com
+        - admin.yourdomain.com
+        - seller.yourdomain.com
       secretName: ecommerce-tls
   rules:
-    # Main storefront
-    - host: yourdomain.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: storefront
-                port:
-                  number: 3003
-
     # API Gateway
     - host: api.yourdomain.com
       http:

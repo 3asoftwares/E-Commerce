@@ -82,7 +82,6 @@ The platform uses **Webpack 5 Module Federation** for micro-frontend architectur
 | Shell App | Host Container | Webpack 5 | 3000 |
 | Admin App | Remote Module | Vite | 3001 |
 | Seller App | Remote Module | Vite | 3002 |
-| Storefront | Standalone | Next.js 16 | 3003 |
 
 ### Shared Dependencies
 
@@ -165,17 +164,17 @@ packages/
 ### Package Exports
 
 ```typescript
-// @3asoftwares/utils
+// 3asoftwares/utils
 export { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from './constants';
 export { Logger } from './server';
 export { getAccessToken, clearAuth } from './client';
 
-// @3asoftwares/utils/client (browser-safe)
+// 3asoftwares/utils/client (browser-safe)
 export { GraphQLClient, createGraphQLClient } from './api';
 export * from './graphql/queries';
 export * from './graphql/mutations';
 
-// @3asoftwares/ui
+// 3asoftwares/ui
 export { Button, Input, Card, Modal } from './components';
 ```
 
@@ -402,7 +401,7 @@ Order Service (3015):
 
 ### Logging
 
-- **Logger**: Custom Logger utility (`@3asoftwares/utils/server`)
+- **Logger**: Custom Logger utility (`3asoftwares/utils/server`)
 - **Log Levels**: debug, info, warn, error
 - **Output**: Console + File (configurable)
 

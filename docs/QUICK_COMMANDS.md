@@ -31,7 +31,7 @@ yarn dev:coupon            # Coupon Service (Port 3014)
 
 🎨 RUN STORYBOOK
 ----------------------------------
-yarn workspace @3asoftwares/ui run storybook  # Storybook (Port 6006)
+yarn workspace 3asoftwares/ui run storybook  # Storybook (Port 6006)
 
 🏗️ BUILD FOR PRODUCTION
 ------------------------

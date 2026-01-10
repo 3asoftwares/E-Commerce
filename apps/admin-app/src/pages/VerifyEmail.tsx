@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../store/store';
 import { setUser } from '../store/authSlice';
-import { Button, Spinner } from '@3asoftwares/ui';
+import { Button, Spinner } from '3asoftwares/ui';
 import {
   storeAuth,
   getStoredAuth,
   VALIDATE_EMAIL_TOKEN_QUERY,
   VERIFY_EMAIL_BY_TOKEN_MUTATION,
-} from '@3asoftwares/utils/client';
+} from '3asoftwares/utils/client';
 import { graphqlRequest } from '../api/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

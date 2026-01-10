@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken } from '@3asoftwares/utils/client';
+import { getAccessToken } from '3asoftwares/utils/client';
 
 const API_BASE = process.env.VITE_AUTH_SERVICE_BASE || 'http://localhost:3011/api/auth';
 

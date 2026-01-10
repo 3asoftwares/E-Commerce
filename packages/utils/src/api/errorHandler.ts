@@ -1,4 +1,4 @@
-import { ErrorType } from '@3asoftwares/types';
+import { ErrorType } from '3asoftwares/types';
 
 export interface AppError {
   type: ErrorType;

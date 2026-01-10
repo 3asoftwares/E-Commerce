@@ -20,8 +20,7 @@ $projects = @(
     @{ LocalPath = "services\graphql-gateway"; VercelName = "e-graphql-gateway" },
     @{ LocalPath = "apps\admin-app"; VercelName = "e-admin-app" },
     @{ LocalPath = "apps\seller-app"; VercelName = "e-seller-app" },
-    @{ LocalPath = "apps\shell-app"; VercelName = "e-shell-app" },
-    @{ LocalPath = "apps\storefront-app"; VercelName = "e-storefront-app" }
+    @{ LocalPath = "apps\shell-app"; VercelName = "e-shell-app" }
 )
 
 $deployType = if ($Production) { "PRODUCTION" } else { "PREVIEW" }
