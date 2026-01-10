@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Logger } from '@3asoftwares/utils/server';
+import { Logger } from '../utils';
 
 // Don't call dotenv.config() here - it's already loaded in index.ts
 

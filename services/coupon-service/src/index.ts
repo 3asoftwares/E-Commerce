@@ -12,8 +12,7 @@ import morgan from 'morgan';
 import { connectDatabase } from './config/database';
 import { setupSwagger } from './config/swagger';
 import couponRoutes from './routes/couponRoutes';
-import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '@3asoftwares/utils';
-import { Logger } from '@3asoftwares/utils/server';
+import { PORT_CONFIG, DEFAULT_CORS_ORIGINS, Logger } from './utils';
 
 // Configure logger for coupon service
 Logger.configure({
