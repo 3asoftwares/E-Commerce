@@ -437,7 +437,7 @@ describe('OrderController', () => {
       expect(responseStatus).toHaveBeenCalledWith(400);
       expect(responseJson).toHaveBeenCalledWith({
         success: false,
-        message: 'Order is already cancelled',
+        message: 'Cannot cancel order with status: cancelled',
       });
     });
 

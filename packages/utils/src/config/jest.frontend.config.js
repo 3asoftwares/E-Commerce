@@ -10,10 +10,12 @@ module.exports = {
   moduleNameMapper: {
     // Handle CSS imports
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    // Handle @e-commerce packages - projects should override these
-    '^3asoftwares/utils$': '<rootDir>/tests/__mocks__/utils.ts',
-    '^3asoftwares/ui$': '<rootDir>/tests/__mocks__/ui-library.tsx',
-    '^3asoftwares/types$': '<rootDir>/tests/__mocks__/types.ts',
+    // Handle @3asoftwares packages - projects should override these
+    '^@3asoftwares/utils$': '<rootDir>/tests/__mocks__/utils.ts',
+    '^@3asoftwares/utils/client$': '<rootDir>/tests/__mocks__/utils.ts',
+    '^@3asoftwares/utils/server$': '<rootDir>/tests/__mocks__/utils.ts',
+    '^@3asoftwares/ui$': '<rootDir>/tests/__mocks__/ui-library.tsx',
+    '^@3asoftwares/types$': '<rootDir>/tests/__mocks__/types.ts',
     // Handle FontAwesome
     '^@fortawesome/react-fontawesome$': '<rootDir>/tests/__mocks__/fontawesome.tsx',
   },

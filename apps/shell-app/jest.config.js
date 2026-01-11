@@ -15,8 +15,10 @@ module.exports = {
     ],
   },
   moduleNameMapper: {
-    '^3asoftwares/utils$': '<rootDir>/tests/__mocks__/utils.ts',
-    '^3asoftwares/ui$': '<rootDir>/tests/__mocks__/ui-library.tsx',
+    ...baseConfig.moduleNameMapper,
+    '^@3asoftwares/utils$': '<rootDir>/tests/__mocks__/utils.ts',
+    '^@3asoftwares/utils/client$': '<rootDir>/tests/__mocks__/utils.ts',
+    '^@3asoftwares/ui$': '<rootDir>/tests/__mocks__/ui-library.tsx',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   transformIgnorePatterns: ['node_modules/(?!(zustand|@fortawesome)/)'],
