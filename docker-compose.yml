@@ -1,15 +1,15 @@
 version: '3.8'
 
 # ===========================================
-# E-COMMERCE DEVELOPMENT DOCKER COMPOSE
-# Complete setup for local development
+# E-COMMERCE LOCAL DEVELOPMENT
+# Start databases with: docker-compose up -d
 # ===========================================
 
 services:
-  # MongoDB for databases
+  # MongoDB Database
   mongodb:
     image: mongo:7.0
-    container_name: ecommerce
+    container_name: ecommerce-mongodb
     restart: unless-stopped
     ports:
       - '27017:27017'
@@ -29,7 +29,7 @@ services:
       retries: 5
       start_period: 30s
 
-  # Redis for caching and sessions
+  # Redis for caching
   redis:
     image: redis:7-alpine
     container_name: ecommerce-redis
@@ -45,64 +45,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  # Main application (all services and frontend)
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: ecommerce-app
-    restart: unless-stopped
-    ports:
-      - '3000:3000' # Shell App
-      - '3001:3001' # Admin App
-      - '3002:3002' # Seller App
-      - '3011:3011' # Auth Service
-      - '3012:3012' # Category Service
-      - '3013:3013' # Coupon Service
-      - '3014:3014' # Product Service
-      - '3015:3015' # Order Service
-      - '4000:4000' # GraphQL Gateway
-      - '6006:6006' # Storybook
-    env_file:
-      - .env.docker
-    environment:
-      NODE_ENV: development
-      MONGODB_URL: mongodb://admin:password@mongodb:27017/ecommerce?authSource=admin
-      REDIS_URL: redis://redis:6379
-      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:8081,http://localhost:8082
-      AUTH_SERVICE_URL: http://localhost:3011
-      CATEGORY_SERVICE_URL: http://localhost:3012
-      COUPON_SERVICE_URL: http://localhost:3013
-      PRODUCT_SERVICE_URL: http://localhost:3014
-      ORDER_SERVICE_URL: http://localhost:3015
-      GRAPHQL_GATEWAY_URL: http://localhost:4000
-      VITE_API_URL: http://localhost:4000/graphql
-      NEXT_PUBLIC_API_URL: http://localhost:4000/graphql
-    depends_on:
-      mongodb:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/apps/admin-app/node_modules
-      - /app/apps/seller-app/node_modules
-      - /app/apps/shell-app/node_modules
-      - /app/packages/types/node_modules
-      - /app/packages/ui-library/node_modules
-      - /app/packages/utils/node_modules
-      - /app/services/auth-service/node_modules
-      - /app/services/category-service/node_modules
-      - /app/services/coupon-service/node_modules
-      - /app/services/graphql-gateway/node_modules
-      - /app/services/order-service/node_modules
-      - /app/services/product-service/node_modules
-    networks:
-      - ecommerce-network
-    stdin_open: true
-    tty: true
 
 volumes:
   mongodb_data:

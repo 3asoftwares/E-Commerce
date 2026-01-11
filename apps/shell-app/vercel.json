@@ -1,11 +1,9 @@
 {
-  "buildCommand": "yarn build",
+  "installCommand": "cd ../.. && yarn install",
+  "buildCommand": "cd ../.. && yarn build:types && yarn build:utils && yarn build:storybook && cd apps/shell-app && yarn build",
   "outputDirectory": "dist",
   "framework": null,
   "devCommand": "yarn dev",
   "regions": ["iad1"],
-  "env": {
-    "NODE_ENV": "production"
-  },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

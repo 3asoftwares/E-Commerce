@@ -1,11 +1,9 @@
 {
-  "buildCommand": "yarn build",
+  "installCommand": "cd ../.. && yarn install",
+  "buildCommand": "cd ../.. && yarn build:types && yarn build:utils && yarn build:storybook && cd apps/admin-app && yarn build",
   "outputDirectory": "dist",
   "framework": "vite",
   "devCommand": "yarn dev",
   "regions": ["iad1"],
-  "env": {
-    "VITE_ENV": "production"
-  },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
