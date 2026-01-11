@@ -39,15 +39,15 @@ WORKDIR /app
 COPY --from=builder /app/services/auth-service/dist ./dist
 COPY --from=builder /app/services/auth-service/package.json ./
 
-# Copy built packages (needed at runtime)
+# Copy all production dependencies from builder
+COPY --from=builder /app/node_modules ./node_modules
+
+# Overwrite the workspace symlinks with actual built packages
+RUN rm -rf node_modules/@3asoftwares
 COPY --from=builder /app/packages/types/dist ./node_modules/@3asoftwares/types/dist
 COPY --from=builder /app/packages/types/package.json ./node_modules/@3asoftwares/types/
 COPY --from=builder /app/packages/utils/dist ./node_modules/@3asoftwares/utils/dist
 COPY --from=builder /app/packages/utils/package.json ./node_modules/@3asoftwares/utils/
-
-# Install production dependencies using npm (avoids yarn workspace resolution)
-RUN sed -i 's/"@3asoftwares\/utils": "\*"/"@3asoftwares\/utils": "file:node_modules\/@3asoftwares\/utils"/g' package.json && \
-    npm install --omit=dev --ignore-scripts
 
 # Set environment
 ENV NODE_ENV=production
