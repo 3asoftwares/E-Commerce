@@ -30,16 +30,23 @@ RUN cd packages/types && yarn build && \
     cd ../utils && yarn build:backend && \
     cd ../../services/auth-service && yarn build
 
-# Production image
+# Production image - standalone, no workspace
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy built files
+# Copy built service
 COPY --from=builder /app/services/auth-service/dist ./dist
 COPY --from=builder /app/services/auth-service/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages ./packages
+
+# Copy built packages (needed at runtime)
+COPY --from=builder /app/packages/types/dist ./node_modules/@3asoftwares/types/dist
+COPY --from=builder /app/packages/types/package.json ./node_modules/@3asoftwares/types/
+COPY --from=builder /app/packages/utils/dist ./node_modules/@3asoftwares/utils/dist
+COPY --from=builder /app/packages/utils/package.json ./node_modules/@3asoftwares/utils/
+
+# Install production dependencies only (no workspace)
+RUN yarn install --production --ignore-scripts
 
 # Set environment
 ENV NODE_ENV=production
