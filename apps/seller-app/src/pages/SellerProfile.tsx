@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSellerAuthStore } from '../store/authStore';
-import { Button, Badge, Spinner } from '3asoftwares/ui';
+import { Button, Badge, Spinner } from '@3asoftwares/ui';
 import { authApi } from '../api/client';
-import { storeAuth, getStoredAuth, Logger } from '3asoftwares/utils/client';
+import { storeAuth, getStoredAuth, Logger } from '@3asoftwares/utils/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser,

@@ -15,7 +15,7 @@ import {
   faChevronRight,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
-import { Button } from '3asoftwares/ui';
+import { Button } from '@3asoftwares/ui';
 
 interface NavItem {
   path: string;

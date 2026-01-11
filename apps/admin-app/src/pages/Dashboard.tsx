@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDashboardStats, useOrders } from '../api/queries';
-import { Badge, Spinner, Button } from '3asoftwares/ui';
-import { OrderStatus } from '3asoftwares/types';
-import { formatIndianCompact } from '3asoftwares/utils/client';
+import { Badge, Spinner, Button } from '@3asoftwares/ui';
+import { OrderStatus } from '@3asoftwares/types';
+import { formatIndianCompact } from '@3asoftwares/utils/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUsers,

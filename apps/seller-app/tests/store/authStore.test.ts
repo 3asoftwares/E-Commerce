@@ -1,5 +1,5 @@
 import { act } from '@testing-library/react';
-import { clearAuth, storeAuth, getStoredAuth } from '3asoftwares/utils';
+import { clearAuth, storeAuth, getStoredAuth } from '@3asoftwares/utils';
 
 // Create a fresh store for each test
 const createMockStore = () => {

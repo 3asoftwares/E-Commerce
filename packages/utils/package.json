@@ -1,6 +1,6 @@
 {
-  "name": "3asoftwares/utils",
-  "version": "1.0.7",
+  "name": "@3asoftwares/utils",
+  "version": "1.0.0",
   "description": "Utility functions for 3A Softwares E-Commerce",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -72,7 +72,7 @@
     "access": "public"
   },
   "dependencies": {
-    "3asoftwares/types": "^1.0.1"
+    "@3asoftwares/types": "^1.0.0"
   },
   "peerDependencies": {
     "express": "^4.18.2",

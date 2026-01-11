@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { getAccessToken, clearAuth, storeAuth, getStoredAuth } from '3asoftwares/utils/client';
+import { getAccessToken, clearAuth, storeAuth, getStoredAuth } from '@3asoftwares/utils/client';
 import { getProfile, logout } from '../services/authService';
 
 // Check token validity every 5 minutes

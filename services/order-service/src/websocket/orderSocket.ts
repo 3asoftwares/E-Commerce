@@ -2,8 +2,8 @@
 
 import { Server as SocketIOServer } from 'socket.io';
 import { Server as HTTPServer } from 'http';
-import { DEFAULT_CORS_ORIGINS } from '3asoftwares/utils';
-import { Logger } from '3asoftwares/utils/server';
+import { DEFAULT_CORS_ORIGINS } from '@3asoftwares/utils';
+import { Logger } from '@3asoftwares/utils/server';
 
 let io: SocketIOServer | null = null;
 

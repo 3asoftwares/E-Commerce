@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
 const { ModuleFederationPlugin } = require('webpack').container;
-const { createBaseWebpackConfig } = require('3asoftwares/utils/config/webpack');
+const { createBaseWebpackConfig } = require('@3asoftwares/utils/config/webpack');
 
 // Load environment variables from .env.local or .env
 const dotenv = require('dotenv');

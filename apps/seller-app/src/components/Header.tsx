@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header as UIHeader } from '3asoftwares/ui';
+import { Header as UIHeader } from '@3asoftwares/ui';
 import { useSellerAuthStore } from '../store/authStore';
 
 export const Header: React.FC = () => {

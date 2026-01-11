@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../src/test-utils';
 import { ProductCard } from '../../src/components/ProductCard/ProductCard';
-import { Product } from '3asoftwares/types';
+import { Product } from '@3asoftwares/types';
 
 const mockProduct: Product = {
   id: '1',

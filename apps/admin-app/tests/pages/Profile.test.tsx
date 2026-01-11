@@ -13,7 +13,7 @@ jest.mock('../../src/api/client', () => ({
 }));
 
 // Mock utils/client
-jest.mock('3asoftwares/utils/client', () => ({
+jest.mock('@3asoftwares/utils/client', () => ({
   SEND_VERIFICATION_EMAIL_MUTATION: `
   mutation SendVerificationEmail($source: String) {
     sendVerificationEmail(source: $source) {

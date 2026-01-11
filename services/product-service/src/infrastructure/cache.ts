@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import dotenv from 'dotenv';
-import { DATABASE_CONFIG } from '3asoftwares/utils';
+import { DATABASE_CONFIG } from '@3asoftwares/utils';
 dotenv.config();
 
 const REDIS_URL = process.env.REDIS_URL || DATABASE_CONFIG.REDIS_URL;

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { Header } from '3asoftwares/ui';
+import { Header } from '@3asoftwares/ui';
 import { useSellerAuthStore } from './store/authStore';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Sidebar } from './components/Sidebar';
 import { authApi } from './api/client';
-import { SHELL_APP_URL, storeAuth, getStoredAuth, Logger } from '3asoftwares/utils/client';
+import { SHELL_APP_URL, storeAuth, getStoredAuth, Logger } from '@3asoftwares/utils/client';
 import { useTokenValidator } from './store/useTokenValidator';
 import { Dashboard } from './pages/Dashboard';
 import { SellerProducts } from './pages/SellerProducts';

@@ -84,15 +84,15 @@ jobs:
 
       - name: Build packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
-          yarn workspace 3asoftwares/ui build:lib
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+          yarn workspace @3asoftwares/ui build:lib
 
       - name: Test packages
         run: |
-          yarn workspace 3asoftwares/types test --passWithNoTests
-          yarn workspace 3asoftwares/utils test --passWithNoTests
-          yarn workspace 3asoftwares/ui test --passWithNoTests
+          yarn workspace @3asoftwares/types test --passWithNoTests
+          yarn workspace @3asoftwares/utils test --passWithNoTests
+          yarn workspace @3asoftwares/ui test --passWithNoTests
 
   # ===========================================
   # TEST BACKEND SERVICES
@@ -110,9 +110,9 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Build shared packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
-      - run: yarn workspace 3asoftwares/auth-service test --passWithNoTests
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+      - run: yarn workspace @3asoftwares/auth-service test --passWithNoTests
 
   test-product-service:
     runs-on: ubuntu-latest
@@ -127,9 +127,9 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Build shared packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
-      - run: yarn workspace 3asoftwares/product-service test --passWithNoTests
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+      - run: yarn workspace @3asoftwares/product-service test --passWithNoTests
 
   test-order-service:
     runs-on: ubuntu-latest
@@ -144,9 +144,9 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Build shared packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
-      - run: yarn workspace 3asoftwares/order-service test --passWithNoTests
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+      - run: yarn workspace @3asoftwares/order-service test --passWithNoTests
 
   test-category-service:
     runs-on: ubuntu-latest
@@ -161,9 +161,9 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Build shared packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
-      - run: yarn workspace 3asoftwares/category-service test --passWithNoTests
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+      - run: yarn workspace @3asoftwares/category-service test --passWithNoTests
 
   test-coupon-service:
     runs-on: ubuntu-latest
@@ -178,9 +178,9 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Build shared packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
-      - run: yarn workspace 3asoftwares/coupon-service test --passWithNoTests
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+      - run: yarn workspace @3asoftwares/coupon-service test --passWithNoTests
 
   # ===========================================
   # TEST FRONTEND APPS
@@ -198,10 +198,10 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Build shared packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
-          yarn workspace 3asoftwares/ui build:lib
-      - run: yarn workspace 3asoftwares/admin-app test --passWithNoTests
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+          yarn workspace @3asoftwares/ui build:lib
+      - run: yarn workspace @3asoftwares/admin-app test --passWithNoTests
 
   test-seller-app:
     runs-on: ubuntu-latest
@@ -216,10 +216,10 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Build shared packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
-          yarn workspace 3asoftwares/ui build:lib
-      - run: yarn workspace 3asoftwares/seller-app test --passWithNoTests
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+          yarn workspace @3asoftwares/ui build:lib
+      - run: yarn workspace @3asoftwares/seller-app test --passWithNoTests
 
   test-shell-app:
     runs-on: ubuntu-latest
@@ -234,10 +234,10 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Build shared packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
-          yarn workspace 3asoftwares/ui build:lib
-      - run: yarn workspace 3asoftwares/shell-app test --passWithNoTests
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
+          yarn workspace @3asoftwares/ui build:lib
+      - run: yarn workspace @3asoftwares/shell-app test --passWithNoTests
 
   # ===========================================
   # BUILD CHECK (ensures everything compiles)

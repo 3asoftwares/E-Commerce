@@ -276,19 +276,19 @@ npm install 3asoftwares/ui
 
 ```typescript
 // Types
-import { User, Product, Order } from '3asoftwares/types';
+import { User, Product, Order } from '@3asoftwares/types';
 
 // Utils
-import { formatCurrency, formatDate } from '3asoftwares/utils';
-import { userSchema, productSchema } from '3asoftwares/utils/client';
-import { validateUser } from '3asoftwares/utils/server';
+import { formatCurrency, formatDate } from '@3asoftwares/utils';
+import { userSchema, productSchema } from '@3asoftwares/utils/client';
+import { validateUser } from '@3asoftwares/utils/server';
 
 // UI Library
-import { Button, Input, Modal } from '3asoftwares/ui';
-import '3asoftwares/ui/styles.css';
+import { Button, Input, Modal } from '@3asoftwares/ui';
+import '@3asoftwares/ui/styles.css';
 
 // Config files (in vite.config.ts)
-import { createLibraryViteConfig } from '3asoftwares/utils/config/vite';
+import { createLibraryViteConfig } from '@3asoftwares/utils/config/vite';
 ```
 
 ---

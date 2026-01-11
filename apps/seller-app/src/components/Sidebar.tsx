@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSellerAuthStore } from '../store/authStore';
-import { Button } from '3asoftwares/ui';
+import { Button } from '@3asoftwares/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChartLine,

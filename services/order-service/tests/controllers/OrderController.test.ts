@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import * as orderController from '../../src/controllers/OrderController';
 import Order from '../../src/models/Order';
-import { OrderStatus, PaymentStatus } from '3asoftwares/types';
+import { OrderStatus, PaymentStatus } from '@3asoftwares/types';
 
 // Mock the Order model
 jest.mock('../../src/models/Order');

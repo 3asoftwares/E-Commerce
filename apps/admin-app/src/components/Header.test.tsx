@@ -15,14 +15,14 @@ vi.mock('../store/store', () => ({
   useAppSelector: vi.fn(),
 }));
 
-vi.mock('3asoftwares/utils', () => ({
+vi.mock('@3asoftwares/utils', () => ({
   SHELL_APP_URL: 'http://localhost:3000',
   clearAuth: vi.fn(),
 }));
 
 import { useUIStore } from '../store/uiStore';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { clearAuth } from '3asoftwares/utils/client';
+import { clearAuth } from '@3asoftwares/utils/client';
 
 describe('Header Component', () => {
   const mockToggleTheme = vi.fn();

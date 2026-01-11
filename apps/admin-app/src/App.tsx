@@ -20,7 +20,7 @@ import {
   getStoredAuth,
   SHELL_APP_URL,
   Logger,
-} from '3asoftwares/utils/client';
+} from '@3asoftwares/utils/client';
 import { getUserById } from './api/client';
 import { useAppDispatch } from './store/store';
 import { useTokenValidator } from './store/useTokenValidator';

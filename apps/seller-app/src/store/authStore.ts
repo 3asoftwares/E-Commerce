@@ -1,11 +1,11 @@
 import { create } from 'zustand';
-import type { SellerAuthStoreState } from '3asoftwares/types';
+import type { SellerAuthStoreState } from '@3asoftwares/types';
 import {
   SHELL_APP_URL,
   clearAuth as clearAuthCookies,
   getStoredAuth,
   storeAuth,
-} from '3asoftwares/utils/client';
+} from '@3asoftwares/utils/client';
 
 interface ExtendedSellerAuthStore extends SellerAuthStoreState {
   setAuthData: (user: any, token: string) => void;

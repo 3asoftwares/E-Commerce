@@ -13,8 +13,8 @@ import { createServer } from 'http';
 import cors from 'cors';
 import { typeDefs } from './schema/typeDefs';
 import { resolvers } from './schema/resolvers';
-import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '3asoftwares/utils';
-import { Logger } from '3asoftwares/utils/server';
+import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from '@3asoftwares/utils';
+import { Logger } from '@3asoftwares/utils/server';
 
 // Configure logger for GraphQL Gateway
 Logger.configure({

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SERVICE_URLS } from '3asoftwares/utils';
+import { SERVICE_URLS } from '@3asoftwares/utils';
 
 const CATEGORY_SERVICE_URL = process.env.CATEGORY_SERVICE_URL || SERVICE_URLS.CATEGORY_SERVICE;
 

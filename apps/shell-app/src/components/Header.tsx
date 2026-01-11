@@ -1,7 +1,7 @@
 import React from 'react';
 import { useUIStore } from '../store/uiStore';
-import { clearAuth, getCurrentUser } from '3asoftwares/utils/client';
-import { Button } from '3asoftwares/ui';
+import { clearAuth, getCurrentUser } from '@3asoftwares/utils/client';
+import { Button } from '@3asoftwares/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 

@@ -1,19 +1,19 @@
 {
-  "name": "3asoftwares/ui",
-  "version": "1.0.2",
+  "name": "@3asoftwares/ui",
+  "version": "1.0.0",
   "description": "React UI Component Library for E-Commerce",
   "license": "MIT",
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
+  "main": "dist/ui-library.cjs.js",
+  "module": "dist/ui-library.es.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/ui-library.es.js",
+      "require": "./dist/ui-library.cjs.js"
     },
-    "./styles.css": "./dist/index.css"
+    "./styles.css": "./dist/style.css"
   },
   "files": [
     "dist"
@@ -55,7 +55,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.6",
-    "3asoftwares/utils": "^1.0.5"
+    "@3asoftwares/utils": "^1.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",

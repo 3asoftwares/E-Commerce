@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSellerAuthStore } from '../store/authStore';
-import { Button, Spinner } from '3asoftwares/ui';
-import { storeAuth, getStoredAuth } from '3asoftwares/utils/client';
+import { Button, Spinner } from '@3asoftwares/ui';
+import { storeAuth, getStoredAuth } from '@3asoftwares/utils/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCheckCircle,

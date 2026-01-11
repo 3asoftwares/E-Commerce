@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Button, Spinner } from '3asoftwares/ui';
+import { Button, Spinner } from '@3asoftwares/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload, faImage, faTimes } from '@fortawesome/free-solid-svg-icons';
 

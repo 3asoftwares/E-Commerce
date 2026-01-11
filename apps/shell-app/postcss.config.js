@@ -1,1 +1,1 @@
-module.exports = require('3asoftwares/utils/config/postcss');
+module.exports = require('@3asoftwares/utils/config/postcss');

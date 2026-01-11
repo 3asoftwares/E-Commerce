@@ -11,8 +11,8 @@ import {
   ToasterBox,
   Textarea,
   Select,
-} from '3asoftwares/ui';
-import type { CouponGraphQL as Coupon, CreateCouponInput } from '3asoftwares/types';
+} from '@3asoftwares/ui';
+import type { CouponGraphQL as Coupon, CreateCouponInput } from '@3asoftwares/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 

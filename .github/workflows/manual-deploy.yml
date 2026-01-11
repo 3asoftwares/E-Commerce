@@ -89,16 +89,16 @@ jobs:
 
       - name: Build packages
         run: |
-          yarn workspace 3asoftwares/types build
-          yarn workspace 3asoftwares/utils build
+          yarn workspace @3asoftwares/types build
+          yarn workspace @3asoftwares/utils build
 
       - name: Run Tests
         run: |
           if [ "${{ github.event.inputs.app }}" == "admin-app" ] || [ "${{ github.event.inputs.app }}" == "all-frontend" ]; then
-            yarn workspace 3asoftwares/admin-app test --passWithNoTests || true
+            yarn workspace @3asoftwares/admin-app test --passWithNoTests || true
           fi
           if [ "${{ github.event.inputs.app }}" == "seller-app" ] || [ "${{ github.event.inputs.app }}" == "all-frontend" ]; then
-            yarn workspace 3asoftwares/seller-app test --passWithNoTests || true
+            yarn workspace @3asoftwares/seller-app test --passWithNoTests || true
           fi
 
   # ===========================================

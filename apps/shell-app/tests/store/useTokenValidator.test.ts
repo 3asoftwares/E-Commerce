@@ -1,7 +1,7 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 
 // Mock the dependencies before importing the hook
-jest.mock('3asoftwares/utils/client', () => ({
+jest.mock('@3asoftwares/utils/client', () => ({
   getAccessToken: jest.fn(),
   clearAuth: jest.fn(),
   storeAuth: jest.fn(),
@@ -14,7 +14,7 @@ jest.mock('../../src/services/authService', () => ({
 }));
 
 import { useTokenValidator } from '../../src/store/useTokenValidator';
-import { getAccessToken, clearAuth, storeAuth, getStoredAuth } from '3asoftwares/utils/client';
+import { getAccessToken, clearAuth, storeAuth, getStoredAuth } from '@3asoftwares/utils/client';
 import { getProfile, logout } from '../../src/services/authService';
 
 const mockGetAccessToken = getAccessToken as jest.Mock;

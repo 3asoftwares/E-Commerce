@@ -3,7 +3,7 @@
  * For frontend apps, use logger.client.ts instead
  */
 
-import { LogLevel } from '3asoftwares/types';
+import { LogLevel } from '@3asoftwares/types';
 
 // Lazy-load fs and path to avoid issues in serverless environments
 let fs: typeof import('fs') | null = null;

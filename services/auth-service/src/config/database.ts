@@ -1,8 +1,8 @@
 
 
 import mongoose from 'mongoose';
-import { Logger } from '3asoftwares/utils/server';
-import { DATABASE_CONFIG } from '3asoftwares/utils';
+import { Logger } from '@3asoftwares/utils/server';
+import { DATABASE_CONFIG } from '@3asoftwares/utils';
 
 const MONGODB_URL = process.env.MONGODB_URL || DATABASE_CONFIG.MONGODB_URL;
 export const connectDatabase = async (): Promise<void> => {

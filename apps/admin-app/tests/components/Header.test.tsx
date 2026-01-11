@@ -2,10 +2,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../../src/store/authSlice';
-import { clearAuth, SHELL_APP_URL } from '3asoftwares/utils/client';
+import { clearAuth, SHELL_APP_URL } from '@3asoftwares/utils/client';
 
 // Mock the utils/client module
-jest.mock('3asoftwares/utils/client', () => ({
+jest.mock('@3asoftwares/utils/client', () => ({
   clearAuth: jest.fn(),
   SHELL_APP_URL: 'http://localhost:3000',
 }));

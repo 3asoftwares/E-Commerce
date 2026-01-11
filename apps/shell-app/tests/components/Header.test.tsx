@@ -10,7 +10,7 @@ jest.mock('../../src/store/uiStore', () => ({
   }),
 }));
 
-jest.mock('3asoftwares/utils', () => ({
+jest.mock('@3asoftwares/utils', () => ({
   getCurrentUser: jest.fn(() => null),
   clearAuth: jest.fn(),
 }));
@@ -106,7 +106,7 @@ describe('Header with logged in user', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Override the mock to return a user
-    jest.doMock('3asoftwares/utils', () => ({
+    jest.doMock('@3asoftwares/utils', () => ({
       getCurrentUser: jest.fn(() => ({
         id: 'user123',
         email: 'test@example.com',
@@ -119,7 +119,7 @@ describe('Header with logged in user', () => {
 
   it('should show user info when logged in', async () => {
     // Re-import to get the mocked version
-    const { getCurrentUser } = require('3asoftwares/utils');
+    const { getCurrentUser } = require('@3asoftwares/utils');
     getCurrentUser.mockReturnValue({
       id: 'user123',
       email: 'test@example.com',
