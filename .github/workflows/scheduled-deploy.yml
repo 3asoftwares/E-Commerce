@@ -1,0 +1,172 @@
+# Scheduled Deployment Workflow
+# Deploys frontend to Vercel and backend to Railway
+# Runs every 6 hours but skips if last deployment was less than 6 hours ago
+
+name: Scheduled Deploy
+
+on:
+  # Run every 6 hours
+  schedule:
+    - cron: '0 */6 * * *'
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment (ignore 6-hour check)'
+        required: false
+        type: boolean
+        default: false
+  # Deploy on push to main
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/**'
+      - 'services/**'
+      - 'packages/**'
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+jobs:
+  # Check if deployment should proceed (6-hour interval)
+  check-deployment-interval:
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.check.outputs.should_deploy }}
+    steps:
+      - name: Check last deployment time
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const forceDeployInput = '${{ github.event.inputs.force_deploy }}';
+            const forceDeploy = forceDeployInput === 'true';
+            
+            if (forceDeploy) {
+              console.log('Force deploy requested, proceeding...');
+              core.setOutput('should_deploy', 'true');
+              return;
+            }
+            
+            // Get workflow runs
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'scheduled-deploy.yml',
+              status: 'success',
+              per_page: 1
+            });
+            
+            if (runs.data.workflow_runs.length === 0) {
+              console.log('No previous successful deployments, proceeding...');
+              core.setOutput('should_deploy', 'true');
+              return;
+            }
+            
+            const lastRun = runs.data.workflow_runs[0];
+            const lastRunTime = new Date(lastRun.updated_at);
+            const now = new Date();
+            const hoursSinceLastRun = (now - lastRunTime) / (1000 * 60 * 60);
+            
+            console.log(`Last deployment: ${lastRunTime.toISOString()}`);
+            console.log(`Hours since last deployment: ${hoursSinceLastRun.toFixed(2)}`);
+            
+            if (hoursSinceLastRun >= 6) {
+              console.log('More than 6 hours since last deployment, proceeding...');
+              core.setOutput('should_deploy', 'true');
+            } else {
+              console.log('Less than 6 hours since last deployment, skipping...');
+              core.setOutput('should_deploy', 'false');
+            }
+
+  # Deploy Frontend Apps to Vercel
+  deploy-frontend:
+    needs: check-deployment-interval
+    if: needs.check-deployment-interval.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [admin-app, seller-app, shell-app]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy ${{ matrix.app }} to Vercel
+        run: |
+          cd apps/${{ matrix.app }}
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets[format('VERCEL_{0}_PROJECT_ID', matrix.app)] }}
+
+  # Deploy Backend Services to Railway
+  deploy-backend:
+    needs: check-deployment-interval
+    if: needs.check-deployment-interval.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth-service, category-service, coupon-service, graphql-gateway, order-service, product-service]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy ${{ matrix.service }} to Railway
+        run: |
+          railway link --environment production
+          railway up --service ${{ matrix.service }} --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+
+  # Summary job
+  deployment-summary:
+    needs: [deploy-frontend, deploy-backend]
+    if: always() && needs.check-deployment-interval.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment Summary
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Frontend (Vercel)" >> $GITHUB_STEP_SUMMARY
+          echo "- admin-app: ${{ needs.deploy-frontend.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- seller-app: ${{ needs.deploy-frontend.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- shell-app: ${{ needs.deploy-frontend.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Backend (Railway)" >> $GITHUB_STEP_SUMMARY
+          echo "- auth-service: ${{ needs.deploy-backend.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- category-service: ${{ needs.deploy-backend.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- coupon-service: ${{ needs.deploy-backend.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- graphql-gateway: ${{ needs.deploy-backend.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- order-service: ${{ needs.deploy-backend.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- product-service: ${{ needs.deploy-backend.result }}" >> $GITHUB_STEP_SUMMARY
+
+  # Skip notification
+  skip-notification:
+    needs: check-deployment-interval
+    if: needs.check-deployment-interval.outputs.should_deploy == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment Skipped
+        run: |
+          echo "## Deployment Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Last deployment was less than 6 hours ago." >> $GITHUB_STEP_SUMMARY
+          echo "To force a deployment, run the workflow manually with 'Force deployment' checked." >> $GITHUB_STEP_SUMMARY
