@@ -52,21 +52,3 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_SHELL }}
-
-  # ===========================================
-  # DEPLOY AUTH SERVICE TO RAILWAY
-  # ===========================================
-  deploy-auth:
-    name: 🚀 Deploy Auth Service (Railway)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Deploy to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          railway up --detach --service 1e3a3dd6-ac2c-4e63-a224-419dcb69770e
