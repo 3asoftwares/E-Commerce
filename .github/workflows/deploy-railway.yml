@@ -1,5 +1,5 @@
 # Deploy Microservices to Railway
-# Triggers on: push to main branch only (with 6-hour interval check), manual dispatch
+# Triggers on: CI workflow completion (success) on main branch, manual dispatch
 # Required secrets:
 #   - RAILWAY_TOKEN: Railway API token
 #   - RAILWAY_PROJECT_ID: Railway project ID
@@ -7,13 +7,12 @@
 name: Deploy to Railway
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
     branches:
       - main
-    paths:
-      - 'services/**'
-      - 'packages/types/**'
-      - 'packages/utils/**'
   workflow_dispatch:
     inputs:
       service:
@@ -29,7 +28,7 @@ on:
           - product-service
           - all
       force_deploy:
-        description: 'Force deployment (ignore 6-hour check)'
+        description: 'Force deployment (ignore checks)'
         required: false
         type: boolean
         default: false
@@ -40,63 +39,33 @@ env:
 
 jobs:
   # ===========================================
-  # CHECK DEPLOYMENT INTERVAL (6 hours)
+  # CHECK IF CI PASSED (for workflow_run trigger)
   # ===========================================
-  check-interval:
+  check-ci:
     runs-on: ubuntu-latest
     outputs:
       should_deploy: ${{ steps.check.outputs.should_deploy }}
     steps:
-      - name: Check last deployment time
+      - name: Check CI status
         id: check
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const forceDeploy = '${{ github.event.inputs.force_deploy }}' === 'true';
-            
-            if (forceDeploy) {
-              console.log('Force deploy requested, proceeding...');
-              core.setOutput('should_deploy', 'true');
-              return;
-            }
-            
-            // Get workflow runs for this workflow
-            const runs = await github.rest.actions.listWorkflowRuns({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'deploy-railway.yml',
-              status: 'success',
-              per_page: 1
-            });
-            
-            if (runs.data.workflow_runs.length === 0) {
-              console.log('No previous successful deployments, proceeding...');
-              core.setOutput('should_deploy', 'true');
-              return;
-            }
-            
-            const lastRun = runs.data.workflow_runs[0];
-            const lastRunTime = new Date(lastRun.updated_at);
-            const now = new Date();
-            const hoursSinceLastRun = (now - lastRunTime) / (1000 * 60 * 60);
-            
-            console.log(`Last deployment: ${lastRunTime.toISOString()}`);
-            console.log(`Hours since last deployment: ${hoursSinceLastRun.toFixed(2)}`);
-            
-            if (hoursSinceLastRun >= 6) {
-              console.log('More than 6 hours since last deployment, proceeding...');
-              core.setOutput('should_deploy', 'true');
-            } else {
-              console.log('Less than 6 hours since last deployment, skipping...');
-              core.setOutput('should_deploy', 'false');
-            }
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Manual trigger, proceeding..."
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.workflow_run.conclusion }}" == "success" ]; then
+            echo "CI passed, proceeding with deployment..."
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "CI did not pass (conclusion: ${{ github.event.workflow_run.conclusion }}), skipping deployment..."
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+          fi
 
   # ===========================================
   # DETECT CHANGES (for push events)
   # ===========================================
   detect-changes:
-    needs: check-interval
-    if: needs.check-interval.outputs.should_deploy == 'true'
+    needs: check-ci
+    if: needs.check-ci.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     outputs:
       auth-service: ${{ steps.changes.outputs.auth-service }}
@@ -132,8 +101,8 @@ jobs:
   # VALIDATE SECRETS
   # ===========================================
   validate-secrets:
-    needs: check-interval
-    if: needs.check-interval.outputs.should_deploy == 'true'
+    needs: check-ci
+    if: needs.check-ci.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Validate Railway secrets
@@ -152,8 +121,8 @@ jobs:
   # BUILD SHARED PACKAGES
   # ===========================================
   build-packages:
-    needs: [check-interval, validate-secrets]
-    if: needs.check-interval.outputs.should_deploy == 'true'
+    needs: [check-ci, validate-secrets]
+    if: needs.check-ci.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -184,10 +153,10 @@ jobs:
   # DEPLOY AUTH SERVICE
   # ===========================================
   deploy-auth:
-    needs: [check-interval, detect-changes, build-packages]
+    needs: [check-ci, detect-changes, build-packages]
     if: |
-      needs.check-interval.outputs.should_deploy == 'true' &&
-      ((github.event_name == 'push' && (needs.detect-changes.outputs.auth-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
+      needs.check-ci.outputs.should_deploy == 'true' &&
+      ((github.event_name == 'workflow_run' && (needs.detect-changes.outputs.auth-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
       (github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'auth-service' || github.event.inputs.service == 'all')))
     runs-on: ubuntu-latest
     steps:
@@ -254,10 +223,10 @@ jobs:
   # DEPLOY CATEGORY SERVICE
   # ===========================================
   deploy-category:
-    needs: [check-interval, detect-changes, build-packages]
+    needs: [check-ci, detect-changes, build-packages]
     if: |
-      needs.check-interval.outputs.should_deploy == 'true' &&
-      ((github.event_name == 'push' && (needs.detect-changes.outputs.category-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
+      needs.check-ci.outputs.should_deploy == 'true' &&
+      ((github.event_name == 'workflow_run' && (needs.detect-changes.outputs.category-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
       (github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'category-service' || github.event.inputs.service == 'all')))
     runs-on: ubuntu-latest
     steps:
@@ -323,10 +292,10 @@ jobs:
   # DEPLOY COUPON SERVICE
   # ===========================================
   deploy-coupon:
-    needs: [check-interval, detect-changes, build-packages]
+    needs: [check-ci, detect-changes, build-packages]
     if: |
-      needs.check-interval.outputs.should_deploy == 'true' &&
-      ((github.event_name == 'push' && (needs.detect-changes.outputs.coupon-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
+      needs.check-ci.outputs.should_deploy == 'true' &&
+      ((github.event_name == 'workflow_run' && (needs.detect-changes.outputs.coupon-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
       (github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'coupon-service' || github.event.inputs.service == 'all')))
     runs-on: ubuntu-latest
     steps:
@@ -392,10 +361,10 @@ jobs:
   # DEPLOY GRAPHQL GATEWAY
   # ===========================================
   deploy-gateway:
-    needs: [check-interval, detect-changes, build-packages]
+    needs: [check-ci, detect-changes, build-packages]
     if: |
-      needs.check-interval.outputs.should_deploy == 'true' &&
-      ((github.event_name == 'push' && (needs.detect-changes.outputs.graphql-gateway == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
+      needs.check-ci.outputs.should_deploy == 'true' &&
+      ((github.event_name == 'workflow_run' && (needs.detect-changes.outputs.graphql-gateway == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
       (github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'graphql-gateway' || github.event.inputs.service == 'all')))
     runs-on: ubuntu-latest
     steps:
@@ -461,10 +430,10 @@ jobs:
   # DEPLOY ORDER SERVICE
   # ===========================================
   deploy-order:
-    needs: [check-interval, detect-changes, build-packages]
+    needs: [check-ci, detect-changes, build-packages]
     if: |
-      needs.check-interval.outputs.should_deploy == 'true' &&
-      ((github.event_name == 'push' && (needs.detect-changes.outputs.order-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
+      needs.check-ci.outputs.should_deploy == 'true' &&
+      ((github.event_name == 'workflow_run' && (needs.detect-changes.outputs.order-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
       (github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'order-service' || github.event.inputs.service == 'all')))
     runs-on: ubuntu-latest
     steps:
@@ -530,10 +499,10 @@ jobs:
   # DEPLOY PRODUCT SERVICE
   # ===========================================
   deploy-product:
-    needs: [check-interval, detect-changes, build-packages]
+    needs: [check-ci, detect-changes, build-packages]
     if: |
-      needs.check-interval.outputs.should_deploy == 'true' &&
-      ((github.event_name == 'push' && (needs.detect-changes.outputs.product-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
+      needs.check-ci.outputs.should_deploy == 'true' &&
+      ((github.event_name == 'workflow_run' && (needs.detect-changes.outputs.product-service == 'true' || needs.detect-changes.outputs.packages == 'true')) ||
       (github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'product-service' || github.event.inputs.service == 'all')))
     runs-on: ubuntu-latest
     steps:
@@ -599,23 +568,23 @@ jobs:
   # DEPLOYMENT SKIPPED
   # ===========================================
   skip-notification:
-    needs: check-interval
-    if: needs.check-interval.outputs.should_deploy == 'false'
+    needs: check-ci
+    if: needs.check-ci.outputs.should_deploy == 'false'
     runs-on: ubuntu-latest
     steps:
       - name: Deployment Skipped
         run: |
           echo "## ⏭️ Railway Deployment Skipped" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Last deployment was less than 6 hours ago." >> $GITHUB_STEP_SUMMARY
-          echo "To force a deployment, run the workflow manually with 'Force deployment' checked." >> $GITHUB_STEP_SUMMARY
+          echo "CI workflow did not pass or was not triggered on main branch." >> $GITHUB_STEP_SUMMARY
+          echo "To force a deployment, run the workflow manually." >> $GITHUB_STEP_SUMMARY
 
   # ===========================================
   # DEPLOYMENT SUMMARY
   # ===========================================
   summary:
-    needs: [check-interval, deploy-auth, deploy-category, deploy-coupon, deploy-gateway, deploy-order, deploy-product]
-    if: always() && needs.check-interval.outputs.should_deploy == 'true'
+    needs: [check-ci, deploy-auth, deploy-category, deploy-coupon, deploy-gateway, deploy-order, deploy-product]
+    if: always() && needs.check-ci.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Deployment Summary
