@@ -2,7 +2,8 @@ const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
 const { ModuleFederationPlugin } = require('webpack').container;
-const { createBaseWebpackConfig } = require('@3asoftwares/utils/config/webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // Load environment variables based on NODE_ENV
 const dotenv = require('dotenv');
@@ -26,19 +27,20 @@ envFiles.forEach((file) => {
 const ADMIN_APP_URL = process.env.ADMIN_APP_URL || 'http://localhost:3001';
 const SELLER_APP_URL = process.env.SELLER_APP_URL || 'http://localhost:3002';
 
-// Get base configuration
-const baseConfig = createBaseWebpackConfig({
-  rootDir: __dirname,
-  htmlTemplate: './public/index.html',
-  htmlTitle: '3A Softwares',
-  devServerPort: 3000,
-});
+const isProduction = nodeEnv === 'production';
 
 module.exports = {
-  ...baseConfig,
-  mode: nodeEnv === 'production' ? 'production' : 'development',
+  entry: './src/index.tsx',
+  target: 'web',
+  mode: isProduction ? 'production' : 'development',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.[contenthash].js',
+    publicPath: 'auto',
+    clean: true,
+  },
   resolve: {
-    ...baseConfig.resolve,
+    extensions: ['.tsx', '.ts', '.jsx', '.js'],
     fallback: {
       crypto: false,
       url: false,
@@ -60,8 +62,48 @@ module.exports = {
       process: false,
     },
   },
+  module: {
+    rules: [
+      {
+        test: /\.(png|jpe?g|gif|svg|webp)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/images/[name].[hash][ext]',
+        },
+      },
+      {
+        test: /\.(ts|tsx)$/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                '@babel/preset-react',
+                ['@babel/preset-typescript', { onlyRemoveTypeImports: true }],
+              ],
+            },
+          },
+        ],
+        exclude: /node_modules\/(?!3asoftwares)/,
+      },
+      {
+        test: /\.css$/,
+        use: [
+          isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+          'css-loader',
+          'postcss-loader',
+        ],
+      },
+    ],
+  },
   plugins: [
-    ...baseConfig.plugins,
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+      title: '3A Softwares',
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css',
+    }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
     }),
@@ -96,4 +138,35 @@ module.exports = {
       'process.env.SELLER_APP_URL': JSON.stringify(SELLER_APP_URL),
     }),
   ],
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          priority: 10,
+        },
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom)[\\/]/,
+          name: 'react-vendor',
+          priority: 20,
+        },
+        uiLibrary: {
+          test: /[\\/]packages[\\/]ui-library[\\/]/,
+          name: 'ui-library',
+          priority: 15,
+        },
+      },
+    },
+    runtimeChunk: 'single',
+  },
+  performance: {
+    hints: false,
+  },
+  devServer: {
+    port: 3000,
+    hot: true,
+    historyApiFallback: true,
+  },
 };
