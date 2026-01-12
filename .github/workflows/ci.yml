@@ -15,46 +15,11 @@ env:
 
 jobs:
   # ===========================================
-  # DETECT CHANGES (DISABLED - Run all checks)
-  # ===========================================
-  # TODO: Re-enable after full CI verification
-  # detect-changes:
-  #   name: Detect Changes
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     packages-types: ${{ steps.filter.outputs.packages-types }}
-  #     ...
-  
-  detect-changes:
-    name: Detect Changes (Disabled - All True)
-    runs-on: ubuntu-latest
-    outputs:
-      packages-types: 'true'
-      packages-utils: 'true'
-      packages-ui: 'true'
-      apps-admin: 'true'
-      apps-seller: 'true'
-      apps-shell: 'true'
-      services-auth: 'true'
-      services-category: 'true'
-      services-coupon: 'true'
-      services-gateway: 'true'
-      services-order: 'true'
-      services-product: 'true'
-      any-packages: 'true'
-      any-apps: 'true'
-      any-services: 'true'
-    steps:
-      - name: Skip Detection - Run All
-        run: echo "Change detection disabled - running all checks"
-
-  # ===========================================
   # SETUP & INSTALL
   # ===========================================
   setup:
-    name: Setup and Install
+    name: Setup
     runs-on: ubuntu-latest
-    needs: detect-changes
     steps:
       - uses: actions/checkout@v4
 
@@ -78,27 +43,19 @@ jobs:
           key: node-modules-${{ github.sha }}
 
   # ===========================================
-  # BUILD ALL
+  # BUILD PACKAGES (Sequential - dependencies)
   # ===========================================
-  build:
-    name: Build All
+  build-types:
+    name: Build Types
     runs-on: ubuntu-latest
     needs: setup
-    outputs:
-      packages-success: ${{ steps.build-packages.outcome }}
-      apps-success: ${{ steps.build-apps.outcome }}
-      services-success: ${{ steps.build-services.outcome }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache/restore@v4
+      - uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -106,61 +63,23 @@ jobs:
             apps/*/node_modules
             services/*/node_modules
           key: node-modules-${{ github.sha }}
+      - run: yarn build:types
+      - uses: actions/cache/save@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
 
-      - name: Build Packages (types → utils → ui)
-        id: build-packages
-        run: |
-          echo "Building Types..."
-          yarn build:types
-          echo "Building Utils..."
-          yarn build:utils
-          echo "Building UI..."
-          yarn build:ui
-
-      - name: Build Apps (admin, seller, shell)
-        id: build-apps
-        if: always() && steps.build-packages.outcome == 'success'
-        run: |
-          yarn build:admin &
-          yarn build:seller &
-          yarn build:shell &
-          wait
-
-      - name: Build Services (auth, category, coupon, gateway, order, product)
-        id: build-services
-        if: always() && steps.build-packages.outcome == 'success'
-        run: |
-          yarn build:auth &
-          yarn build:category &
-          yarn build:coupon &
-          yarn build:gateway &
-          yarn build:order &
-          yarn build:product &
-          wait
-
-  # ===========================================
-  # TEST ALL
-  # ===========================================
-  test:
-    name: Test All
+  build-utils:
+    name: Build Utils
     runs-on: ubuntu-latest
-    needs: [detect-changes, build]
-    if: always() && needs.build.result == 'success'
-    outputs:
-      packages-success: ${{ steps.test-packages.outcome }}
-      apps-success: ${{ steps.test-apps.outcome }}
-      services-success: ${{ steps.test-services.outcome }}
+    needs: build-types
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache/restore@v4
+      - uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -168,51 +87,674 @@ jobs:
             apps/*/node_modules
             services/*/node_modules
           key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - run: yarn build:utils
+      - uses: actions/cache/save@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
 
-      - name: Build Packages First
-        run: |
-          yarn build:types
-          yarn build:utils
-          yarn build:ui
+  build-ui:
+    name: Build UI
+    runs-on: ubuntu-latest
+    needs: build-utils
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn build:ui
+      - uses: actions/cache/save@v4
+        with:
+          path: packages/ui-library/dist
+          key: build-ui-${{ github.sha }}
 
-      - name: Test Packages (types, utils, ui)
-        id: test-packages
-        continue-on-error: true
-        run: |
-          echo "Testing Types..."
-          yarn workspace @3asoftwares/types test || true
-          echo "Testing Utils..."
-          yarn workspace @3asoftwares/utils test || true
-          echo "Testing UI..."
-          yarn workspace @3asoftwares/ui test || true
+  # ===========================================
+  # BUILD APPS (Parallel)
+  # ===========================================
+  build-admin:
+    name: Build Admin
+    runs-on: ubuntu-latest
+    needs: build-ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/ui-library/dist
+          key: build-ui-${{ github.sha }}
+      - run: yarn build:admin
 
-      - name: Test Apps (admin, seller, shell)
-        id: test-apps
-        continue-on-error: true
-        run: |
-          echo "Testing Admin..."
-          yarn test:admin --passWithNoTests || true
-          echo "Testing Seller..."
-          yarn test:seller --passWithNoTests || true
-          echo "Testing Shell..."
-          yarn test:shell --passWithNoTests || true
+  build-seller:
+    name: Build Seller
+    runs-on: ubuntu-latest
+    needs: build-ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/ui-library/dist
+          key: build-ui-${{ github.sha }}
+      - run: yarn build:seller
 
-      - name: Test Services (auth, category, coupon, gateway, order, product)
-        id: test-services
-        continue-on-error: true
-        run: |
-          echo "Testing Auth..."
-          yarn test:auth --passWithNoTests || true
-          echo "Testing Category..."
-          yarn test:category --passWithNoTests || true
-          echo "Testing Coupon..."
-          yarn test:coupon --passWithNoTests || true
-          echo "Testing Gateway..."
-          yarn test:gateway --passWithNoTests || true
-          echo "Testing Order..."
-          yarn test:order --passWithNoTests || true
-          echo "Testing Product..."
-          yarn test:product --passWithNoTests || true
+  build-shell:
+    name: Build Shell
+    runs-on: ubuntu-latest
+    needs: build-ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/ui-library/dist
+          key: build-ui-${{ github.sha }}
+      - run: yarn build:shell
+
+  # ===========================================
+  # BUILD SERVICES (Parallel)
+  # ===========================================
+  build-auth:
+    name: Build Auth
+    runs-on: ubuntu-latest
+    needs: build-utils
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn build:auth
+
+  build-category:
+    name: Build Category
+    runs-on: ubuntu-latest
+    needs: build-utils
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn build:category
+
+  build-coupon:
+    name: Build Coupon
+    runs-on: ubuntu-latest
+    needs: build-utils
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn build:coupon
+
+  build-gateway:
+    name: Build Gateway
+    runs-on: ubuntu-latest
+    needs: build-utils
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn build:gateway
+
+  build-order:
+    name: Build Order
+    runs-on: ubuntu-latest
+    needs: build-utils
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn build:order
+
+  build-product:
+    name: Build Product
+    runs-on: ubuntu-latest
+    needs: build-utils
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn build:product
+
+  # ===========================================
+  # TEST PACKAGES (Parallel)
+  # ===========================================
+  test-types:
+    name: Test Types
+    runs-on: ubuntu-latest
+    needs: build-types
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - run: yarn workspace @3asoftwares/types test
+
+  test-utils:
+    name: Test Utils
+    runs-on: ubuntu-latest
+    needs: build-utils
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn workspace @3asoftwares/utils test
+
+  test-ui:
+    name: Test UI
+    runs-on: ubuntu-latest
+    needs: build-ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/ui-library/dist
+          key: build-ui-${{ github.sha }}
+      - run: yarn workspace @3asoftwares/ui test
+
+  # ===========================================
+  # TEST APPS (Parallel)
+  # ===========================================
+  test-admin:
+    name: Test Admin
+    runs-on: ubuntu-latest
+    needs: build-admin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/ui-library/dist
+          key: build-ui-${{ github.sha }}
+      - run: yarn test:admin
+
+  test-seller:
+    name: Test Seller
+    runs-on: ubuntu-latest
+    needs: build-seller
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/ui-library/dist
+          key: build-ui-${{ github.sha }}
+      - run: yarn test:seller
+
+  test-shell:
+    name: Test Shell
+    runs-on: ubuntu-latest
+    needs: build-shell
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/ui-library/dist
+          key: build-ui-${{ github.sha }}
+      - run: yarn test:shell
+
+  # ===========================================
+  # TEST SERVICES (Parallel)
+  # ===========================================
+  test-auth:
+    name: Test Auth
+    runs-on: ubuntu-latest
+    needs: build-auth
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn test:auth
+
+  test-category:
+    name: Test Category
+    runs-on: ubuntu-latest
+    needs: build-category
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn test:category
+
+  test-coupon:
+    name: Test Coupon
+    runs-on: ubuntu-latest
+    needs: build-coupon
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn test:coupon
+
+  test-gateway:
+    name: Test Gateway
+    runs-on: ubuntu-latest
+    needs: build-gateway
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn test:gateway
+
+  test-order:
+    name: Test Order
+    runs-on: ubuntu-latest
+    needs: build-order
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn test:order
+
+  test-product:
+    name: Test Product
+    runs-on: ubuntu-latest
+    needs: build-product
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+            apps/*/node_modules
+            services/*/node_modules
+          key: node-modules-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/types/dist
+          key: build-types-${{ github.sha }}
+      - uses: actions/cache/restore@v4
+        with:
+          path: packages/utils/dist
+          key: build-utils-${{ github.sha }}
+      - run: yarn test:product
 
   # ===========================================
   # SUMMARY
@@ -220,7 +762,32 @@ jobs:
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [detect-changes, setup, build, test]
+    needs:
+      - setup
+      - build-types
+      - build-utils
+      - build-ui
+      - build-admin
+      - build-seller
+      - build-shell
+      - build-auth
+      - build-category
+      - build-coupon
+      - build-gateway
+      - build-order
+      - build-product
+      - test-types
+      - test-utils
+      - test-ui
+      - test-admin
+      - test-seller
+      - test-shell
+      - test-auth
+      - test-category
+      - test-coupon
+      - test-gateway
+      - test-order
+      - test-product
     if: always()
     steps:
       - name: Generate Summary
@@ -228,27 +795,42 @@ jobs:
           echo "## CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          echo "### Changes Detected" >> $GITHUB_STEP_SUMMARY
-          echo "| Component | Changed |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----------|---------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Packages | ${{ needs.detect-changes.outputs.any-packages }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Apps | ${{ needs.detect-changes.outputs.any-apps }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Services | ${{ needs.detect-changes.outputs.any-services }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
           echo "### Build Results" >> $GITHUB_STEP_SUMMARY
-          echo "| Stage | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Setup | ${{ needs.setup.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Test | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Package/App/Service | Build | Test |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------------------|-------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Types | ${{ needs.build-types.result }} | ${{ needs.test-types.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Utils | ${{ needs.build-utils.result }} | ${{ needs.test-utils.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| UI | ${{ needs.build-ui.result }} | ${{ needs.test-ui.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Admin | ${{ needs.build-admin.result }} | ${{ needs.test-admin.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Seller | ${{ needs.build-seller.result }} | ${{ needs.test-seller.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Shell | ${{ needs.build-shell.result }} | ${{ needs.test-shell.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Auth | ${{ needs.build-auth.result }} | ${{ needs.test-auth.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Category | ${{ needs.build-category.result }} | ${{ needs.test-category.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Coupon | ${{ needs.build-coupon.result }} | ${{ needs.test-coupon.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Gateway | ${{ needs.build-gateway.result }} | ${{ needs.test-gateway.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Order | ${{ needs.build-order.result }} | ${{ needs.test-order.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Product | ${{ needs.build-product.result }} | ${{ needs.test-product.result }} |" >> $GITHUB_STEP_SUMMARY
 
-      - name: Check for Failures
+      - name: Check for Build Failures
         run: |
-          if [ "${{ needs.build.result }}" == "failure" ]; then
-            echo "CI Pipeline FAILED - Build failed" >> $GITHUB_STEP_SUMMARY
+          FAILED=false
+          
+          if [ "${{ needs.build-types.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-utils.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-ui.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-admin.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-seller.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-shell.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-auth.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-category.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-coupon.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-gateway.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-order.result }}" == "failure" ]; then FAILED=true; fi
+          if [ "${{ needs.build-product.result }}" == "failure" ]; then FAILED=true; fi
+          
+          if [ "$FAILED" == "true" ]; then
+            echo "❌ CI Pipeline FAILED" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
           
-          echo "CI Pipeline completed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "✅ CI Pipeline completed successfully" >> $GITHUB_STEP_SUMMARY

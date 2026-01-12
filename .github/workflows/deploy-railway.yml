@@ -164,7 +164,7 @@ jobs:
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_GATEWAY }}
+          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE_GRAPHQL }}
         run: |
           cd services/graphql-gateway
           railway up --service $RAILWAY_SERVICE --detach
