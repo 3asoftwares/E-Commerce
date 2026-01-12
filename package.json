@@ -1,6 +1,6 @@
 {
   "name": "ecommerce-platform",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "private": true,
   "description": "Enterprise 3A Softwares with multiple independent applications",
   "workspaces": [
@@ -9,8 +9,10 @@
     "services/*"
   ],
   "scripts": {
+    "build:packages": "yarn workspace @3asoftwares/types build && yarn workspace @3asoftwares/utils build && yarn workspace @3asoftwares/ui build",
     "dev:admin": "yarn workspace @3asoftwares/admin-app run dev",
     "dev:shell": "yarn workspace @3asoftwares/shell-app run dev",
+    "dev:shell:full": "yarn build:packages && yarn workspace @3asoftwares/shell-app run dev",
     "dev:seller": "yarn workspace @3asoftwares/seller-app run dev",
     "dev:auth": "cd services/auth-service && yarn dev",
     "dev:category": "cd services/category-service && yarn dev",
@@ -22,7 +24,7 @@
     "dev:backend": "concurrently \"yarn dev:auth\" \"yarn dev:category\" \"yarn dev:coupon\" \"yarn dev:gateway\" \"yarn dev:order\" \"yarn dev:product\" --names \"auth,category,coupon,gateway,order,product\" --prefix-colors \"magenta,green,yellow,cyan,blue,white\"",
     "dev:all": "concurrently \"yarn dev:frontend\" \"yarn dev:backend\" --names \"FRONTEND,BACKEND\" --prefix-colors \"cyan,white\"",
     "build:admin": "yarn workspace @3asoftwares/admin-app run build",
-    "build:shell": "yarn workspace @3asoftwares/shell-app run build",
+    "build:shell": "yarn build:packages && yarn workspace @3asoftwares/shell-app run build",
     "build:seller": "yarn workspace @3asoftwares/seller-app run build",
     "build:auth": "cd services/auth-service && yarn build",
     "build:category": "cd services/category-service && yarn build",

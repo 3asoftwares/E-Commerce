@@ -41,6 +41,11 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js'],
+    // Monorepo package aliases - resolve to built dist folders
+    alias: {
+      '@3asoftwares/ui': path.resolve(__dirname, '../../packages/ui-library'),
+      '@3asoftwares/utils': path.resolve(__dirname, '../../packages/utils'),
+    },
     fallback: {
       crypto: false,
       url: false,
@@ -130,6 +135,19 @@ module.exports = {
           requiredVersion: '^6.20.0',
           eager: true,
         },
+        // Share monorepo packages across microfrontends
+        '@3asoftwares/ui': {
+          singleton: true,
+          requiredVersion: '1.0.0',
+        },
+        '@3asoftwares/utils': {
+          singleton: true,
+          requiredVersion: '1.0.0',
+        },
+        zustand: {
+          singleton: true,
+          requiredVersion: '^4.4.7',
+        },
       },
     }),
     new webpack.DefinePlugin({
@@ -155,6 +173,11 @@ module.exports = {
         uiLibrary: {
           test: /[\\/]packages[\\/]ui-library[\\/]/,
           name: 'ui-library',
+          priority: 15,
+        },
+        utils: {
+          test: /[\\/]packages[\\/]utils[\\/]/,
+          name: 'utils',
           priority: 15,
         },
       },

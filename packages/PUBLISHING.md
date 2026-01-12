@@ -6,8 +6,8 @@ This document describes how to publish the shared packages (`3asoftwares/types`,
 
 | Package                   | Version | Description                        | Dependencies                               |
 | ------------------------- | ------- | ---------------------------------- | ------------------------------------------ |
-| `3asoftwares/types`      | 1.0.1   | TypeScript type definitions        | None                                       |
-| `3asoftwares/utils`      | 1.0.2   | Utility functions & shared configs | `3asoftwares/types`                       |
+| `3asoftwares/types`      | 1.0.0   | TypeScript type definitions        | None                                       |
+| `3asoftwares/utils`      | 1.0.0   | Utility functions & shared configs | `3asoftwares/types`                       |
 | `3asoftwares/ui` | 1.0.0   | React UI Component Library         | `3asoftwares/utils`, `react`, `react-dom` |
 
 ## Prerequisites
@@ -129,7 +129,7 @@ Follow [SemVer](https://semver.org/) for version updates:
 
 - **MAJOR** (1.0.0 → 2.0.0): Breaking changes
 - **MINOR** (1.0.0 → 1.1.0): New features, backward compatible
-- **PATCH** (1.0.0 → 1.0.1): Bug fixes, backward compatible
+- **PATCH** (1.0.0 → 1.0.0): Bug fixes, backward compatible
 
 ### Update Version
 

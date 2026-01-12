@@ -287,8 +287,8 @@ Apps consume packages using the workspace protocol:
 // apps/admin-app/package.json
 {
   "dependencies": {
-    "@3asoftwares/types": "^1.0.2",
-    "@3asoftwares/ui": "^1.0.1",
+    "@3asoftwares/types": "^1.0.0",
+    "@3asoftwares/ui": "^1.0.0",
     "@3asoftwares/utils": "^1.0.7"
   }
 }

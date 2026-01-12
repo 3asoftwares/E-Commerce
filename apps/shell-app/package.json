@@ -1,7 +1,7 @@
 {
   "name": "@3asoftwares/shell-app",
   "license": "MIT",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "Central launcher/dashboard for navigating to all other applications",
   "scripts": {
     "dev": "webpack serve --mode development --port 3000",
@@ -14,8 +14,8 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@3asoftwares/ui": "1.0.2",
-    "@3asoftwares/utils": "1.0.8",
+    "@3asoftwares/ui": "1.0.0",
+    "@3asoftwares/utils": "1.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.6",

@@ -65,7 +65,7 @@ This document defines the rules and conventions for managing dependencies, impor
 // ✅ Correct - workspace protocol
 {
   "dependencies": {
-    "@3asoftwares/types": "^1.0.2",
+    "@3asoftwares/types": "^1.0.0",
     "@3asoftwares/utils": "^1.0.7"
   }
 }
@@ -75,7 +75,7 @@ This document defines the rules and conventions for managing dependencies, impor
 // ❌ Wrong - specific version without workspace
 {
   "dependencies": {
-    "@3asoftwares/types": "1.0.2"
+    "@3asoftwares/types": "1.0.0"
   }
 }
 ```
@@ -259,7 +259,7 @@ All packages follow [Semantic Versioning](https://semver.org/):
 |--------------|-------------------|---------|
 | **MAJOR** | Breaking changes | 1.0.0 → 2.0.0 |
 | **MINOR** | New features (backward compatible) | 1.0.0 → 1.1.0 |
-| **PATCH** | Bug fixes | 1.0.0 → 1.0.1 |
+| **PATCH** | Bug fixes | 1.0.0 → 1.0.0 |
 
 ### 2. Version Sync Strategy
 
@@ -269,9 +269,9 @@ All packages follow [Semantic Versioning](https://semver.org/):
 # When @3asoftwares/types has breaking change:
 # Update version in all packages that depend on it
 
-packages/types:    1.0.2 → 2.0.0
+packages/types:    1.0.0 → 2.0.0
 packages/utils:    1.0.7 → 1.1.0 (update types dep)
-packages/ui:       1.0.2 → 1.1.0 (update utils dep)
+packages/ui:       1.0.0 → 1.1.0 (update utils dep)
 ```
 
 ### 3. Pre-release Versions

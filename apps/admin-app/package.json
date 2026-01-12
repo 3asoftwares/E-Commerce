@@ -1,7 +1,7 @@
 {
   "name": "@3asoftwares/admin-app",
   "license": "MIT",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "Admin dashboard for platform management - users, orders, products, analytics",
   "scripts": {
     "dev": "vite --port 3001 --host",
@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@3asoftwares/types": "1.0.3",
-    "@3asoftwares/ui": "1.0.2",
-    "@3asoftwares/utils": "1.0.8",
+    "@3asoftwares/ui": "1.0.0",
+    "@3asoftwares/utils": "1.0.0",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.1",

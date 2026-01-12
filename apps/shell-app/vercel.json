@@ -1,9 +1,6 @@
 {
-  "git": {
-    "deploymentEnabled": false
-  },
-  "installCommand": "",
-  "buildCommand": "npm run build",
+  "installCommand": "cd ../.. && yarn install",
+  "buildCommand": "cd ../.. && yarn build:packages && yarn workspace @3asoftwares/shell-app build",
   "outputDirectory": "dist",
   "framework": null,
   "regions": ["iad1"],
