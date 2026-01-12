@@ -1,5 +1,6 @@
 # Deploy Frontend Apps to Vercel
 # Triggers on: CI workflow completion (success) on main branch, manual dispatch
+# Deploys immediately when CI passes - no waiting period
 # Required secrets:
 #   - VERCEL_TOKEN: Vercel API token
 #   - VERCEL_ORG_ID: Vercel organization/team ID
@@ -27,11 +28,6 @@ on:
           - seller-app
           - shell-app
           - all
-      force_deploy:
-        description: 'Force deployment (ignore checks)'
-        required: false
-        type: boolean
-        default: false
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -40,7 +36,7 @@ env:
 
 jobs:
   # ===========================================
-  # CHECK IF CI PASSED (for workflow_run trigger)
+  # CHECK IF CI PASSED
   # ===========================================
   check-ci:
     runs-on: ubuntu-latest
@@ -54,7 +50,7 @@ jobs:
             echo "Manual trigger, proceeding..."
             echo "should_deploy=true" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.workflow_run.conclusion }}" == "success" ]; then
-            echo "CI passed, proceeding with deployment..."
+            echo "CI passed with all checks, proceeding with deployment..."
             echo "should_deploy=true" >> $GITHUB_OUTPUT
           else
             echo "CI did not pass (conclusion: ${{ github.event.workflow_run.conclusion }}), skipping deployment..."
@@ -68,13 +64,15 @@ jobs:
     needs: check-ci
     if: |
       needs.check-ci.outputs.should_deploy == 'true' &&
-      (github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch' && (github.event.inputs.app == 'admin-app' || github.event.inputs.app == 'all'))
+      (github.event_name == 'workflow_run' || (github.event.inputs.app == 'admin-app' || github.event.inputs.app == 'all'))
     runs-on: ubuntu-latest
     environment:
       name: production
       url: ${{ steps.deploy.outputs.url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Validate Vercel secrets
         run: |
@@ -117,13 +115,9 @@ jobs:
         id: deploy
         shell: bash
         run: |
-          cd apps/admin-app
-          
-          # Sync environment variables from .env.production to Vercel
           echo "📦 Syncing environment variables to Vercel..."
-          if [ -f ".env.production" ]; then
+          if [ -f "apps/admin-app/.env.production" ]; then
             while IFS= read -r line || [[ -n "$line" ]]; do
-              # Skip comments and empty lines
               if [[ ! "$line" =~ ^# ]] && [[ -n "$line" ]] && [[ "$line" == *"="* ]]; then
                 key=$(echo "$line" | cut -d '=' -f 1)
                 value=$(echo "$line" | cut -d '=' -f 2-)
@@ -131,7 +125,7 @@ jobs:
                 vercel env rm "$key" production --yes --token=${{ secrets.VERCEL_TOKEN }} 2>/dev/null || true
                 echo "$value" | vercel env add "$key" production --token=${{ secrets.VERCEL_TOKEN }}
               fi
-            done < .env.production
+            done < apps/admin-app/.env.production
           fi
           
           vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
@@ -150,7 +144,7 @@ jobs:
     needs: check-ci
     if: |
       needs.check-ci.outputs.should_deploy == 'true' &&
-      (github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch' && (github.event.inputs.app == 'seller-app' || github.event.inputs.app == 'all'))
+      (github.event_name == 'workflow_run' || (github.event.inputs.app == 'seller-app' || github.event.inputs.app == 'all'))
     runs-on: ubuntu-latest
     environment:
       name: production
@@ -201,13 +195,9 @@ jobs:
         id: deploy
         shell: bash
         run: |
-          cd apps/seller-app
-          
-          # Sync environment variables from .env.production to Vercel
           echo "📦 Syncing environment variables to Vercel..."
-          if [ -f ".env.production" ]; then
+          if [ -f "apps/seller-app/.env.production" ]; then
             while IFS= read -r line || [[ -n "$line" ]]; do
-              # Skip comments and empty lines
               if [[ ! "$line" =~ ^# ]] && [[ -n "$line" ]] && [[ "$line" == *"="* ]]; then
                 key=$(echo "$line" | cut -d '=' -f 1)
                 value=$(echo "$line" | cut -d '=' -f 2-)
@@ -215,7 +205,7 @@ jobs:
                 vercel env rm "$key" production --yes --token=${{ secrets.VERCEL_TOKEN }} 2>/dev/null || true
                 echo "$value" | vercel env add "$key" production --token=${{ secrets.VERCEL_TOKEN }}
               fi
-            done < .env.production
+            done < apps/seller-app/.env.production
           fi
           
           vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
@@ -234,7 +224,7 @@ jobs:
     needs: check-ci
     if: |
       needs.check-ci.outputs.should_deploy == 'true' &&
-      (github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch' && (github.event.inputs.app == 'shell-app' || github.event.inputs.app == 'all'))
+      (github.event_name == 'workflow_run' || (github.event.inputs.app == 'shell-app' || github.event.inputs.app == 'all'))
     runs-on: ubuntu-latest
     environment:
       name: production
@@ -285,13 +275,9 @@ jobs:
         id: deploy
         shell: bash
         run: |
-          cd apps/shell-app
-          
-          # Sync environment variables from .env.production to Vercel
           echo "📦 Syncing environment variables to Vercel..."
-          if [ -f ".env.production" ]; then
+          if [ -f "apps/shell-app/.env.production" ]; then
             while IFS= read -r line || [[ -n "$line" ]]; do
-              # Skip comments and empty lines
               if [[ ! "$line" =~ ^# ]] && [[ -n "$line" ]] && [[ "$line" == *"="* ]]; then
                 key=$(echo "$line" | cut -d '=' -f 1)
                 value=$(echo "$line" | cut -d '=' -f 2-)
@@ -299,7 +285,7 @@ jobs:
                 vercel env rm "$key" production --yes --token=${{ secrets.VERCEL_TOKEN }} 2>/dev/null || true
                 echo "$value" | vercel env add "$key" production --token=${{ secrets.VERCEL_TOKEN }}
               fi
-            done < .env.production
+            done < apps/shell-app/.env.production
           fi
           
           vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
@@ -323,8 +309,8 @@ jobs:
         run: |
           echo "## ⏭️ Vercel Deployment Skipped" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "CI workflow did not pass or was not triggered on main branch." >> $GITHUB_STEP_SUMMARY
-          echo "To force a deployment, run the workflow manually." >> $GITHUB_STEP_SUMMARY
+          echo "CI workflow did not pass all checks." >> $GITHUB_STEP_SUMMARY
+          echo "Fix the failing checks and push again." >> $GITHUB_STEP_SUMMARY
 
   # ===========================================
   # DEPLOYMENT SUMMARY

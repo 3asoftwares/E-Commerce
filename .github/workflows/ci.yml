@@ -32,11 +32,14 @@ jobs:
           yarn build:types
           yarn build:utils
 
-      - name: Test packages
-        run: |
-          yarn workspace @3asoftwares/types run test:coverage
-          yarn workspace @3asoftwares/utils run test:coverage
-          yarn workspace @3asoftwares/ui run test run
+      - name: Test types package
+        run: yarn workspace @3asoftwares/types run test:coverage
+
+      - name: Test utils package
+        run: yarn workspace @3asoftwares/utils run test:coverage
+
+      - name: Test UI library
+        run: yarn workspace @3asoftwares/ui run test run
 
   # ===========================================
   # BUILD & TEST BACKEND SERVICES
@@ -64,14 +67,23 @@ jobs:
       - name: Build all backend services
         run: yarn build:backend
 
-      - name: Test backend services
-        run: |
-          yarn test:auth --passWithNoTests
-          yarn test:category --passWithNoTests
-          yarn test:coupon --passWithNoTests
-          yarn test:gateway --passWithNoTests
-          yarn test:order --passWithNoTests
-          yarn test:product --passWithNoTests
+      - name: Test auth-service
+        run: yarn test:auth --passWithNoTests
+
+      - name: Test category-service
+        run: yarn test:category --passWithNoTests
+
+      - name: Test coupon-service
+        run: yarn test:coupon --passWithNoTests
+
+      - name: Test graphql-gateway
+        run: yarn test:gateway --passWithNoTests
+
+      - name: Test order-service
+        run: yarn test:order --passWithNoTests
+
+      - name: Test product-service
+        run: yarn test:product --passWithNoTests
 
   # ===========================================
   # BUILD & TEST FRONTEND APPS
@@ -100,8 +112,40 @@ jobs:
       - name: Build frontend apps
         run: yarn build:frontend
 
-      - name: Test frontend apps
+      - name: Test admin-app
+        run: yarn test:admin --passWithNoTests
+
+      - name: Test seller-app
+        run: yarn test:seller --passWithNoTests
+
+      - name: Test shell-app
+        run: yarn test:shell --passWithNoTests
+
+  # ===========================================
+  # CI STATUS CHECK
+  # ===========================================
+  ci-status:
+    runs-on: ubuntu-latest
+    needs: [build-packages, build-backend, build-frontend]
+    if: always()
+    steps:
+      - name: Check CI Status
         run: |
-          yarn test:admin --passWithNoTests
-          yarn test:seller --passWithNoTests
-          yarn test:shell --passWithNoTests
+          echo "## 📊 CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| build-packages | ${{ needs.build-packages.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| build-backend | ${{ needs.build-backend.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| build-frontend | ${{ needs.build-frontend.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Check if any job failed
+          if [ "${{ needs.build-packages.result }}" == "failure" ] || \
+             [ "${{ needs.build-backend.result }}" == "failure" ] || \
+             [ "${{ needs.build-frontend.result }}" == "failure" ]; then
+            echo "❌ CI Pipeline failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          
+          echo "✅ CI Pipeline passed - all checks completed successfully" >> $GITHUB_STEP_SUMMARY

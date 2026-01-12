@@ -1,5 +1,6 @@
 # Deploy Microservices to Railway
 # Triggers on: CI workflow completion (success) on main branch, manual dispatch
+# Deploys immediately when CI passes - no waiting period
 # Required secrets:
 #   - RAILWAY_TOKEN: Railway API token
 #   - RAILWAY_PROJECT_ID: Railway project ID
@@ -27,11 +28,6 @@ on:
           - order-service
           - product-service
           - all
-      force_deploy:
-        description: 'Force deployment (ignore checks)'
-        required: false
-        type: boolean
-        default: false
 
 env:
   RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -39,7 +35,7 @@ env:
 
 jobs:
   # ===========================================
-  # CHECK IF CI PASSED (for workflow_run trigger)
+  # CHECK IF CI PASSED
   # ===========================================
   check-ci:
     runs-on: ubuntu-latest
@@ -53,7 +49,7 @@ jobs:
             echo "Manual trigger, proceeding..."
             echo "should_deploy=true" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.workflow_run.conclusion }}" == "success" ]; then
-            echo "CI passed, proceeding with deployment..."
+            echo "CI passed with all checks, proceeding with deployment..."
             echo "should_deploy=true" >> $GITHUB_OUTPUT
           else
             echo "CI did not pass (conclusion: ${{ github.event.workflow_run.conclusion }}), skipping deployment..."
@@ -89,6 +85,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -119,10 +117,12 @@ jobs:
     needs: [check-ci, build-packages]
     if: |
       needs.check-ci.outputs.should_deploy == 'true' &&
-      (github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'auth-service' || github.event.inputs.service == 'all'))
+      (github.event_name == 'workflow_run' || (github.event.inputs.service == 'auth-service' || github.event.inputs.service == 'all'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -159,11 +159,9 @@ jobs:
           cd services/auth-service
           railway link ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
           
-          # Sync environment variables from .env.production to Railway
           echo "📦 Syncing environment variables to Railway..."
           if [ -f ".env.production" ]; then
             while IFS= read -r line || [[ -n "$line" ]]; do
-              # Skip comments and empty lines
               if [[ ! "$line" =~ ^# ]] && [[ -n "$line" ]] && [[ "$line" == *"="* ]]; then
                 key=$(echo "$line" | cut -d '=' -f 1)
                 value=$(echo "$line" | cut -d '=' -f 2-)
@@ -178,8 +176,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deployment Summary
-        run: |
-          echo "### 🚀 Auth Service Deployed" >> $GITHUB_STEP_SUMMARY
+        run: echo "### 🚀 Auth Service Deployed" >> $GITHUB_STEP_SUMMARY
 
   # ===========================================
   # DEPLOY CATEGORY SERVICE
@@ -188,10 +185,12 @@ jobs:
     needs: [check-ci, build-packages]
     if: |
       needs.check-ci.outputs.should_deploy == 'true' &&
-      (github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'category-service' || github.event.inputs.service == 'all'))
+      (github.event_name == 'workflow_run' || (github.event.inputs.service == 'category-service' || github.event.inputs.service == 'all'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -228,7 +227,6 @@ jobs:
           cd services/category-service
           railway link ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
           
-          # Sync environment variables from .env.production to Railway
           echo "📦 Syncing environment variables to Railway..."
           if [ -f ".env.production" ]; then
             while IFS= read -r line || [[ -n "$line" ]]; do
@@ -246,8 +244,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deployment Summary
-        run: |
-          echo "### 🚀 Category Service Deployed" >> $GITHUB_STEP_SUMMARY
+        run: echo "### 🚀 Category Service Deployed" >> $GITHUB_STEP_SUMMARY
 
   # ===========================================
   # DEPLOY COUPON SERVICE
@@ -256,10 +253,12 @@ jobs:
     needs: [check-ci, build-packages]
     if: |
       needs.check-ci.outputs.should_deploy == 'true' &&
-      (github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'coupon-service' || github.event.inputs.service == 'all'))
+      (github.event_name == 'workflow_run' || (github.event.inputs.service == 'coupon-service' || github.event.inputs.service == 'all'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -296,7 +295,6 @@ jobs:
           cd services/coupon-service
           railway link ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
           
-          # Sync environment variables from .env.production to Railway
           echo "📦 Syncing environment variables to Railway..."
           if [ -f ".env.production" ]; then
             while IFS= read -r line || [[ -n "$line" ]]; do
@@ -314,8 +312,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deployment Summary
-        run: |
-          echo "### 🚀 Coupon Service Deployed" >> $GITHUB_STEP_SUMMARY
+        run: echo "### 🚀 Coupon Service Deployed" >> $GITHUB_STEP_SUMMARY
 
   # ===========================================
   # DEPLOY GRAPHQL GATEWAY
@@ -324,10 +321,12 @@ jobs:
     needs: [check-ci, build-packages]
     if: |
       needs.check-ci.outputs.should_deploy == 'true' &&
-      (github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'graphql-gateway' || github.event.inputs.service == 'all'))
+      (github.event_name == 'workflow_run' || (github.event.inputs.service == 'graphql-gateway' || github.event.inputs.service == 'all'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -364,7 +363,6 @@ jobs:
           cd services/graphql-gateway
           railway link ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
           
-          # Sync environment variables from .env.production to Railway
           echo "📦 Syncing environment variables to Railway..."
           if [ -f ".env.production" ]; then
             while IFS= read -r line || [[ -n "$line" ]]; do
@@ -382,8 +380,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deployment Summary
-        run: |
-          echo "### 🚀 GraphQL Gateway Deployed" >> $GITHUB_STEP_SUMMARY
+        run: echo "### 🚀 GraphQL Gateway Deployed" >> $GITHUB_STEP_SUMMARY
 
   # ===========================================
   # DEPLOY ORDER SERVICE
@@ -392,10 +389,12 @@ jobs:
     needs: [check-ci, build-packages]
     if: |
       needs.check-ci.outputs.should_deploy == 'true' &&
-      (github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'order-service' || github.event.inputs.service == 'all'))
+      (github.event_name == 'workflow_run' || (github.event.inputs.service == 'order-service' || github.event.inputs.service == 'all'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -432,7 +431,6 @@ jobs:
           cd services/order-service
           railway link ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
           
-          # Sync environment variables from .env.production to Railway
           echo "📦 Syncing environment variables to Railway..."
           if [ -f ".env.production" ]; then
             while IFS= read -r line || [[ -n "$line" ]]; do
@@ -450,8 +448,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deployment Summary
-        run: |
-          echo "### 🚀 Order Service Deployed" >> $GITHUB_STEP_SUMMARY
+        run: echo "### 🚀 Order Service Deployed" >> $GITHUB_STEP_SUMMARY
 
   # ===========================================
   # DEPLOY PRODUCT SERVICE
@@ -460,10 +457,12 @@ jobs:
     needs: [check-ci, build-packages]
     if: |
       needs.check-ci.outputs.should_deploy == 'true' &&
-      (github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch' && (github.event.inputs.service == 'product-service' || github.event.inputs.service == 'all'))
+      (github.event_name == 'workflow_run' || (github.event.inputs.service == 'product-service' || github.event.inputs.service == 'all'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -500,7 +499,6 @@ jobs:
           cd services/product-service
           railway link ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
           
-          # Sync environment variables from .env.production to Railway
           echo "📦 Syncing environment variables to Railway..."
           if [ -f ".env.production" ]; then
             while IFS= read -r line || [[ -n "$line" ]]; do
@@ -518,8 +516,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deployment Summary
-        run: |
-          echo "### 🚀 Product Service Deployed" >> $GITHUB_STEP_SUMMARY
+        run: echo "### 🚀 Product Service Deployed" >> $GITHUB_STEP_SUMMARY
 
   # ===========================================
   # DEPLOYMENT SKIPPED
@@ -533,8 +530,8 @@ jobs:
         run: |
           echo "## ⏭️ Railway Deployment Skipped" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "CI workflow did not pass or was not triggered on main branch." >> $GITHUB_STEP_SUMMARY
-          echo "To force a deployment, run the workflow manually." >> $GITHUB_STEP_SUMMARY
+          echo "CI workflow did not pass all checks." >> $GITHUB_STEP_SUMMARY
+          echo "Fix the failing checks and push again." >> $GITHUB_STEP_SUMMARY
 
   # ===========================================
   # DEPLOYMENT SUMMARY

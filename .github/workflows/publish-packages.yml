@@ -1,28 +1,17 @@
 # Publish Packages to npm
-# Triggers on: push to main (with package changes), releases, manual dispatch
+# Triggers on: CI workflow completion (success) on main branch, releases, manual dispatch
 # Required secrets:
 #   - NPM_TOKEN: npm access token with publish permissions
-#
-# To get NPM_TOKEN:
-#   1. Go to https://www.npmjs.com/settings/YOUR_USERNAME/tokens
-#   2. Generate New Token > Classic Token > Automation
-#   3. Add it to GitHub Secrets as NPM_TOKEN
-#
-# Version bumping:
-#   - On push to main: Publishes with current version (skips if already published)
-#   - On release: Publishes with release tag version
-#   - Manual dispatch: Can specify version bump type
 
 name: Publish Packages to npm
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
     branches:
       - main
-    paths:
-      - 'packages/types/**'
-      - 'packages/utils/**'
-      - 'packages/ui-library/**'
   release:
     types: [published]
   workflow_dispatch:
@@ -38,7 +27,7 @@ on:
           - ui-library
           - all
       version_bump:
-        description: 'Version bump type (only for manual dispatch)'
+        description: 'Version bump type'
         required: false
         type: choice
         options:
@@ -53,17 +42,42 @@ env:
 
 jobs:
   # ===========================================
+  # CHECK IF CI PASSED
+  # ===========================================
+  check-ci:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check.outputs.should_publish }}
+    steps:
+      - name: Check CI status
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Manual trigger, proceeding..."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "release" ]; then
+            echo "Release trigger, proceeding..."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.workflow_run.conclusion }}" == "success" ]; then
+            echo "CI passed with all checks, proceeding with publish..."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          else
+            echo "CI did not pass (conclusion: ${{ github.event.workflow_run.conclusion }}), skipping publish..."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          fi
+
+  # ===========================================
   # VALIDATE SECRETS
   # ===========================================
   validate-secrets:
+    needs: check-ci
+    if: needs.check-ci.outputs.should_publish == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Validate npm token
         run: |
           if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
             echo "::error::NPM_TOKEN secret is not set"
-            echo "Please add NPM_TOKEN to your GitHub repository secrets."
-            echo "Get your token from: https://www.npmjs.com/settings/YOUR_USERNAME/tokens"
             exit 1
           fi
           echo "✅ NPM_TOKEN is configured"
@@ -72,14 +86,16 @@ jobs:
   # PUBLISH @3asoftwares/types
   # ===========================================
   publish-types:
-    needs: validate-secrets
+    needs: [check-ci, validate-secrets]
     runs-on: ubuntu-latest
     if: |
-      github.event_name == 'push' ||
-      github.event_name == 'release' ||
-      (github.event_name == 'workflow_dispatch' && (github.event.inputs.package == 'types' || github.event.inputs.package == 'all'))
+      needs.check-ci.outputs.should_publish == 'true' &&
+      (github.event_name == 'workflow_run' || github.event_name == 'release' ||
+       (github.event_name == 'workflow_dispatch' && (github.event.inputs.package == 'types' || github.event.inputs.package == 'all')))
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -88,19 +104,18 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies from root
-        run: |
-          rm -rf node_modules
-          yarn install --frozen-lockfile || yarn install
+        run: yarn install --frozen-lockfile || yarn install
 
       - name: Build types package
         run: yarn build:types
 
+      - name: Run tests
+        run: yarn workspace @3asoftwares/types run test:coverage
+
       - name: Bump version (if specified)
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.version_bump != 'none'
         working-directory: packages/types
-        run: |
-          npm version ${{ github.event.inputs.version_bump }} --no-git-tag-version
-          echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        run: npm version ${{ github.event.inputs.version_bump }} --no-git-tag-version
 
       - name: Check if version exists
         id: check-version
@@ -129,8 +144,7 @@ jobs:
       - name: Publish Summary
         run: |
           if [ "${{ steps.check-version.outputs.exists }}" == "true" ]; then
-            echo "### ⏭️ Types Package Skipped" >> $GITHUB_STEP_SUMMARY
-            echo "Version already exists on npm" >> $GITHUB_STEP_SUMMARY
+            echo "### ⏭️ Types Package Skipped (version exists)" >> $GITHUB_STEP_SUMMARY
           else
             echo "### 📦 Types Package Published" >> $GITHUB_STEP_SUMMARY
           fi
@@ -139,15 +153,17 @@ jobs:
   # PUBLISH @3asoftwares/utils
   # ===========================================
   publish-utils:
-    needs: [validate-secrets, publish-types]
+    needs: [check-ci, validate-secrets, publish-types]
     runs-on: ubuntu-latest
     if: |
       always() && needs.validate-secrets.result == 'success' &&
-      (github.event_name == 'push' ||
-      github.event_name == 'release' ||
-      (github.event_name == 'workflow_dispatch' && (github.event.inputs.package == 'utils' || github.event.inputs.package == 'all')))
+      needs.check-ci.outputs.should_publish == 'true' &&
+      (github.event_name == 'workflow_run' || github.event_name == 'release' ||
+       (github.event_name == 'workflow_dispatch' && (github.event.inputs.package == 'utils' || github.event.inputs.package == 'all')))
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -156,19 +172,18 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies from root
-        run: |
-          rm -rf node_modules
-          yarn install --frozen-lockfile || yarn install
+        run: yarn install --frozen-lockfile || yarn install
 
       - name: Build utils package
         run: yarn build:types && yarn build:utils
 
+      - name: Run tests
+        run: yarn workspace @3asoftwares/utils run test:coverage
+
       - name: Bump version (if specified)
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.version_bump != 'none'
         working-directory: packages/utils
-        run: |
-          npm version ${{ github.event.inputs.version_bump }} --no-git-tag-version
-          echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        run: npm version ${{ github.event.inputs.version_bump }} --no-git-tag-version
 
       - name: Check if version exists
         id: check-version
@@ -197,24 +212,26 @@ jobs:
       - name: Publish Summary
         run: |
           if [ "${{ steps.check-version.outputs.exists }}" == "true" ]; then
-            echo "### ⏭️ Utils Package Skipped" >> $GITHUB_STEP_SUMMARY
-            echo "Version already exists on npm" >> $GITHUB_STEP_SUMMARY
+            echo "### ⏭️ Utils Package Skipped (version exists)" >> $GITHUB_STEP_SUMMARY
           else
             echo "### 📦 Utils Package Published" >> $GITHUB_STEP_SUMMARY
           fi
 
   # ===========================================
-  # PUBLISH @3asoftwares/ui-library
+  # PUBLISH @3asoftwares/ui
   # ===========================================
   publish-ui-library:
-    needs: validate-secrets
+    needs: [check-ci, validate-secrets, publish-utils]
     runs-on: ubuntu-latest
     if: |
-      github.event_name == 'push' ||
-      github.event_name == 'release' ||
-      (github.event_name == 'workflow_dispatch' && (github.event.inputs.package == 'ui-library' || github.event.inputs.package == 'all'))
+      always() && needs.validate-secrets.result == 'success' &&
+      needs.check-ci.outputs.should_publish == 'true' &&
+      (github.event_name == 'workflow_run' || github.event_name == 'release' ||
+       (github.event_name == 'workflow_dispatch' && (github.event.inputs.package == 'ui-library' || github.event.inputs.package == 'all')))
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -223,9 +240,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies from root
-        run: |
-          rm -rf node_modules
-          yarn install --frozen-lockfile || yarn install
+        run: yarn install --frozen-lockfile || yarn install
 
       - name: Build ui-library package
         run: |
@@ -233,12 +248,13 @@ jobs:
           yarn build:utils
           yarn build:storybook
 
+      - name: Run tests
+        run: yarn workspace @3asoftwares/ui run test run
+
       - name: Bump version (if specified)
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.version_bump != 'none'
         working-directory: packages/ui-library
-        run: |
-          npm version ${{ github.event.inputs.version_bump }} --no-git-tag-version
-          echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        run: npm version ${{ github.event.inputs.version_bump }} --no-git-tag-version
 
       - name: Check if version exists
         id: check-version
@@ -267,18 +283,32 @@ jobs:
       - name: Publish Summary
         run: |
           if [ "${{ steps.check-version.outputs.exists }}" == "true" ]; then
-            echo "### ⏭️ UI Library Package Skipped" >> $GITHUB_STEP_SUMMARY
-            echo "Version already exists on npm" >> $GITHUB_STEP_SUMMARY
+            echo "### ⏭️ UI Library Package Skipped (version exists)" >> $GITHUB_STEP_SUMMARY
           else
             echo "### 📦 UI Library Package Published" >> $GITHUB_STEP_SUMMARY
           fi
 
   # ===========================================
+  # PUBLISH SKIPPED
+  # ===========================================
+  skip-notification:
+    needs: check-ci
+    if: needs.check-ci.outputs.should_publish == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish Skipped
+        run: |
+          echo "## ⏭️ npm Publish Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "CI workflow did not pass all checks." >> $GITHUB_STEP_SUMMARY
+          echo "Fix the failing checks and push again." >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================
   # PUBLISH SUMMARY
   # ===========================================
   summary:
-    needs: [publish-types, publish-utils, publish-ui-library]
-    if: always()
+    needs: [check-ci, publish-types, publish-utils, publish-ui-library]
+    if: always() && needs.check-ci.outputs.should_publish == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Publish Summary
@@ -289,4 +319,4 @@ jobs:
           echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| @3asoftwares/types | ${{ needs.publish-types.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| @3asoftwares/utils | ${{ needs.publish-utils.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| @3asoftwares/ui-library | ${{ needs.publish-ui-library.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| @3asoftwares/ui | ${{ needs.publish-ui-library.result }} |" >> $GITHUB_STEP_SUMMARY
