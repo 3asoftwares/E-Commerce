@@ -14,6 +14,8 @@
     "dist",
     "tests",
     "src/tests",
+    "src/test-utils.tsx",
+    "**/test-utils.tsx",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
