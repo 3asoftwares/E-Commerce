@@ -1,6 +1,3 @@
-module.exports = {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-};
+const { postcssConfig } = require("../utils/src/config/postcss.config");
+
+module.exports = postcssConfig;
