@@ -101,6 +101,11 @@
     "vitest": "1.6.0",
     "@vitest/coverage-v8": "1.6.0"
   },
+  "overrides": {
+    "swagger-jsdoc": {
+      "yaml": "2.0.0-1"
+    }
+  },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"

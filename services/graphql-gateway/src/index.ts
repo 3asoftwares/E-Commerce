@@ -6,6 +6,7 @@ const envPath = path.resolve(__dirname, '../.env');
 dotenv.config({ path: envPath });
 
 import { ApolloServer } from '@apollo/server';
+import jwt from 'jsonwebtoken';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import express from 'express';
@@ -51,7 +52,30 @@ async function startApolloServer() {
     expressMiddleware(server, {
       context: async ({ req }) => {
         const token = req.headers.authorization?.replace('Bearer ', '') || '';
-        return { token };
+        let user = null;
+
+        if (token) {
+          try {
+            const decoded = jwt.decode(token) as {
+              userId: string;
+              email: string;
+              role: string;
+              name?: string;
+            } | null;
+            if (decoded) {
+              user = {
+                id: decoded.userId,
+                email: decoded.email,
+                role: decoded.role,
+                name: decoded.name || decoded.email,
+              };
+            }
+          } catch (error) {
+            // Token decode failed, user remains null
+          }
+        }
+
+        return { token, user };
       },
     })
   );

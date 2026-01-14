@@ -14,5 +14,5 @@ export const DEFAULT_CORS_ORIGINS = [
   'http://localhost:3002',
   'http://localhost:3003',
   'http://localhost:3004',
-  'http://localhost:8010',
+  'http://localhost:8081',
 ];
