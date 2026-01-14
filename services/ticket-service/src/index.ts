@@ -12,7 +12,6 @@ import morgan from 'morgan';
 import { connectDatabase } from './config/database';
 import { setupSwagger } from './config/swagger';
 import ticketRoutes from './routes/ticketRoutes';
-import supportUserRoutes from './routes/supportUserRoutes';
 import { PORT_CONFIG, DEFAULT_CORS_ORIGINS } from './utils/config';
 import { Logger } from './utils/logger';
 
@@ -42,7 +41,6 @@ app.get('/health', (_: Request, res: Response) => {
 
 // Routes
 app.use('/api/tickets', ticketRoutes);
-app.use('/api/support-users', supportUserRoutes);
 
 // Setup Swagger documentation
 setupSwagger(app);

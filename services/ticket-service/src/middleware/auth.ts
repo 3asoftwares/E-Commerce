@@ -45,7 +45,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
 };
 
 export const authorizeAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user?.role !== 'admin') {
+  if (!['admin', 'support'].includes(req.user?.role || '')) {
     return res.status(403).json({
       success: false,
       message: 'Access denied. Admin privileges required.',
@@ -55,7 +55,7 @@ export const authorizeAdmin = (req: AuthRequest, res: Response, next: NextFuncti
 };
 
 export const authorizeSupport = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (!['admin', 'agent'].includes(req.user?.role || '')) {
+  if (!['admin', 'support', 'agent'].includes(req.user?.role || '')) {
     return res.status(403).json({
       success: false,
       message: 'Access denied. Support privileges required.',

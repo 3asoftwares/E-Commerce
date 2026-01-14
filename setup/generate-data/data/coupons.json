@@ -16,13 +16,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 100,
-    "usageCount": 1,
+    "usageCount": 43,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-09-08T14:35:55.205Z"
+      "$date": "2024-08-30T18:12:09.216Z"
     },
     "updatedAt": {
-      "$date": "2025-12-03T09:06:27.926Z"
+      "$date": "2025-12-02T17:29:27.641Z"
     }
   },
   {
@@ -42,13 +42,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 150,
-    "usageCount": 34,
+    "usageCount": 12,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-10-20T13:44:50.277Z"
+      "$date": "2024-07-13T23:34:59.294Z"
     },
     "updatedAt": {
-      "$date": "2025-08-09T11:12:41.916Z"
+      "$date": "2025-04-24T09:16:46.049Z"
     }
   },
   {
@@ -68,13 +68,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 200,
-    "usageCount": 25,
+    "usageCount": 36,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-04-14T13:19:17.889Z"
+      "$date": "2024-11-13T05:28:35.717Z"
     },
     "updatedAt": {
-      "$date": "2025-11-11T18:53:02.083Z"
+      "$date": "2025-06-22T19:07:22.084Z"
     }
   },
   {
@@ -94,13 +94,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 250,
-    "usageCount": 33,
+    "usageCount": 7,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-05-29T16:18:05.868Z"
+      "$date": "2024-07-27T22:20:14.566Z"
     },
     "updatedAt": {
-      "$date": "2025-08-02T19:15:34.120Z"
+      "$date": "2025-01-01T12:23:43.183Z"
     }
   },
   {
@@ -120,13 +120,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 300,
-    "usageCount": 36,
+    "usageCount": 44,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-11-05T09:21:10.446Z"
+      "$date": "2024-05-02T19:34:03.841Z"
     },
     "updatedAt": {
-      "$date": "2025-08-11T22:39:38.749Z"
+      "$date": "2025-07-25T11:08:51.840Z"
     }
   },
   {
@@ -146,13 +146,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 350,
-    "usageCount": 31,
+    "usageCount": 35,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-07-28T11:07:28.617Z"
+      "$date": "2024-12-29T23:23:06.515Z"
     },
     "updatedAt": {
-      "$date": "2025-09-03T13:48:02.406Z"
+      "$date": "2025-06-05T14:04:27.997Z"
     }
   },
   {
@@ -172,13 +172,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 400,
-    "usageCount": 15,
+    "usageCount": 25,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-12-28T06:20:54.978Z"
+      "$date": "2024-06-13T21:38:32.705Z"
     },
     "updatedAt": {
-      "$date": "2025-12-20T15:22:16.278Z"
+      "$date": "2025-08-12T09:52:00.551Z"
     }
   },
   {
@@ -198,13 +198,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 450,
-    "usageCount": 36,
+    "usageCount": 10,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-09-08T16:38:59.146Z"
+      "$date": "2024-09-18T04:57:50.476Z"
     },
     "updatedAt": {
-      "$date": "2025-11-23T16:06:36.266Z"
+      "$date": "2025-10-20T21:54:44.940Z"
     }
   },
   {
@@ -224,13 +224,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 500,
-    "usageCount": 33,
+    "usageCount": 23,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-02-09T02:08:13.310Z"
+      "$date": "2024-10-02T14:28:41.216Z"
     },
     "updatedAt": {
-      "$date": "2025-04-09T16:59:16.111Z"
+      "$date": "2025-05-22T16:33:23.872Z"
     }
   },
   {
@@ -250,13 +250,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 550,
-    "usageCount": 40,
+    "usageCount": 49,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-02-06T01:12:16.695Z"
+      "$date": "2024-01-02T13:39:16.943Z"
     },
     "updatedAt": {
-      "$date": "2025-03-18T08:22:07.587Z"
+      "$date": "2025-08-11T04:42:37.261Z"
     }
   },
   {
@@ -276,13 +276,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 600,
-    "usageCount": 25,
+    "usageCount": 35,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-04-26T21:07:55.933Z"
+      "$date": "2024-02-06T03:07:24.699Z"
     },
     "updatedAt": {
-      "$date": "2025-04-26T02:19:58.631Z"
+      "$date": "2025-04-04T19:49:06.544Z"
     }
   },
   {
@@ -302,13 +302,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 650,
-    "usageCount": 35,
+    "usageCount": 8,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-05-06T01:39:49.747Z"
+      "$date": "2024-04-25T02:16:45.804Z"
     },
     "updatedAt": {
-      "$date": "2025-01-30T11:23:44.425Z"
+      "$date": "2025-06-24T07:56:18.285Z"
     }
   },
   {
@@ -328,13 +328,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 700,
-    "usageCount": 49,
+    "usageCount": 2,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-01-06T20:59:43.857Z"
+      "$date": "2024-05-23T11:50:07.585Z"
     },
     "updatedAt": {
-      "$date": "2025-05-15T14:57:52.160Z"
+      "$date": "2025-10-08T17:39:25.745Z"
     }
   },
   {
@@ -354,13 +354,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 750,
-    "usageCount": 48,
+    "usageCount": 22,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-10-04T15:10:21.898Z"
+      "$date": "2024-08-20T06:27:48.537Z"
     },
     "updatedAt": {
-      "$date": "2025-03-06T23:20:27.129Z"
+      "$date": "2025-03-29T13:42:25.994Z"
     }
   },
   {
@@ -380,13 +380,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 800,
-    "usageCount": 40,
+    "usageCount": 36,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-08-25T05:06:34.829Z"
+      "$date": "2024-03-25T19:34:50.987Z"
     },
     "updatedAt": {
-      "$date": "2025-04-03T11:50:58.217Z"
+      "$date": "2025-10-01T20:34:49.369Z"
     }
   },
   {
@@ -406,13 +406,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 850,
-    "usageCount": 17,
+    "usageCount": 20,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-08-14T16:04:47.082Z"
+      "$date": "2024-07-15T09:47:45.106Z"
     },
     "updatedAt": {
-      "$date": "2025-02-17T15:10:09.784Z"
+      "$date": "2025-07-28T20:39:41.371Z"
     }
   },
   {
@@ -432,13 +432,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 900,
-    "usageCount": 8,
+    "usageCount": 39,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-07-20T11:17:30.677Z"
+      "$date": "2024-02-25T03:24:42.728Z"
     },
     "updatedAt": {
-      "$date": "2025-05-16T01:01:10.913Z"
+      "$date": "2025-11-23T18:00:42.493Z"
     }
   },
   {
@@ -458,13 +458,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 950,
-    "usageCount": 39,
+    "usageCount": 1,
     "isActive": true,
     "createdAt": {
-      "$date": "2024-01-24T16:30:37.172Z"
+      "$date": "2024-02-22T18:54:53.190Z"
     },
     "updatedAt": {
-      "$date": "2025-12-07T23:32:46.626Z"
+      "$date": "2025-05-24T23:26:18.455Z"
     }
   },
   {
@@ -484,13 +484,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 1000,
-    "usageCount": 24,
+    "usageCount": 36,
     "isActive": false,
     "createdAt": {
-      "$date": "2024-03-06T18:51:40.212Z"
+      "$date": "2024-11-18T12:06:47.563Z"
     },
     "updatedAt": {
-      "$date": "2025-07-25T23:25:32.115Z"
+      "$date": "2025-11-16T14:04:01.246Z"
     }
   },
   {
@@ -510,13 +510,13 @@
       "$date": "2026-12-31T23:59:59.000Z"
     },
     "usageLimit": 1050,
-    "usageCount": 1,
+    "usageCount": 24,
     "isActive": false,
     "createdAt": {
-      "$date": "2024-06-07T23:50:47.920Z"
+      "$date": "2024-07-21T19:05:12.192Z"
     },
     "updatedAt": {
-      "$date": "2025-07-30T01:33:59.205Z"
+      "$date": "2025-08-06T15:12:06.196Z"
     }
   }
 ]

@@ -7,7 +7,8 @@ const recordCount = {
   users: {
     admins: 10,
     sellers: 20,
-    customers: 70,
+    customers: 60,
+    support: 10,
   },
   categories: 20,
   products: {
@@ -18,6 +19,7 @@ const recordCount = {
   orders: 50,
   reviews: 100,
   addresses: 100,
+  tickets: 20,
 };
 
 import fs from 'fs';
@@ -42,6 +44,13 @@ import {
   ORDER_STATUSES,
   PAYMENT_STATUSES,
   PAYMENT_METHODS,
+  TICKET_CATEGORIES,
+  TICKET_PRIORITIES,
+  TICKET_STATUSES,
+  TICKET_SUBJECTS,
+  TICKET_DESCRIPTIONS,
+  TICKET_RESOLUTIONS,
+  TICKET_COMMENTS,
 } from './data-constants.js';
 
 // ES Module __dirname equivalent
@@ -76,12 +85,14 @@ const slugify = (name) => {
 let users = [];
 let sellers = [];
 let customers = [];
+let supportUsers = [];
 let categories = [];
 let products = [];
 let coupons = [];
 let orders = [];
 let reviews = [];
 let addresses = [];
+let tickets = [];
 
 // Generate Users (100 total: 10 admins, 20 sellers, 70 customers)
 function generateUsers() {
@@ -96,7 +107,7 @@ function generateUsers() {
     users.push({
       _id: { $oid: generateObjectId(ID_PREFIX.USER, userIndex) },
       email: `admin${i + 1}@yopmail.com`,
-      password: HASHED_PASSWORDS.ADMIN, // 'Admin@123'
+      password: HASHED_PASSWORDS.ADMIN,
       name: `${firstName} ${lastName}`,
       role: USER_ROLES.ADMIN,
       isActive: true,
@@ -129,7 +140,7 @@ function generateUsers() {
     userIndex++;
   }
 
-  // Generate customers (70)
+  // Generate customers (60)
   for (let i = 0; i < recordCount.users.customers; i++) {
     const firstName = FIRST_NAMES[(30 + i) % 50];
     const lastName = LAST_NAMES[(30 + i) % 50];
@@ -137,7 +148,7 @@ function generateUsers() {
 
     const customer = {
       _id: { $oid: generateObjectId(ID_PREFIX.USER, userIndex) },
-      email: `customer${i + 1}@yopmail.com`,
+      email: `user${i + 1}@yopmail.com`,
       password: HASHED_PASSWORDS.CUSTOMER, // 'User@123'
       name: `${firstName} ${lastName}`,
       role: USER_ROLES.CUSTOMER,
@@ -148,6 +159,28 @@ function generateUsers() {
     };
     users.push(customer);
     customers.push(customer);
+    userIndex++;
+  }
+
+  // Generate support users (10)
+  for (let i = 0; i < recordCount.users.support; i++) {
+    const firstName = FIRST_NAMES[(i + 5) % 50];
+    const lastName = LAST_NAMES[(i + 15) % 50];
+    const createdAt = generateDate(2024, 2024);
+
+    const supportUser = {
+      _id: { $oid: generateObjectId(ID_PREFIX.USER, userIndex) },
+      email: `support${i + 1}@yopmail.com`,
+      password: HASHED_PASSWORDS.SUPPORT,
+      name: `${firstName} ${lastName}`,
+      role: USER_ROLES.SUPPORT,
+      isActive: i < 9, // 1 inactive support user
+      emailVerified: true,
+      createdAt: { $date: createdAt },
+      updatedAt: { $date: generateDate(2025, 2025) },
+    };
+    users.push(supportUser);
+    supportUsers.push(supportUser);
     userIndex++;
   }
 
@@ -408,6 +441,89 @@ function generateAddresses() {
   return addresses;
 }
 
+// Generate Tickets (20) - matches ITicket model
+function generateTickets() {
+  for (let i = 0; i < recordCount.tickets; i++) {
+    const customer = customers[i % customers.length];
+    const createdAt = generateDate(2025, 2025);
+
+    // Determine ticket status and assign accordingly
+    const statusIndex = i % TICKET_STATUSES.length;
+    const status = TICKET_STATUSES[statusIndex];
+
+    // Assign support user for non-open tickets
+    let assignedTo = null;
+    let assignedToName = null;
+    if (status !== 'open' && supportUsers.length > 0) {
+      const supportUser = supportUsers[i % supportUsers.length];
+      assignedTo = supportUser._id.$oid;
+      assignedToName = supportUser.name;
+    }
+
+    // Generate comments for in-progress, pending, resolved, closed tickets
+    const ticketComments = [];
+    if (status !== 'open' && assignedTo) {
+      const supportUser = supportUsers.find((u) => u._id.$oid === assignedTo);
+      ticketComments.push({
+        userId: assignedTo,
+        userName: supportUser ? supportUser.name : 'Support Agent',
+        userRole: 'support',
+        message: TICKET_COMMENTS[i % TICKET_COMMENTS.length],
+        isInternal: i % 4 === 0, // Some internal notes
+        createdAt: { $date: generateDate(2025, 2025) },
+      });
+
+      // Add customer response for some tickets
+      if (i % 3 === 0) {
+        ticketComments.push({
+          userId: customer._id.$oid,
+          userName: customer.name,
+          userRole: 'customer',
+          message: 'Thank you for looking into this!',
+          isInternal: false,
+          createdAt: { $date: generateDate(2025, 2025) },
+        });
+      }
+    }
+
+    // Set resolution for resolved/closed tickets
+    let resolution = null;
+    let resolvedAt = null;
+    let closedAt = null;
+    if (status === 'resolved' || status === 'closed') {
+      resolution = TICKET_RESOLUTIONS[i % TICKET_RESOLUTIONS.length];
+      resolvedAt = { $date: generateDate(2025, 2025) };
+      if (status === 'closed') {
+        closedAt = { $date: generateDate(2025, 2025) };
+      }
+    }
+
+    tickets.push({
+      _id: { $oid: generateObjectId(ID_PREFIX.TICKET, i + 1) },
+      ticketId: `TKT-2025-${String(i + 1).padStart(4, '0')}`,
+      subject: TICKET_SUBJECTS[i % TICKET_SUBJECTS.length],
+      description: TICKET_DESCRIPTIONS[i % TICKET_DESCRIPTIONS.length],
+      category: TICKET_CATEGORIES[i % TICKET_CATEGORIES.length],
+      priority: TICKET_PRIORITIES[i % TICKET_PRIORITIES.length],
+      status: status,
+      customerName: customer.name,
+      customerEmail: customer.email,
+      customerId: customer._id.$oid,
+      assignedTo: assignedTo,
+      assignedToName: assignedToName,
+      resolution: resolution,
+      attachments: i % 5 === 0 ? [`attachment-${i + 1}.jpg`] : [],
+      comments: ticketComments,
+      createdAt: { $date: createdAt },
+      updatedAt: { $date: generateDate(2025, 2025) },
+      resolvedAt: resolvedAt,
+      closedAt: closedAt,
+    });
+  }
+
+  return tickets;
+}
+
 // Main execution
 function main() {
   console.log('Generating sample data based on model schemas...\n');
@@ -417,11 +533,14 @@ function main() {
     ADMIN: hashPassword(PASSWORDS.ADMIN),
     SELLER: hashPassword(PASSWORDS.SELLER),
     CUSTOMER: hashPassword(PASSWORDS.CUSTOMER),
+    SUPPORT: hashPassword(PASSWORDS.SUPPORT),
   };
-  console.log('✓ Passwords hashed (Admin@123, Seller@123, User@123)\n');
+  console.log('✓ Passwords hashed (Admin@123, Seller@123, User@123, Support@123)\n');
 
   generateUsers();
-  console.log(`✓ Generated ${users.length} users (10 admins, 20 sellers, 70 customers)`);
+  console.log(
+    `✓ Generated ${users.length} users (10 admins, 20 sellers, 60 customers, 10 support)`
+  );
 
   generateCategories();
   console.log(`✓ Generated ${categories.length} categories`);
@@ -441,6 +560,9 @@ function main() {
   generateAddresses();
   console.log(`✓ Generated ${addresses.length} addresses (linked to users)`);
 
+  generateTickets();
+  console.log(`✓ Generated ${tickets.length} tickets (linked to customers and support users)`);
+
   // Write files
   const outputDir = __dirname;
 
@@ -454,8 +576,9 @@ function main() {
   fs.writeFileSync(path.join(outputDir, 'data/orders.json'), JSON.stringify(orders, null, 2));
   fs.writeFileSync(path.join(outputDir, 'data/reviews.json'), JSON.stringify(reviews, null, 2));
   fs.writeFileSync(path.join(outputDir, 'data/addresses.json'), JSON.stringify(addresses, null, 2));
+  fs.writeFileSync(path.join(outputDir, 'data/tickets.json'), JSON.stringify(tickets, null, 2));
 
-  console.log('\n✓ All files written to sample-data/ directory');
+  console.log('\n✓ All files written to data/ directory');
 }
 
 main();

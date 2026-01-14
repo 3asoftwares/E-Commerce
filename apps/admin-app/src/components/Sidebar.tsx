@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUIStore } from '../store/uiStore';
+import { useAppSelector } from '../store/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChartLine,
@@ -14,16 +15,19 @@ import {
   faChevronLeft,
   faChevronRight,
   faTimes,
+  faHeadset,
 } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@3asoftwares/ui';
+import { SUPPORT_APP_URL } from '@3asoftwares/utils/client';
 
 interface NavItem {
   path: string;
   icon: IconDefinition;
   label: string;
+  isExternal?: boolean;
 }
 
-const navItems: NavItem[] = [
+const staticNavItems: NavItem[] = [
   { path: '/', icon: faChartLine, label: 'Dashboard' },
   { path: '/users', icon: faUsers, label: 'Users' },
   { path: '/products', icon: faBox, label: 'Products' },
@@ -35,6 +39,21 @@ const navItems: NavItem[] = [
 export const Sidebar: React.FC = () => {
   const location = useLocation();
   const { sidebarOpen, toggleSidebar } = useUIStore();
+  const user = useAppSelector((state) => state.auth.user);
+
+  // Generate nav items with dynamic user ID for Support Portal
+  const navItems = useMemo<NavItem[]>(() => {
+    const userId = user?._id || user?.id || '';
+    return [
+      ...staticNavItems,
+      {
+        path: `${SUPPORT_APP_URL}?userId=${userId}`,
+        icon: faHeadset,
+        label: 'Support Portal',
+        isExternal: true
+      },
+    ];
+  }, [user]);
 
   // Close sidebar on mobile when route changes
   useEffect(() => {
@@ -137,40 +156,57 @@ export const Sidebar: React.FC = () => {
               } space-y-2`}
             >
               {navItems.map((item) => {
-                const isActive = location.pathname === item.path;
+                const isActive = !item.isExternal && location.pathname === item.path;
+                const linkClassName = `
+                  group flex items-center gap-3 w-10 h-10 rounded-lg transition-all duration-200
+                  ${isActive
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                  }
+                  ${!sidebarOpen ? 'lg:justify-center lg:px-0' : 'w-full'}
+                `;
+                const iconSpanClassName = `
+                  flex items-center justify-center w-10 h-10 rounded-lg transition-colors
+                  ${isActive
+                    ? 'bg-white/20'
+                    : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
+                  }
+                  ${!sidebarOpen ? 'lg:bg-transparent lg:dark:bg-transparent' : ''}
+                `;
+
+                const linkContent = (
+                  <>
+                    <span className={iconSpanClassName}>
+                      <FontAwesomeIcon
+                        icon={item.icon}
+                        className={`w-5 h-5 ${isActive ? 'text-white' : ''}`}
+                      />
+                    </span>
+                    {sidebarOpen && <span className="font-medium text-sm">{item.label}</span>}
+                  </>
+                );
+
                 return (
                   <li key={item.path}>
-                    <Link
-                      to={item.path}
-                      className={`
-                        group flex items-center gap-3 w-10 h-10 rounded-lg transition-all duration-200
-                        ${
-                          isActive
-                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
-                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
-                        }
-                        ${!sidebarOpen ? 'lg:justify-center lg:px-0' : 'w-full'}
-                      `}
-                      title={!sidebarOpen ? item.label : undefined}
-                    >
-                      <span
-                        className={`
-                        flex items-center justify-center w-10 h-10 rounded-lg transition-colors
-                        ${
-                          isActive
-                            ? 'bg-white/20'
-                            : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
-                        }
-                        ${!sidebarOpen ? 'lg:bg-transparent lg:dark:bg-transparent' : ''}
-                      `}
+                    {item.isExternal ? (
+                      <a
+                        href={item.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={linkClassName}
+                        title={!sidebarOpen ? item.label : undefined}
                       >
-                        <FontAwesomeIcon
-                          icon={item.icon}
-                          className={`w-5 h-5 ${isActive ? 'text-white' : ''}`}
-                        />
-                      </span>
-                      {sidebarOpen && <span className="font-medium text-sm">{item.label}</span>}
-                    </Link>
+                        {linkContent}
+                      </a>
+                    ) : (
+                      <Link
+                        to={item.path}
+                        className={linkClassName}
+                        title={!sidebarOpen ? item.label : undefined}
+                      >
+                        {linkContent}
+                        </Link>
+                    )}
                   </li>
                 );
               })}

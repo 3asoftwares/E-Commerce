@@ -7,7 +7,7 @@ import { Logger } from '@3asoftwares/utils/server';
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
+    const limit = Math.min(parseInt(req.query.limit as string) || 100, 500); // Default 100, max 500
     const search = req.query.search as string;
     const role = req.query.role as string;
 

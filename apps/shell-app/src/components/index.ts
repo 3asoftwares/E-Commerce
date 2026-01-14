@@ -4,3 +4,4 @@ export { Header } from './Header';
 export { AuthForm } from './AuthForm';
 export { LanguageSelector } from './LanguageSelector';
 export { SystemStatus, StatusIndicator, IncidentBanner } from './SystemStatus';
+export { IframeContainer } from './IframeContainer';

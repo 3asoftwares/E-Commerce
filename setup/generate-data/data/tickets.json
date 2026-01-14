@@ -1,0 +1,800 @@
+[
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000001"
+    },
+    "ticketId": "TKT-2025-0001",
+    "subject": "Unable to complete payment on checkout",
+    "description": "I've been trying to complete my purchase for the past hour, but the payment keeps failing. I've tried both credit card and PayPal, but neither works. The error message says 'Payment processing failed. Please try again later.' My cart total is $245.99.",
+    "category": "technical",
+    "priority": "low",
+    "status": "open",
+    "customerName": "Donald Walker",
+    "customerEmail": "user1@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a70000001f",
+    "assignedTo": null,
+    "assignedToName": null,
+    "resolution": null,
+    "attachments": [
+      "attachment-1.jpg"
+    ],
+    "comments": [],
+    "createdAt": {
+      "$date": "2025-03-28T20:36:44.192Z"
+    },
+    "updatedAt": {
+      "$date": "2025-05-08T16:04:38.096Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000002"
+    },
+    "ticketId": "TKT-2025-0002",
+    "subject": "Order arrived damaged - need replacement",
+    "description": "My order arrived today but the package was completely crushed. The laptop screen is cracked and the box was wet. I need an immediate replacement or full refund. I have photos of the damage.",
+    "category": "billing",
+    "priority": "medium",
+    "status": "in-progress",
+    "customerName": "Ashley Young",
+    "customerEmail": "user2@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000020",
+    "assignedTo": "60a1b2c3d4e5f6a70000005c",
+    "assignedToName": "Michael Taylor",
+    "resolution": null,
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a70000005c",
+        "userName": "Michael Taylor",
+        "userRole": "support",
+        "message": "Thank you for your patience. Working on a resolution.",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-10-02T23:24:16.505Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-05-02T14:59:28.493Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-31T19:07:07.755Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000003"
+    },
+    "ticketId": "TKT-2025-0003",
+    "subject": "How to reset my password?",
+    "description": "I forgot my password and the reset email is not arriving. I've checked spam folder but nothing there. Can you help me reset it manually?",
+    "category": "general",
+    "priority": "high",
+    "status": "pending",
+    "customerName": "Steven Allen",
+    "customerEmail": "user3@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000021",
+    "assignedTo": "60a1b2c3d4e5f6a70000005d",
+    "assignedToName": "Linda Moore",
+    "resolution": null,
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a70000005d",
+        "userName": "Linda Moore",
+        "userRole": "support",
+        "message": "I've escalated this to our technical team.",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-05-03T01:26:12.098Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-07-10T15:44:36.869Z"
+    },
+    "updatedAt": {
+      "$date": "2025-12-14T22:51:19.293Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000004"
+    },
+    "ticketId": "TKT-2025-0004",
+    "subject": "Website loading very slowly",
+    "description": "The website has been extremely slow for the past 2 days. Product pages take over 30 seconds to load and sometimes timeout completely. This is affecting my shopping experience.",
+    "category": "feature",
+    "priority": "urgent",
+    "status": "resolved",
+    "customerName": "Kimberly King",
+    "customerEmail": "user4@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000022",
+    "assignedTo": "60a1b2c3d4e5f6a70000005e",
+    "assignedToName": "David Jackson",
+    "resolution": "Technical team identified and fixed the server issue.",
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a70000005e",
+        "userName": "David Jackson",
+        "userRole": "support",
+        "message": "Could you please provide more details?",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-10-04T19:55:49.739Z"
+        }
+      },
+      {
+        "userId": "60a1b2c3d4e5f6a700000022",
+        "userName": "Kimberly King",
+        "userRole": "customer",
+        "message": "Thank you for looking into this!",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-10-14T12:39:36.581Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-03-05T11:21:26.780Z"
+    },
+    "updatedAt": {
+      "$date": "2025-05-03T00:12:21.166Z"
+    },
+    "resolvedAt": {
+      "$date": "2025-12-22T06:42:21.446Z"
+    },
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000005"
+    },
+    "ticketId": "TKT-2025-0005",
+    "subject": "Request for invoice copy",
+    "description": "I need a copy of my invoice for tax purposes. The original email was accidentally deleted. Please send it to my registered email.",
+    "category": "order",
+    "priority": "low",
+    "status": "closed",
+    "customerName": "Paul Wright",
+    "customerEmail": "user5@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000023",
+    "assignedTo": "60a1b2c3d4e5f6a70000005f",
+    "assignedToName": "Elizabeth Martin",
+    "resolution": "Invoice copy emailed to customer's registered address.",
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a70000005f",
+        "userName": "Elizabeth Martin",
+        "userRole": "support",
+        "message": "The issue has been identified and we're working on a fix.",
+        "isInternal": true,
+        "createdAt": {
+          "$date": "2025-12-18T05:50:54.722Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-09-29T08:14:22.868Z"
+    },
+    "updatedAt": {
+      "$date": "2025-09-26T15:50:01.597Z"
+    },
+    "resolvedAt": {
+      "$date": "2025-12-14T18:31:14.089Z"
+    },
+    "closedAt": {
+      "$date": "2025-01-03T22:32:11.929Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000006"
+    },
+    "ticketId": "TKT-2025-0006",
+    "subject": "Coupon code not working",
+    "description": "I'm trying to use the coupon code 'SAVE20' but it says it's invalid. The promotional email I received says it should be valid until January 31st. Can you check what's wrong?",
+    "category": "account",
+    "priority": "medium",
+    "status": "open",
+    "customerName": "Emily Scott",
+    "customerEmail": "user6@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000024",
+    "assignedTo": null,
+    "assignedToName": null,
+    "resolution": null,
+    "attachments": [
+      "attachment-6.jpg"
+    ],
+    "comments": [],
+    "createdAt": {
+      "$date": "2025-06-14T20:25:26.216Z"
+    },
+    "updatedAt": {
+      "$date": "2025-05-15T07:36:17.197Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000007"
+    },
+    "ticketId": "TKT-2025-0007",
+    "subject": "Feature request: Wishlist sharing",
+    "description": "It would be great if we could share our wishlists with friends and family. This would be especially useful for gift giving occasions like birthdays and holidays.",
+    "category": "technical",
+    "priority": "high",
+    "status": "in-progress",
+    "customerName": "Andrew Torres",
+    "customerEmail": "user7@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000025",
+    "assignedTo": "60a1b2c3d4e5f6a700000061",
+    "assignedToName": "Barbara Perez",
+    "resolution": null,
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a700000061",
+        "userName": "Barbara Perez",
+        "userRole": "support",
+        "message": "Your request has been processed successfully.",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-09-30T15:29:48.766Z"
+        }
+      },
+      {
+        "userId": "60a1b2c3d4e5f6a700000025",
+        "userName": "Andrew Torres",
+        "userRole": "customer",
+        "message": "Thank you for looking into this!",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-04-23T07:47:00.363Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-09-04T17:31:41.404Z"
+    },
+    "updatedAt": {
+      "$date": "2025-06-03T07:16:10.416Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000008"
+    },
+    "ticketId": "TKT-2025-0008",
+    "subject": "Wrong item received",
+    "description": "I ordered a blue XL t-shirt but received a red M instead. I need the correct item shipped as soon as possible.",
+    "category": "billing",
+    "priority": "urgent",
+    "status": "pending",
+    "customerName": "Donna Nguyen",
+    "customerEmail": "user8@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000026",
+    "assignedTo": "60a1b2c3d4e5f6a700000062",
+    "assignedToName": "Richard Thompson",
+    "resolution": null,
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a700000062",
+        "userName": "Richard Thompson",
+        "userRole": "support",
+        "message": "Please check your email for further instructions.",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-05-31T03:55:28.487Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-10-02T09:33:55.275Z"
+    },
+    "updatedAt": {
+      "$date": "2025-12-29T17:29:49.514Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000009"
+    },
+    "ticketId": "TKT-2025-0009",
+    "subject": "Unable to track my order",
+    "description": "The tracking link in my order confirmation email shows 'tracking number not found'. Where is my package?",
+    "category": "general",
+    "priority": "low",
+    "status": "resolved",
+    "customerName": "Joshua Hill",
+    "customerEmail": "user9@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000027",
+    "assignedTo": "60a1b2c3d4e5f6a700000063",
+    "assignedToName": "Susan White",
+    "resolution": "Tracking information updated and shared with customer.",
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a700000063",
+        "userName": "Susan White",
+        "userRole": "support",
+        "message": "Is there anything else I can help you with?",
+        "isInternal": true,
+        "createdAt": {
+          "$date": "2025-05-08T19:41:14.809Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-10-04T06:13:40.137Z"
+    },
+    "updatedAt": {
+      "$date": "2025-04-22T01:04:36.862Z"
+    },
+    "resolvedAt": {
+      "$date": "2025-12-11T12:33:10.160Z"
+    },
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b70000000a"
+    },
+    "ticketId": "TKT-2025-0010",
+    "subject": "Account showing wrong order history",
+    "description": "When I log into my account, I see orders that I never placed. This is concerning - has my account been compromised? Please check immediately.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "closed",
+    "customerName": "Michelle Flores",
+    "customerEmail": "user10@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000028",
+    "assignedTo": "60a1b2c3d4e5f6a700000064",
+    "assignedToName": "Joseph Harris",
+    "resolution": "Account secured and unauthorized orders cancelled.",
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a700000064",
+        "userName": "Joseph Harris",
+        "userRole": "support",
+        "message": "Thank you for bringing this to our attention.",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-03-09T13:31:46.198Z"
+        }
+      },
+      {
+        "userId": "60a1b2c3d4e5f6a700000028",
+        "userName": "Michelle Flores",
+        "userRole": "customer",
+        "message": "Thank you for looking into this!",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-10-30T17:49:46.901Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-11-13T06:53:20.801Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-02T22:03:51.826Z"
+    },
+    "resolvedAt": {
+      "$date": "2025-03-14T08:45:12.553Z"
+    },
+    "closedAt": {
+      "$date": "2025-12-22T08:45:50.261Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b70000000b"
+    },
+    "ticketId": "TKT-2025-0011",
+    "subject": "Product page shows wrong price",
+    "description": "The Wireless Bluetooth Headphones show $49.99 on the listing but changes to $79.99 in cart. This seems like false advertising. Please honor the advertised price.",
+    "category": "order",
+    "priority": "high",
+    "status": "open",
+    "customerName": "Kenneth Green",
+    "customerEmail": "user11@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000029",
+    "assignedTo": null,
+    "assignedToName": null,
+    "resolution": null,
+    "attachments": [
+      "attachment-11.jpg"
+    ],
+    "comments": [],
+    "createdAt": {
+      "$date": "2025-02-07T17:56:46.721Z"
+    },
+    "updatedAt": {
+      "$date": "2025-02-20T17:01:11.726Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b70000000c"
+    },
+    "ticketId": "TKT-2025-0012",
+    "subject": "Mobile app crashes on startup",
+    "description": "After the latest update, the mobile app crashes immediately when I try to open it. Already tried reinstalling but same issue.",
+    "category": "account",
+    "priority": "urgent",
+    "status": "in-progress",
+    "customerName": "Dorothy Adams",
+    "customerEmail": "user12@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a70000002a",
+    "assignedTo": "60a1b2c3d4e5f6a70000005c",
+    "assignedToName": "Michael Taylor",
+    "resolution": null,
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a70000005c",
+        "userName": "Michael Taylor",
+        "userRole": "support",
+        "message": "Thank you for your patience. Working on a resolution.",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-12-14T05:09:11.490Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-03-30T07:15:18.438Z"
+    },
+    "updatedAt": {
+      "$date": "2025-05-20T14:43:55.680Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b70000000d"
+    },
+    "ticketId": "TKT-2025-0013",
+    "subject": "Refund not received after 14 days",
+    "description": "I returned my order two weeks ago and the tracking shows it was delivered to your warehouse. But I still haven't received my refund. What's the delay?",
+    "category": "technical",
+    "priority": "low",
+    "status": "pending",
+    "customerName": "Kevin Nelson",
+    "customerEmail": "user13@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a70000002b",
+    "assignedTo": "60a1b2c3d4e5f6a70000005d",
+    "assignedToName": "Linda Moore",
+    "resolution": null,
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a70000005d",
+        "userName": "Linda Moore",
+        "userRole": "support",
+        "message": "I've escalated this to our technical team.",
+        "isInternal": true,
+        "createdAt": {
+          "$date": "2025-02-05T22:11:57.143Z"
+        }
+      },
+      {
+        "userId": "60a1b2c3d4e5f6a70000002b",
+        "userName": "Kevin Nelson",
+        "userRole": "customer",
+        "message": "Thank you for looking into this!",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-05-30T19:17:43.241Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-11-10T07:47:19.203Z"
+    },
+    "updatedAt": {
+      "$date": "2025-04-20T08:53:20.978Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b70000000e"
+    },
+    "ticketId": "TKT-2025-0014",
+    "subject": "How to change delivery address?",
+    "description": "I just placed an order but realized I put my old address. How can I update the delivery address before it ships?",
+    "category": "billing",
+    "priority": "medium",
+    "status": "resolved",
+    "customerName": "Carol Baker",
+    "customerEmail": "user14@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a70000002c",
+    "assignedTo": "60a1b2c3d4e5f6a70000005e",
+    "assignedToName": "David Jackson",
+    "resolution": "Address updated before shipment.",
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a70000005e",
+        "userName": "David Jackson",
+        "userRole": "support",
+        "message": "Could you please provide more details?",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-09-03T13:48:54.546Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-05-29T18:57:29.479Z"
+    },
+    "updatedAt": {
+      "$date": "2025-01-12T18:19:37.197Z"
+    },
+    "resolvedAt": {
+      "$date": "2025-10-03T01:27:38.014Z"
+    },
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b70000000f"
+    },
+    "ticketId": "TKT-2025-0015",
+    "subject": "Product quality issue",
+    "description": "The leather wallet I received looks nothing like the photos. The material feels cheap and the stitching is already coming apart after just one week of use. Very disappointed.",
+    "category": "general",
+    "priority": "high",
+    "status": "closed",
+    "customerName": "Brian Hall",
+    "customerEmail": "user15@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a70000002d",
+    "assignedTo": "60a1b2c3d4e5f6a70000005f",
+    "assignedToName": "Elizabeth Martin",
+    "resolution": "Full refund processed for quality issue. Product reviewed by QA.",
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a70000005f",
+        "userName": "Elizabeth Martin",
+        "userRole": "support",
+        "message": "The issue has been identified and we're working on a fix.",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-04-18T15:21:26.844Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-04-27T17:48:13.071Z"
+    },
+    "updatedAt": {
+      "$date": "2025-08-19T12:42:43.487Z"
+    },
+    "resolvedAt": {
+      "$date": "2025-12-16T12:00:45.800Z"
+    },
+    "closedAt": {
+      "$date": "2025-09-20T23:01:45.862Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000010"
+    },
+    "ticketId": "TKT-2025-0016",
+    "subject": "Subscription billing issue",
+    "description": "I cancelled my premium subscription last month but was still charged this month. Please refund this charge and confirm the subscription is cancelled.",
+    "category": "feature",
+    "priority": "urgent",
+    "status": "open",
+    "customerName": "Amanda Rivera",
+    "customerEmail": "user16@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a70000002e",
+    "assignedTo": null,
+    "assignedToName": null,
+    "resolution": null,
+    "attachments": [
+      "attachment-16.jpg"
+    ],
+    "comments": [],
+    "createdAt": {
+      "$date": "2025-07-18T20:24:31.857Z"
+    },
+    "updatedAt": {
+      "$date": "2025-11-02T20:45:51.643Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000011"
+    },
+    "ticketId": "TKT-2025-0017",
+    "subject": "Can't add items to cart",
+    "description": "Every time I try to add something to my cart, I get an error message saying 'Unable to add item'. This has been happening for the past 3 days on both Chrome and Firefox.",
+    "category": "order",
+    "priority": "low",
+    "status": "in-progress",
+    "customerName": "George Campbell",
+    "customerEmail": "user17@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a70000002f",
+    "assignedTo": "60a1b2c3d4e5f6a700000061",
+    "assignedToName": "Barbara Perez",
+    "resolution": null,
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a700000061",
+        "userName": "Barbara Perez",
+        "userRole": "support",
+        "message": "Your request has been processed successfully.",
+        "isInternal": true,
+        "createdAt": {
+          "$date": "2025-11-05T00:47:42.737Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-10-06T16:49:30.964Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-09T08:10:41.284Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000012"
+    },
+    "ticketId": "TKT-2025-0018",
+    "subject": "Request for bulk order discount",
+    "description": "I'm interested in ordering 50 units of the Office Desk Chair for my company. Do you offer bulk order discounts? If so, what would be the price per unit?",
+    "category": "account",
+    "priority": "medium",
+    "status": "pending",
+    "customerName": "Melissa Mitchell",
+    "customerEmail": "user18@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000030",
+    "assignedTo": "60a1b2c3d4e5f6a700000062",
+    "assignedToName": "Richard Thompson",
+    "resolution": null,
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a700000062",
+        "userName": "Richard Thompson",
+        "userRole": "support",
+        "message": "Please check your email for further instructions.",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-08-30T13:03:48.219Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-01-08T23:51:26.543Z"
+    },
+    "updatedAt": {
+      "$date": "2025-11-09T18:09:58.034Z"
+    },
+    "resolvedAt": null,
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000013"
+    },
+    "ticketId": "TKT-2025-0019",
+    "subject": "Missing item from order",
+    "description": "My order was supposed to have 3 items but I only received 2. The USB-C Hub is missing from the package. Please send the missing item.",
+    "category": "technical",
+    "priority": "high",
+    "status": "resolved",
+    "customerName": "Timothy Carter",
+    "customerEmail": "user19@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000031",
+    "assignedTo": "60a1b2c3d4e5f6a700000063",
+    "assignedToName": "Susan White",
+    "resolution": "Missing item shipped via express delivery.",
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a700000063",
+        "userName": "Susan White",
+        "userRole": "support",
+        "message": "Is there anything else I can help you with?",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-08-09T13:41:43.991Z"
+        }
+      },
+      {
+        "userId": "60a1b2c3d4e5f6a700000031",
+        "userName": "Timothy Carter",
+        "userRole": "customer",
+        "message": "Thank you for looking into this!",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-07-19T16:44:46.801Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-04-24T07:48:46.217Z"
+    },
+    "updatedAt": {
+      "$date": "2025-04-21T02:21:33.906Z"
+    },
+    "resolvedAt": {
+      "$date": "2025-01-12T05:33:17.410Z"
+    },
+    "closedAt": null
+  },
+  {
+    "_id": {
+      "$oid": "80b1c2d3e4f5a6b700000014"
+    },
+    "ticketId": "TKT-2025-0020",
+    "subject": "Gift card balance not showing",
+    "description": "I received a $100 gift card for Christmas and activated it successfully. But when I try to use it at checkout, it shows $0 balance.",
+    "category": "billing",
+    "priority": "urgent",
+    "status": "closed",
+    "customerName": "Deborah Roberts",
+    "customerEmail": "user20@yopmail.com",
+    "customerId": "60a1b2c3d4e5f6a700000032",
+    "assignedTo": "60a1b2c3d4e5f6a700000064",
+    "assignedToName": "Joseph Harris",
+    "resolution": "Gift card balance restored after system sync.",
+    "attachments": [],
+    "comments": [
+      {
+        "userId": "60a1b2c3d4e5f6a700000064",
+        "userName": "Joseph Harris",
+        "userRole": "support",
+        "message": "Thank you for bringing this to our attention.",
+        "isInternal": false,
+        "createdAt": {
+          "$date": "2025-05-20T11:21:42.023Z"
+        }
+      }
+    ],
+    "createdAt": {
+      "$date": "2025-02-01T11:41:07.054Z"
+    },
+    "updatedAt": {
+      "$date": "2025-06-16T06:10:40.692Z"
+    },
+    "resolvedAt": {
+      "$date": "2025-05-23T16:33:26.057Z"
+    },
+    "closedAt": {
+      "$date": "2025-07-02T18:51:25.556Z"
+    }
+  }
+]

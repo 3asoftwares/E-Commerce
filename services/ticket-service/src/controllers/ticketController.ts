@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { Ticket, TicketStatus } from '../models/Ticket';
-import { SupportUser } from '../models/SupportUser';
 import { AuthRequest } from '../middleware/auth';
 import { Logger } from '../utils/logger';
 
@@ -63,11 +62,7 @@ export const getAllTickets = async (req: Request, res: Response) => {
     const skip = (pageNum - 1) * limitNum;
 
     const [tickets, total] = await Promise.all([
-      Ticket.find(query)
-        .populate('assignedTo', 'name email avatar')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limitNum),
+      Ticket.find(query).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
       Ticket.countDocuments(query),
     ]);
 
@@ -111,7 +106,7 @@ export const getTicketById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const ticket = await Ticket.findById(id).populate('assignedTo', 'name email avatar');
+    const ticket = await Ticket.findById(id);
 
     if (!ticket) {
       return res.status(404).json({
@@ -243,7 +238,7 @@ export const updateTicket = async (req: AuthRequest, res: Response) => {
       id,
       { ...updates, updatedAt: new Date() },
       { new: true, runValidators: true }
-    ).populate('assignedTo', 'name email avatar');
+    );
 
     if (!ticket) {
       return res.status(404).json({
@@ -297,14 +292,13 @@ export const updateTicket = async (req: AuthRequest, res: Response) => {
 export const assignTicket = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { assignedTo } = req.body;
+    const { assignedTo, assignedToName } = req.body;
 
-    // Verify support user exists
-    const supportUser = await SupportUser.findById(assignedTo);
-    if (!supportUser) {
-      return res.status(404).json({
+    // assignedTo should be a user ID from auth-service
+    if (!assignedTo) {
+      return res.status(400).json({
         success: false,
-        message: 'Support user not found',
+        message: 'Assigned user ID is required',
       });
     }
 
@@ -312,11 +306,12 @@ export const assignTicket = async (req: AuthRequest, res: Response) => {
       id,
       {
         assignedTo,
+        assignedToName: assignedToName || '',
         status: TicketStatus.IN_PROGRESS,
         updatedAt: new Date(),
       },
       { new: true }
-    ).populate('assignedTo', 'name email avatar');
+    );
 
     if (!ticket) {
       return res.status(404).json({
@@ -325,16 +320,15 @@ export const assignTicket = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    // Update support user's assigned ticket count
-    await SupportUser.findByIdAndUpdate(assignedTo, {
-      $inc: { assignedTickets: 1 },
-    });
-
-    Logger.info(`Ticket ${ticket.ticketId} assigned to ${supportUser.name}`, undefined, 'TicketController');
+    Logger.info(
+      `Ticket ${ticket.ticketId} assigned to ${assignedToName || assignedTo}`,
+      undefined,
+      'TicketController'
+    );
 
     res.status(200).json({
       success: true,
-      message: `Ticket assigned to ${supportUser.name}`,
+      message: `Ticket assigned successfully`,
       data: ticket,
     });
   } catch (error: any) {
@@ -389,13 +383,6 @@ export const resolveTicket = async (req: AuthRequest, res: Response) => {
     ticket.resolution = resolution;
     ticket.resolvedAt = new Date();
     await ticket.save();
-
-    // Update support user's resolved ticket count
-    if (ticket.assignedTo) {
-      await SupportUser.findByIdAndUpdate(ticket.assignedTo, {
-        $inc: { resolvedTickets: 1 },
-      });
-    }
 
     Logger.info(`Ticket resolved: ${ticket.ticketId}`, undefined, 'TicketController');
 
@@ -530,44 +517,51 @@ export const deleteTicket = async (req: AuthRequest, res: Response) => {
  * @swagger
  * /api/tickets/stats:
  *   get:
- *     summary: Get ticket statistics
+ *     summary: Get ticket statistics for the logged-in user
  *     tags: [Tickets]
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         description: Filter stats by assigned user ID
  *     responses:
  *       200:
  *         description: Ticket statistics
  */
 export const getTicketStats = async (req: Request, res: Response) => {
   try {
-    const [
-      total,
-      open,
-      inProgress,
-      pending,
-      resolved,
-      closed,
-      highPriority,
-      mediumPriority,
-      lowPriority,
-      urgentPriority,
-    ] = await Promise.all([
-      Ticket.countDocuments(),
-      Ticket.countDocuments({ status: 'open' }),
-      Ticket.countDocuments({ status: 'in-progress' }),
-      Ticket.countDocuments({ status: 'pending' }),
-      Ticket.countDocuments({ status: 'resolved' }),
-      Ticket.countDocuments({ status: 'closed' }),
-      Ticket.countDocuments({ priority: 'high' }),
-      Ticket.countDocuments({ priority: 'medium' }),
-      Ticket.countDocuments({ priority: 'low' }),
-      Ticket.countDocuments({ priority: 'urgent' }),
-    ]);
+    const { userId } = req.query;
+
+    // Get ALL ticket stats (dashboard overview)
+    const total = await Ticket.countDocuments({});
+    const open = await Ticket.countDocuments({ status: 'open' });
+    const inProgress = await Ticket.countDocuments({ status: 'in-progress' });
+    const pending = await Ticket.countDocuments({ status: 'pending' });
+    const resolved = await Ticket.countDocuments({ status: 'resolved' });
+    const closed = await Ticket.countDocuments({ status: 'closed' });
+    const highPriority = await Ticket.countDocuments({ priority: 'high' });
+    const mediumPriority = await Ticket.countDocuments({ priority: 'medium' });
+    const lowPriority = await Ticket.countDocuments({ priority: 'low' });
+
+    // Get user's assigned tickets if userId provided
+    let userTickets: any[] = [];
+    if (userId && userId !== 'undefined' && userId !== 'null') {
+      userTickets = await Ticket.find({ assignedTo: userId })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .select('ticketId subject status priority category customerName createdAt');
+    }
+
+    Logger.info('getTicketStats', { total, open, inProgress, userTicketsCount: userTickets.length }, 'TicketController');
 
     res.status(200).json({
       success: true,
       data: {
         total,
         byStatus: { open, inProgress, pending, resolved, closed },
-        byPriority: { high: highPriority, medium: mediumPriority, low: lowPriority, urgent: urgentPriority },
+        byPriority: { high: highPriority, medium: mediumPriority, low: lowPriority },
+        userTickets,
       },
     });
   } catch (error: any) {

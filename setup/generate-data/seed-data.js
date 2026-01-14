@@ -9,26 +9,11 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient, ObjectId } from 'mongodb';
+import { COLLECTIONS, DATABASE_NAME, MONGODB_URL } from './constants.js';
 
 // ES Module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Database and Collection names
-const DATABASE_NAME = 'ecommerce';
-const COLLECTIONS = {
-  users: 'users',
-  categories: 'categories',
-  products: 'products',
-  coupons: 'coupons',
-  orders: 'orders',
-  reviews: 'reviews',
-  addresses: 'addresses',
-};
-
-// MongoDB Atlas Connection String
-const MONGODB_URL =
-  'mongodb+srv://admin:admin@cluster0.wei5wdz.mongodb.net/ecommerce?appName=Cluster0';
 
 // Read JSON file and parse MongoDB extended JSON format
 function readJsonFile(filename) {
@@ -151,6 +136,11 @@ async function seedDatabase() {
     await db.collection(COLLECTIONS.addresses).insertMany(addresses);
     console.log(`Addresses: ${addresses.length} documents inserted`);
 
+    // Seed Tickets
+    const tickets = readJsonFile('tickets.json');
+    await db.collection(COLLECTIONS.tickets).insertMany(tickets);
+    console.log(`Tickets: ${tickets.length} documents inserted`);
+
     // Create indexes for better performance
     console.log('\nCreating indexes...');
 
@@ -192,6 +182,16 @@ async function seedDatabase() {
     await db.collection(COLLECTIONS.addresses).createIndex({ userId: 1 });
     console.log('Addresses indexes created');
 
+    // Tickets indexes
+    await db.collection(COLLECTIONS.tickets).createIndex({ ticketId: 1 }, { unique: true });
+    await db.collection(COLLECTIONS.tickets).createIndex({ status: 1 });
+    await db.collection(COLLECTIONS.tickets).createIndex({ priority: 1 });
+    await db.collection(COLLECTIONS.tickets).createIndex({ category: 1 });
+    await db.collection(COLLECTIONS.tickets).createIndex({ assignedTo: 1 });
+    await db.collection(COLLECTIONS.tickets).createIndex({ customerId: 1 });
+    await db.collection(COLLECTIONS.tickets).createIndex({ createdAt: -1 });
+    console.log('Tickets indexes created');
+
     // Print summary
     console.log('                 DATABASE SEEDING COMPLETE');
     console.log('═══════════════════════════════════════════════════════════');
@@ -204,11 +204,13 @@ async function seedDatabase() {
     console.log(`   • Orders:     ${orders.length} documents`);
     console.log(`   • Reviews:    ${reviews.length} documents`);
     console.log(`   • Addresses:  ${addresses.length} documents`);
+    console.log(`   • Tickets:    ${tickets.length} documents`);
 
     console.log('\n🔐 Test Credentials:');
-    console.log('   Admin:    admin1@ecommerce.com    / Admin@123');
-    console.log('   Seller:   seller1@marketplace.com / Seller@123');
-    console.log('   Customer: customer1@email.com     / User@123');
+    console.log('   Admin:    admin1@yopmail.com     / Admin@123');
+    console.log('   Seller:   seller1@yopmail.com    / Seller@123');
+    console.log('   Customer: customer1@yopmail.com  / User@123');
+    console.log('   Support:  support1@yopmail.com   / Support@123');
 
     console.log('\n═══════════════════════════════════════════════════════════\n');
   } catch (error) {

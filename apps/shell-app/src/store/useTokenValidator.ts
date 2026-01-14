@@ -4,6 +4,8 @@ import { getProfile, logout } from '../services/authService';
 
 // Check token validity every 5 minutes
 const TOKEN_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
+// Minimum time between validation calls (debounce)
+const MIN_VALIDATION_INTERVAL = 10 * 1000; // 10 seconds
 
 /**
  * Hook to periodically validate the user's session by calling the profile API.
@@ -15,6 +17,14 @@ const TOKEN_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
 export function useTokenValidator(onUserUpdate?: (user: any) => void) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastActivityRef = useRef<number>(Date.now());
+  const lastValidationRef = useRef<number>(0);
+  const isValidatingRef = useRef<boolean>(false);
+  const onUserUpdateRef = useRef(onUserUpdate);
+
+  // Keep ref updated without triggering re-renders
+  useEffect(() => {
+    onUserUpdateRef.current = onUserUpdate;
+  }, [onUserUpdate]);
 
   const validateToken = useCallback(async () => {
     const token = getAccessToken();
@@ -41,9 +51,9 @@ export function useTokenValidator(onUserUpdate?: (user: any) => void) {
           });
         }
 
-        // Notify parent component of user update
-        if (onUserUpdate) {
-          onUserUpdate(user);
+        // Notify parent component of user update (using ref to avoid dependency)
+        if (onUserUpdateRef.current) {
+          onUserUpdateRef.current(user);
         }
 
         return { valid: true, user };
@@ -67,7 +77,7 @@ export function useTokenValidator(onUserUpdate?: (user: any) => void) {
       // Network error, don't logout - might be temporary
       return { valid: true, reason: 'network_error' };
     }
-  }, [onUserUpdate]);
+  }, []); // No dependencies - uses refs for callbacks
 
   const handleInvalidToken = useCallback(async () => {
     // Try to call logout API to remove refresh token from MongoDB
@@ -89,38 +99,70 @@ export function useTokenValidator(onUserUpdate?: (user: any) => void) {
   }, []);
 
   const checkAndValidate = useCallback(async () => {
-    const result = await validateToken();
+    const now = Date.now();
+    
+    // Debounce: Skip if we validated recently
+    if (now - lastValidationRef.current < MIN_VALIDATION_INTERVAL) {
+      console.log('[TokenValidator] Skipping validation - too soon since last check');
+      return;
+    }
+    
+    // Prevent concurrent validations
+    if (isValidatingRef.current) {
+      console.log('[TokenValidator] Skipping validation - already in progress');
+      return;
+    }
+    
+    isValidatingRef.current = true;
+    lastValidationRef.current = now;
+    
+    try {
+      const result = await validateToken();
 
-    if (!result.valid && result.reason !== 'network_error' && result.reason !== 'no_token') {
-      handleInvalidToken();
+      if (!result.valid && result.reason !== 'network_error' && result.reason !== 'no_token') {
+        handleInvalidToken();
+      }
+    } finally {
+      isValidatingRef.current = false;
     }
   }, [validateToken, handleInvalidToken]);
+
+  // Store checkAndValidate in a ref to avoid dependency issues
+  const checkAndValidateRef = useRef(checkAndValidate);
+  useEffect(() => {
+    checkAndValidateRef.current = checkAndValidate;
+  }, [checkAndValidate]);
 
   useEffect(() => {
     // Check if there's a token to validate
     const token = getAccessToken();
     if (!token) return;
 
-    // Initial validation on mount
-    checkAndValidate();
+    // Initial validation on mount (with small delay to avoid race conditions)
+    const initialTimeout = setTimeout(() => {
+      checkAndValidateRef.current();
+    }, 100);
 
     // Set up periodic validation
-    intervalRef.current = setInterval(checkAndValidate, TOKEN_CHECK_INTERVAL);
+    intervalRef.current = setInterval(() => {
+      checkAndValidateRef.current();
+    }, TOKEN_CHECK_INTERVAL);
 
     // Cleanup on unmount
     return () => {
+      clearTimeout(initialTimeout);
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [checkAndValidate]);
+  }, []); // Empty dependency - uses refs
 
   // Also validate on window focus (user comes back to tab)
   useEffect(() => {
     const handleFocus = () => {
       const token = getAccessToken();
       if (token) {
-        checkAndValidate();
+        checkAndValidateRef.current();
       }
     };
 
@@ -129,7 +171,7 @@ export function useTokenValidator(onUserUpdate?: (user: any) => void) {
     return () => {
       window.removeEventListener('focus', handleFocus);
     };
-  }, [checkAndValidate]);
+  }, []); // Empty dependency - uses refs
 
   return {
     validateToken,

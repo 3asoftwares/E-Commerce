@@ -43,7 +43,8 @@ export interface ITicket extends Document {
   customerName: string;
   customerEmail: string;
   customerId?: string;
-  assignedTo?: mongoose.Types.ObjectId;
+  assignedTo?: string; // User ID from auth-service
+  assignedToName?: string; // User name for display
   resolution?: string;
   attachments: string[];
   comments: IComment[];
@@ -113,15 +114,19 @@ const ticketSchema = new Schema<ITicket>(
       type: String,
     },
     assignedTo: {
-      type: Schema.Types.ObjectId,
-      ref: 'SupportUser',
+      type: String, // User ID from auth-service
+    },
+    assignedToName: {
+      type: String, // User name for display
     },
     resolution: {
       type: String,
     },
-    attachments: [{
-      type: String,
-    }],
+    attachments: [
+      {
+        type: String,
+      },
+    ],
     comments: [commentSchema],
     resolvedAt: {
       type: Date,

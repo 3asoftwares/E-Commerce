@@ -199,6 +199,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           expiresIn: data.expiresIn,
         });
 
+        // Check if there's a returnTo URL from an external app (e.g., support-app)
+        const returnTo = sessionStorage.getItem('auth_returnTo');
+        const appType = sessionStorage.getItem('auth_app');
+
+        if (returnTo && appType) {
+          // Clear the stored values
+          sessionStorage.removeItem('auth_returnTo');
+          sessionStorage.removeItem('auth_app');
+
+          // Build redirect URL with token and userId
+          const redirectUrl = new URL(returnTo);
+          redirectUrl.searchParams.set('token', data.accessToken);
+          redirectUrl.searchParams.set('userId', data.user.id || data.user._id);
+
+          // Redirect to the external app
+          window.location.href = redirectUrl.toString();
+          return;
+        }
+
         onSuccess?.();
         renderApp(data.user.role);
       } else {
@@ -211,6 +230,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           refreshToken: data.refreshToken,
           expiresIn: data.expiresIn,
         });
+
+        // Check if there's a returnTo URL from an external app (e.g., support-app)
+        const returnTo = sessionStorage.getItem('auth_returnTo');
+        const appType = sessionStorage.getItem('auth_app');
+
+        if (returnTo && appType) {
+          // Clear the stored values
+          sessionStorage.removeItem('auth_returnTo');
+          sessionStorage.removeItem('auth_app');
+
+          // Build redirect URL with token and userId
+          const redirectUrl = new URL(returnTo);
+          redirectUrl.searchParams.set('token', data.accessToken);
+          redirectUrl.searchParams.set('userId', data.user.id || data.user._id);
+
+          // Redirect to the external app
+          window.location.href = redirectUrl.toString();
+          return;
+        }
 
         onSuccess?.();
         renderApp(data.user.role);

@@ -12,8 +12,14 @@ export const PASSWORDS = {
   ADMIN: 'Admin@123',
   SELLER: 'Seller@123',
   CUSTOMER: 'User@123',
+  SUPPORT: 'Support@123',
 };
-export const USER_ROLES = { ADMIN: 'admin', SELLER: 'seller', CUSTOMER: 'customer' };
+export const USER_ROLES = {
+  ADMIN: 'admin',
+  SELLER: 'seller',
+  CUSTOMER: 'customer',
+  SUPPORT: 'support',
+};
 export const ORDER_STATUSES = [
   'PENDING',
   'CONFIRMED',
@@ -638,4 +644,92 @@ export const ID_PREFIX = {
   ORDER: '70a1b2c3d4e5f6a8',
   REVIEW: '709f1f77bcf86cd9',
   ADDRESS: '809f1f77bcf86cda',
+  TICKET: '80b1c2d3e4f5a6b7',
 };
+
+// Ticket Constants
+export const TICKET_CATEGORIES = ['technical', 'billing', 'general', 'feature', 'order', 'account'];
+export const TICKET_PRIORITIES = ['low', 'medium', 'high', 'urgent'];
+export const TICKET_STATUSES = ['open', 'in-progress', 'pending', 'resolved', 'closed'];
+
+export const TICKET_SUBJECTS = [
+  'Unable to complete payment on checkout',
+  'Order arrived damaged - need replacement',
+  'How to reset my password?',
+  'Website loading very slowly',
+  'Request for invoice copy',
+  'Coupon code not working',
+  'Feature request: Wishlist sharing',
+  'Wrong item received',
+  'Unable to track my order',
+  'Account showing wrong order history',
+  'Product page shows wrong price',
+  'Mobile app crashes on startup',
+  'Refund not received after 14 days',
+  'How to change delivery address?',
+  'Product quality issue',
+  'Subscription billing issue',
+  "Can't add items to cart",
+  'Request for bulk order discount',
+  'Missing item from order',
+  'Gift card balance not showing',
+];
+
+export const TICKET_DESCRIPTIONS = [
+  "I've been trying to complete my purchase for the past hour, but the payment keeps failing. I've tried both credit card and PayPal, but neither works. The error message says 'Payment processing failed. Please try again later.' My cart total is $245.99.",
+  'My order arrived today but the package was completely crushed. The laptop screen is cracked and the box was wet. I need an immediate replacement or full refund. I have photos of the damage.',
+  "I forgot my password and the reset email is not arriving. I've checked spam folder but nothing there. Can you help me reset it manually?",
+  'The website has been extremely slow for the past 2 days. Product pages take over 30 seconds to load and sometimes timeout completely. This is affecting my shopping experience.',
+  'I need a copy of my invoice for tax purposes. The original email was accidentally deleted. Please send it to my registered email.',
+  "I'm trying to use the coupon code 'SAVE20' but it says it's invalid. The promotional email I received says it should be valid until January 31st. Can you check what's wrong?",
+  'It would be great if we could share our wishlists with friends and family. This would be especially useful for gift giving occasions like birthdays and holidays.',
+  'I ordered a blue XL t-shirt but received a red M instead. I need the correct item shipped as soon as possible.',
+  "The tracking link in my order confirmation email shows 'tracking number not found'. Where is my package?",
+  'When I log into my account, I see orders that I never placed. This is concerning - has my account been compromised? Please check immediately.',
+  'The Wireless Bluetooth Headphones show $49.99 on the listing but changes to $79.99 in cart. This seems like false advertising. Please honor the advertised price.',
+  'After the latest update, the mobile app crashes immediately when I try to open it. Already tried reinstalling but same issue.',
+  "I returned my order two weeks ago and the tracking shows it was delivered to your warehouse. But I still haven't received my refund. What's the delay?",
+  'I just placed an order but realized I put my old address. How can I update the delivery address before it ships?',
+  'The leather wallet I received looks nothing like the photos. The material feels cheap and the stitching is already coming apart after just one week of use. Very disappointed.',
+  'I cancelled my premium subscription last month but was still charged this month. Please refund this charge and confirm the subscription is cancelled.',
+  "Every time I try to add something to my cart, I get an error message saying 'Unable to add item'. This has been happening for the past 3 days on both Chrome and Firefox.",
+  "I'm interested in ordering 50 units of the Office Desk Chair for my company. Do you offer bulk order discounts? If so, what would be the price per unit?",
+  'My order was supposed to have 3 items but I only received 2. The USB-C Hub is missing from the package. Please send the missing item.',
+  'I received a $100 gift card for Christmas and activated it successfully. But when I try to use it at checkout, it shows $0 balance.',
+];
+
+export const TICKET_RESOLUTIONS = [
+  'Issue resolved by clearing browser cache and retrying payment.',
+  'Replacement order shipped. Customer received new item.',
+  'Password reset link sent to alternative email. Customer confirmed access.',
+  'Technical team identified and fixed the server issue.',
+  "Invoice copy emailed to customer's registered address.",
+  'Coupon reactivated and customer completed purchase.',
+  'Feature request logged for product team review.',
+  'Correct item shipped with prepaid return label for wrong item.',
+  'Tracking information updated and shared with customer.',
+  'Account secured and unauthorized orders cancelled.',
+  'Price adjusted to honor advertised amount.',
+  'App update pushed to fix iOS compatibility issue.',
+  'Refund processed and confirmed with customer.',
+  'Address updated before shipment.',
+  'Full refund processed for quality issue. Product reviewed by QA.',
+  'Refund processed and subscription fully cancelled.',
+  'Browser cookie issue identified. Customer cleared cache and issue resolved.',
+  'Custom bulk quote prepared and sent to customer.',
+  'Missing item shipped via express delivery.',
+  'Gift card balance restored after system sync.',
+];
+
+export const TICKET_COMMENTS = [
+  "I'm looking into this issue right now.",
+  'Thank you for your patience. Working on a resolution.',
+  "I've escalated this to our technical team.",
+  'Could you please provide more details?',
+  "The issue has been identified and we're working on a fix.",
+  'I apologize for the inconvenience caused.',
+  'Your request has been processed successfully.',
+  'Please check your email for further instructions.',
+  'Is there anything else I can help you with?',
+  'Thank you for bringing this to our attention.',
+];

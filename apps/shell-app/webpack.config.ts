@@ -26,6 +26,7 @@ envFiles.forEach((file) => {
 // Remote app URLs - configurable via environment variables
 const ADMIN_APP_URL = process.env.ADMIN_APP_URL || 'http://localhost:3001';
 const SELLER_APP_URL = process.env.SELLER_APP_URL || 'http://localhost:3002';
+const SUPPORT_APP_URL = process.env.SUPPORT_APP_URL || 'http://localhost:3003';
 
 const isProduction = nodeEnv === 'production';
 
@@ -43,7 +44,10 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '.css'],
     // Monorepo package aliases - resolve to built dist folders with subpath support
     alias: {
-      '@3asoftwares/ui/styles.css': path.resolve(__dirname, '../../packages/ui-library/dist/style.css'),
+      '@3asoftwares/ui/styles.css': path.resolve(
+        __dirname,
+        '../../packages/ui-library/dist/style.css'
+      ),
       '@3asoftwares/ui': path.resolve(__dirname, '../../packages/ui-library/dist/ui-library.es.js'),
       '@3asoftwares/utils/client': path.resolve(__dirname, '../../packages/utils/dist/client.mjs'),
       '@3asoftwares/utils/server': path.resolve(__dirname, '../../packages/utils/dist/server.mjs'),
@@ -146,9 +150,12 @@ module.exports = {
       },
     }),
     new webpack.DefinePlugin({
-      'process.env.AUTH_SERVICE_BASE': JSON.stringify(process.env.AUTH_SERVICE_BASE || 'http://localhost:3011/api/auth'),
+      'process.env.AUTH_SERVICE_BASE': JSON.stringify(
+        process.env.AUTH_SERVICE_BASE || 'http://localhost:3011/api/auth'
+      ),
       'process.env.ADMIN_APP_URL': JSON.stringify(ADMIN_APP_URL),
       'process.env.SELLER_APP_URL': JSON.stringify(SELLER_APP_URL),
+      'process.env.SUPPORT_APP_URL': JSON.stringify(SUPPORT_APP_URL),
     }),
   ],
   optimization: {

@@ -1,1253 +1,1241 @@
 /**
  * 3A Softwares - Customer Support Application
- * Technologies: JavaScript (ES6+), HTML5, CSS3, SCSS, Bootstrap, Fetch API
- * Features: Ticket management, Support user management, Admin authentication
+ * Uses Shell App for authentication (no standalone login)
+ * Features: Create, Update, Resolve, Assign Tickets, View Support Users
  */
 
 // ==========================================
 // CONFIGURATION
 // ==========================================
 const CONFIG = {
-    API_BASE_URL: 'http://localhost:3009/api',
-    USE_API: true, // Set to false to use mock data
+  TICKET_API_URL: 'http://localhost:3016/api',
+  AUTH_API_URL: 'http://localhost:3011/api/auth',
+  SHELL_APP_URL: 'http://localhost:3000',
+  AUTH_COOKIE_NAMES: {
+    USER: 'auth_user',
+    ACCESS_TOKEN: 'auth_access_token',
+    REFRESH_TOKEN: 'auth_refresh_token',
+    TOKEN_EXPIRY: 'auth_token_expiry',
+  },
 };
 
 // ==========================================
 // APPLICATION STATE
 // ==========================================
 const AppState = {
-    currentUser: null,
-    tickets: [],
-    supportUsers: [],
-    currentPage: 'dashboard',
-    ticketIdCounter: 1000,
-    selectedTicket: null,
-    isLoading: false,
-    token: null,
+  currentUser: null,
+  tickets: [],
+  supportUsers: [],
+  dashboardStats: null,
+  currentPage: 'dashboard',
+  selectedTicket: null,
+  isLoading: false,
+  token: null,
+  isEmbedded: window.self !== window.top,
+  usersCurrentPage: 1,
+  usersPerPage: 10,
+  ticketsCurrentPage: 1,
+  ticketsPerPage: 10,
+  // Lazy loading flags
+  ticketsLoaded: false,
+  usersLoaded: false,
+  statsLoaded: false,
 };
 
 // ==========================================
-// INITIALIZATION
+// COOKIE HELPERS
 // ==========================================
-document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
-});
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return decodeURIComponent(parts.pop().split(';').shift());
+  }
+  return null;
+}
 
+function setCookie(name, value, days = 1) {
+  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function deleteCookie(name) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
+function clearAllAuthCookies() {
+  Object.values(CONFIG.AUTH_COOKIE_NAMES).forEach(deleteCookie);
+}
+
+function getAuthFromCookies() {
+  const userStr = getCookie(CONFIG.AUTH_COOKIE_NAMES.USER);
+  const token = getCookie(CONFIG.AUTH_COOKIE_NAMES.ACCESS_TOKEN);
+
+  if (!userStr || !token) return null;
+
+  try {
+    return { user: JSON.parse(userStr), token };
+  } catch (e) {
+    console.error('Error parsing user cookie:', e);
+    return null;
+  }
+}
+
+function storeAuthToCookies(user, accessToken, refreshToken = null) {
+  setCookie(CONFIG.AUTH_COOKIE_NAMES.USER, JSON.stringify(user), 7);
+  setCookie(CONFIG.AUTH_COOKIE_NAMES.ACCESS_TOKEN, accessToken, 1);
+  if (refreshToken) {
+    setCookie(CONFIG.AUTH_COOKIE_NAMES.REFRESH_TOKEN, refreshToken, 7);
+  }
+  setCookie(CONFIG.AUTH_COOKIE_NAMES.TOKEN_EXPIRY, (Date.now() + 3600 * 1000).toString(), 1);
+}
+
+// ==========================================
+// UTILITY FUNCTIONS
+// ==========================================
+const capitalize = (str) => (str ? str.charAt(0).toUpperCase() + str.slice(1) : '');
+
+const truncateText = (text, maxLength) =>
+  text && text.length > maxLength ? text.substring(0, maxLength) + '...' : text || '';
+
+const formatStatus = (status) => (status ? status.split('-').map(capitalize).join(' ') : '');
+
+function formatDate(date) {
+  if (!date) return '';
+  const d = new Date(date);
+  const days = Math.floor((new Date() - d) / (1000 * 60 * 60 * 24));
+
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
+
+function getUserAvatarUrl(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff`;
+}
+
+// ==========================================
+// UI HELPERS
+// ==========================================
+function setLoading(isLoading) {
+  AppState.isLoading = isLoading;
+  document.querySelectorAll('button[type="submit"]').forEach((btn) => {
+    btn.disabled = isLoading;
+    if (isLoading) {
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+    }
+  });
+}
+
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('successToast');
+  const toastMessage = document.getElementById('toastMessage');
+  const toastHeader = toast?.querySelector('.toast-header');
+
+  if (!toast || !toastMessage || !toastHeader) return;
+
+  toastMessage.textContent = message;
+  toastHeader.classList.toggle('bg-danger', type === 'error');
+  toastHeader.classList.toggle('bg-success', type !== 'error');
+
+  new bootstrap.Toast(toast).show();
+}
+
+function animateCounter(elementId, targetValue) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+
+  let current = 0;
+  const increment = targetValue / 20;
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= targetValue) {
+      element.textContent = targetValue;
+      clearInterval(timer);
+    } else {
+      element.textContent = Math.floor(current);
+    }
+  }, 50);
+}
+
+// ==========================================
+// AUTHENTICATION
+// ==========================================
 async function initializeApp() {
-    // Check for existing session
-    const savedUser = localStorage.getItem('supportUser') || sessionStorage.getItem('supportUser');
-    if (savedUser) {
-        const userData = JSON.parse(savedUser);
-        AppState.currentUser = userData.user || userData;
-        AppState.token = userData.token;
-        await showDashboard();
+  setupEventListeners();
+
+  if (AppState.isEmbedded) {
+    setupShellIntegration();
+  } else {
+    await handleStandaloneAuth();
+  }
+}
+
+async function handleStandaloneAuth() {
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get('userId');
+
+  if (userId) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    await fetchUserById(userId);
+    return;
+  }
+
+  const cookieAuth = getAuthFromCookies();
+  if (cookieAuth?.token && cookieAuth?.user) {
+    if (['support', 'admin'].includes(cookieAuth.user.role)) {
+      AppState.token = cookieAuth.token;
+      AppState.currentUser = cookieAuth.user;
+      await showDashboard();
+      return;
+    }
+    showAccessDenied();
+    return;
+  }
+
+  redirectToShellLogin();
+}
+
+async function fetchUserById(userId) {
+  try {
+    const response = await fetch(`${CONFIG.AUTH_API_URL}/user/${userId}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      redirectToShellLogin();
+      return;
     }
 
-    // Setup event listeners
-    setupEventListeners();
+    const result = await response.json();
+    if (!result.success || !result.data) {
+      redirectToShellLogin();
+      return;
+    }
+
+    const { user, accessToken, refreshToken } = result.data;
+
+    if (['support', 'admin'].includes(user.role)) {
+      storeAuthToCookies(user, accessToken, refreshToken);
+      AppState.currentUser = user;
+      AppState.token = accessToken;
+      await showDashboard();
+    } else {
+      showAccessDenied();
+    }
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    redirectToShellLogin();
+  }
+}
+
+function redirectToShellLogin() {
+  window.location.href = `${CONFIG.SHELL_APP_URL}?logout=true`;
+}
+
+function setupShellIntegration() {
+  window.addEventListener('message', async (event) => {
+    const { type, payload } = event.data || {};
+
+    if (type === 'AUTH_DATA' && payload?.user && payload?.token) {
+      if (['support', 'admin'].includes(payload.user.role)) {
+        AppState.currentUser = payload.user;
+        AppState.token = payload.token;
+        sessionStorage.setItem('supportAuth', JSON.stringify(payload));
+        await showDashboard();
+      } else {
+        showAccessDenied();
+      }
+    }
+
+    if (type === 'THEME_CHANGE' && payload) {
+      applyTheme(payload.theme);
+    }
+
+    if (type === 'LOGOUT') {
+      handleLogout();
+    }
+  });
+
+  window.parent?.postMessage({ type: 'REQUEST_AUTH' }, '*');
+}
+
+function showAccessDenied() {
+  document.getElementById('dashboardPage')?.classList.remove('active');
+  document.body.innerHTML = `
+    <div class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+      <div class="text-center">
+        <i class="bi bi-shield-x text-danger" style="font-size: 64px;"></i>
+        <h2 class="mt-3">Access Denied</h2>
+        <p class="text-muted">You don't have permission to access the Support Portal.</p>
+        <p class="text-muted">Only users with 'support' or 'admin' role can access this application.</p>
+        <button class="btn btn-primary mt-3" onclick="goToShellApp()">
+          <i class="bi bi-arrow-left me-2"></i>Go to Main App
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function goToShellApp() {
+  localStorage.removeItem('supportAuth');
+  sessionStorage.removeItem('supportAuth');
+
+  if (AppState.isEmbedded && window.parent) {
+    window.parent.postMessage({ type: 'CLOSE_APP' }, '*');
+  } else {
+    window.location.href = CONFIG.SHELL_APP_URL;
+  }
+}
+
+function handleLogout(e) {
+  e?.preventDefault();
+
+  AppState.currentUser = null;
+  AppState.token = null;
+  AppState.tickets = [];
+  AppState.supportUsers = [];
+
+  localStorage.removeItem('supportAuth');
+  sessionStorage.removeItem('supportAuth');
+  clearAllAuthCookies();
+
+  if (AppState.isEmbedded && window.parent) {
+    window.parent.postMessage({ type: 'LOGOUT_REQUEST' }, '*');
+  } else {
+    window.location.href = `${CONFIG.SHELL_APP_URL}?logout=true`;
+  }
+}
+
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  document.documentElement.classList.toggle('dark', isDark);
+  document.body.classList.toggle('dark-theme', isDark);
 }
 
 // ==========================================
 // EVENT LISTENERS
 // ==========================================
 function setupEventListeners() {
-    // Login form
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
-
-    // Password toggle
-    const togglePassword = document.getElementById('togglePassword');
-    if (togglePassword) {
-        togglePassword.addEventListener('click', () => {
-            const passwordInput = document.getElementById('password');
-            const icon = togglePassword.querySelector('i');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.replace('bi-eye', 'bi-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.replace('bi-eye-slash', 'bi-eye');
-            }
-        });
-    }
-
-    // Sidebar menu items
-    const menuItems = document.querySelectorAll('.sidebar-menu li');
-    menuItems.forEach((item) => {
-        item.addEventListener('click', () => {
-            const page = item.dataset.page;
-            if (page) {
-                showPage(page);
-                updateActiveMenu(item);
-            }
-        });
+  // Sidebar menu
+  document.querySelectorAll('.sidebar-menu li').forEach((item) => {
+    item.addEventListener('click', () => {
+      const page = item.dataset.page;
+      if (page) {
+        showPage(page);
+        updateActiveMenuItem(page);
+      }
     });
+  });
 
-    // Sidebar toggle
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', toggleSidebar);
-    }
+  // Sidebar toggle
+  document.getElementById('sidebarToggle')?.addEventListener('click', toggleSidebar);
 
-    // Logout buttons
-    const logoutBtn = document.getElementById('logoutBtn');
-    const logoutDropdown = document.getElementById('logoutDropdown');
-    if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
-    if (logoutDropdown) logoutDropdown.addEventListener('click', handleLogout);
+  // Logout
+  document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+  document.getElementById('logoutDropdown')?.addEventListener('click', handleLogout);
 
-    // New ticket form
-    const newTicketForm = document.getElementById('newTicketForm');
-    if (newTicketForm) {
-        newTicketForm.addEventListener('submit', handleCreateTicket);
-    }
+  // New ticket form
+  document.getElementById('newTicketForm')?.addEventListener('submit', handleCreateTicket);
 
-    // Filters
-    const filterStatus = document.getElementById('filterStatus');
-    const filterPriority = document.getElementById('filterPriority');
-    const filterCategory = document.getElementById('filterCategory');
-    const ticketSearch = document.getElementById('ticketSearch');
+  // Filters
+  ['filterStatus', 'filterPriority', 'filterCategory'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('change', filterTickets);
+  });
+  document.getElementById('ticketSearch')?.addEventListener('input', debounce(filterTickets, 300));
 
-    if (filterStatus) filterStatus.addEventListener('change', filterTickets);
-    if (filterPriority) filterPriority.addEventListener('change', filterTickets);
-    if (filterCategory) filterCategory.addEventListener('change', filterTickets);
-    if (ticketSearch) ticketSearch.addEventListener('input', debounce(filterTickets, 300));
+  // Global search
+  document
+    .getElementById('globalSearch')
+    ?.addEventListener('input', debounce(handleGlobalSearch, 300));
 
-    // Global search
-    const globalSearch = document.getElementById('globalSearch');
-    if (globalSearch) {
-        globalSearch.addEventListener('input', debounce(handleGlobalSearch, 300));
-    }
+  // Select all checkbox
+  document.getElementById('selectAll')?.addEventListener('change', (e) => {
+    document
+      .querySelectorAll('#ticketsTableBody input[type="checkbox"]')
+      .forEach((cb) => (cb.checked = e.target.checked));
+  });
 
-    // Select all checkbox
-    const selectAll = document.getElementById('selectAll');
-    if (selectAll) {
-        selectAll.addEventListener('change', (e) => {
-            const checkboxes = document.querySelectorAll('#ticketsTableBody input[type="checkbox"]');
-            checkboxes.forEach((cb) => (cb.checked = e.target.checked));
-        });
-    }
-
-    // Resolve ticket button in modal
-    const resolveBtn = document.getElementById('resolveTicketBtn');
-    if (resolveBtn) {
-        resolveBtn.addEventListener('click', handleResolveTicket);
-    }
-}
-
-// ==========================================
-// AUTHENTICATION
-// ==========================================
-async function handleLogin(e) {
-    e.preventDefault();
-
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const rememberMe = document.getElementById('rememberMe').checked;
-
-    setLoading(true);
-
-    try {
-        if (CONFIG.USE_API && window.TicketService) {
-            const response = await window.TicketService.login(email, password);
-            
-            if (response.success) {
-                AppState.currentUser = response.data.user;
-                AppState.token = response.data.token;
-
-                const storage = rememberMe ? localStorage : sessionStorage;
-                storage.setItem('supportUser', JSON.stringify(response.data));
-
-                await showDashboard();
-                showToast(`Welcome back, ${response.data.user.name}!`);
-            } else {
-                showToast(response.message || 'Login failed', 'error');
-            }
-        } else {
-            // Fallback to mock login
-            if (email === 'admin@3asoftwares.com' && password === 'admin123') {
-                const user = {
-                    id: 1,
-                    name: 'Admin User',
-                    email: email,
-                    role: 'admin',
-                };
-
-                AppState.currentUser = user;
-
-                if (rememberMe) {
-                    localStorage.setItem('supportUser', JSON.stringify({ user }));
-                }
-
-                await showDashboard();
-                showToast('Welcome back, Admin!');
-            } else {
-                showToast('Invalid credentials. Please try again.', 'error');
-            }
-        }
-    } catch (error) {
-        console.error('Login error:', error);
-        showToast(error.message || 'Login failed. Please try again.', 'error');
-    } finally {
-        setLoading(false);
-    }
-}
-
-function handleLogout(e) {
-    e.preventDefault();
-
-    AppState.currentUser = null;
-    AppState.token = null;
-    AppState.tickets = [];
-    AppState.supportUsers = [];
-    localStorage.removeItem('supportUser');
-    sessionStorage.removeItem('supportUser');
-
-    // Show login page
-    document.getElementById('dashboardPage').classList.remove('active');
-    document.getElementById('loginPage').classList.add('active');
-
-    // Reset form
-    document.getElementById('loginForm').reset();
+  // Resolve ticket button
+  document.getElementById('resolveTicketBtn')?.addEventListener('click', handleResolveTicket);
 }
 
 // ==========================================
 // NAVIGATION
 // ==========================================
 async function showDashboard() {
-    document.getElementById('loginPage').classList.remove('active');
-    document.getElementById('dashboardPage').classList.add('active');
+  document.getElementById('dashboardPage')?.classList.add('active');
 
-    // Update user info in UI
-    updateUserInfo();
+  updateUserInfo();
+  updateUIForRole();
 
-    // Load data from API
-    await loadTickets();
-    await loadSupportUsers();
-
-    updateDashboardStats();
-    renderRecentTickets();
-    renderTicketsTable();
-    renderUsersTable();
-    updatePriorityChart();
-    populateAssigneeDropdown();
+  // Only load dashboard stats on initial load
+  await loadDashboardStats();
+  updateDashboardStats();
+  updatePriorityChart();
+  renderUserTickets();
 }
 
-function showPage(pageName) {
-    // Hide all content sections
-    const sections = document.querySelectorAll('.content-section');
-    sections.forEach((section) => section.classList.remove('active'));
+async function showPage(pageName) {
+  document.querySelectorAll('.content-section').forEach((s) => s.classList.remove('active'));
+  document.getElementById(`${pageName}Content`)?.classList.add('active');
 
-    // Show selected section
-    const targetSection = document.getElementById(`${pageName}Content`);
-    if (targetSection) {
-        targetSection.classList.add('active');
-    }
+  AppState.currentPage = pageName;
 
-    AppState.currentPage = pageName;
-
-    // Refresh data if needed
-    if (pageName === 'dashboard') {
-        updateDashboardStats();
-        renderRecentTickets();
-        updatePriorityChart();
-    } else if (pageName === 'tickets') {
-        renderTicketsTable();
-    } else if (pageName === 'users') {
-        renderUsersTable();
-    }
+  // Lazy load data based on page
+  switch (pageName) {
+    case 'dashboard':
+      if (!AppState.statsLoaded) await loadDashboardStats();
+      updateDashboardStats();
+      updatePriorityChart();
+      renderUserTickets();
+      break;
+    case 'tickets':
+      if (!AppState.ticketsLoaded) await loadTickets();
+      renderTicketsTable();
+      break;
+    case 'users':
+      if (!AppState.usersLoaded) await loadSupportUsers();
+      renderUsersTable();
+      break;
+    case 'newTicket':
+      if (!AppState.usersLoaded) await loadSupportUsers();
+      populateAssigneeDropdown();
+      break;
+    case 'reports':
+      if (!AppState.statsLoaded) await loadDashboardStats();
+      updateReports();
+      break;
+  }
 }
 
-function updateActiveMenu(activeItem) {
-    const menuItems = document.querySelectorAll('.sidebar-menu li');
-    menuItems.forEach((item) => item.classList.remove('active'));
-    activeItem.classList.add('active');
+function updateActiveMenuItem(pageName) {
+  document.querySelectorAll('.sidebar-menu li').forEach((item) => {
+    item.classList.toggle('active', item.dataset.page === pageName);
+  });
 }
 
 function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.querySelector('.main-content');
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.querySelector('.main-content');
 
-    sidebar.classList.toggle('collapsed');
-    mainContent.classList.toggle('expanded');
+  sidebar.classList.toggle('collapsed');
+  mainContent.classList.toggle('expanded');
 
-    // For mobile
-    if (window.innerWidth <= 991) {
-        sidebar.classList.toggle('show');
-    }
+  if (window.innerWidth <= 991) {
+    sidebar.classList.toggle('show');
+  }
 }
 
 function updateUserInfo() {
-    const userNameElements = document.querySelectorAll('.user-profile span');
-    const userAvatarElements = document.querySelectorAll('.user-profile img');
+  if (!AppState.currentUser) return;
 
-    if (AppState.currentUser) {
-        userNameElements.forEach((el) => {
-            el.textContent = AppState.currentUser.name;
-        });
-        userAvatarElements.forEach((el) => {
-            el.src = AppState.currentUser.avatar || 
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(AppState.currentUser.name)}&background=6366f1&color=fff`;
-        });
-    }
+  const { name, avatar } = AppState.currentUser;
+  const avatarUrl = avatar || getUserAvatarUrl(name);
+
+  const userName = document.getElementById('userName');
+  if (userName) userName.textContent = name;
+
+  const userAvatar = document.getElementById('userAvatar');
+  if (userAvatar) {
+    userAvatar.src = avatarUrl;
+    userAvatar.alt = name;
+  }
+
+  const welcomeMessage = document.getElementById('welcomeMessage');
+  if (welcomeMessage) {
+    welcomeMessage.textContent = `Welcome back, ${name.split(' ')[0]}! Here's your support overview.`;
+  }
+}
+
+function updateUIForRole() {
+  if (!AppState.currentUser) return;
+
+  const usersMenuItem = document.querySelector('.sidebar-menu li[data-page="users"]');
+  if (usersMenuItem) {
+    usersMenuItem.style.display = AppState.currentUser.role === 'admin' ? '' : 'none';
+  }
+}
+
+// ==========================================
+// API HELPERS
+// ==========================================
+async function apiRequest(endpoint, options = {}) {
+  const token = AppState.token || getCookie(CONFIG.AUTH_COOKIE_NAMES.ACCESS_TOKEN);
+
+  const response = await fetch(`${CONFIG.TICKET_API_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'API request failed');
+  }
+
+  return data;
 }
 
 // ==========================================
 // DATA LOADING
 // ==========================================
-async function loadTickets() {
-    try {
-        if (CONFIG.USE_API && window.TicketService) {
-            const response = await window.TicketService.getTickets();
-            if (response.success) {
-                AppState.tickets = response.data;
-            }
-        }
-    } catch (error) {
-        console.error('Error loading tickets:', error);
-        showToast('Failed to load tickets', 'error');
+async function loadDashboardStats() {
+  try {
+    setLoading(true);
+    const userId = AppState.currentUser?._id || AppState.currentUser?.id;
+    const endpoint = userId ? `/tickets/stats?userId=${userId}` : '/tickets/stats';
+    console.log('loadDashboardStats - calling:', endpoint);
+    const response = await apiRequest(endpoint);
+    console.log('loadDashboardStats - response:', response);
+    if (response.success) {
+      AppState.dashboardStats = response.data;
+      AppState.statsLoaded = true;
     }
+  } catch (error) {
+    console.error('Error loading dashboard stats:', error);
+    showToast('Failed to load dashboard stats', 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function loadTickets() {
+  try {
+    setLoading(true);
+    const response = await apiRequest('/tickets?limit=1000');
+    if (response.success) {
+      AppState.tickets = response.data;
+      AppState.ticketsLoaded = true;
+    }
+  } catch (error) {
+    console.error('Error loading tickets:', error);
+    showToast('Failed to load tickets', 'error');
+  } finally {
+    setLoading(false);
+  }
 }
 
 async function loadSupportUsers() {
-    try {
-        if (CONFIG.USE_API && window.TicketService && AppState.currentUser?.role === 'admin') {
-            const response = await window.TicketService.getSupportUsers();
-            if (response.success) {
-                AppState.supportUsers = response.data;
-            }
-        }
-    } catch (error) {
-        console.error('Error loading support users:', error);
+  try {
+    setLoading(true);
+    const response = await fetch(
+      `${CONFIG.AUTH_API_URL.replace('/auth', '')}/users?role=support&limit=100`,
+      {
+        headers: {
+          Authorization: `Bearer ${AppState.token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      AppState.supportUsers = data.data?.users || data.data || data.users || [];
+      AppState.usersLoaded = true;
     }
+  } catch (error) {
+    console.error('Error loading support users:', error);
+  } finally {
+    setLoading(false);
+  }
 }
 
 // ==========================================
 // DASHBOARD
 // ==========================================
-function updateDashboardStats() {
-    const total = AppState.tickets.length;
-    const open = AppState.tickets.filter((t) => t.status === 'open').length;
-    const inProgress = AppState.tickets.filter((t) => t.status === 'in-progress').length;
-    const resolved = AppState.tickets.filter((t) => t.status === 'resolved' || t.status === 'closed').length;
-
-    animateCounter('totalTickets', total);
-    animateCounter('openTickets', open);
-    animateCounter('inProgressTickets', inProgress);
-    animateCounter('resolvedTickets', resolved);
-
-    // Update badge count
-    const ticketCount = document.getElementById('ticketCount');
-    if (ticketCount) ticketCount.textContent = total;
+function getMyTickets() {
+  const userId = AppState.currentUser?._id || AppState.currentUser?.id;
+  return userId ? AppState.tickets.filter((t) => t.assignedTo === userId) : [];
 }
 
-function animateCounter(elementId, targetValue) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
+function updateDashboardStats() {
+  const stats = AppState.dashboardStats;
+  if (!stats) return;
 
-    let current = 0;
-    const increment = targetValue / 20;
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= targetValue) {
-            element.textContent = targetValue;
-            clearInterval(timer);
-        } else {
-            element.textContent = Math.floor(current);
-        }
-    }, 50);
+  const total = stats.total || 0;
+  const open = stats.byStatus?.open || 0;
+  const inProgress = stats.byStatus?.inProgress || 0;
+  const resolved = (stats.byStatus?.resolved || 0) + (stats.byStatus?.closed || 0);
+
+  animateCounter('totalTickets', total);
+  animateCounter('openTickets', open);
+  animateCounter('inProgressTickets', inProgress);
+  animateCounter('resolvedTickets', resolved);
+
+  const ticketCount = document.getElementById('ticketCount');
+  if (ticketCount) ticketCount.textContent = total;
+
+  const notificationBadge = document.getElementById('notificationBadge');
+  if (notificationBadge) {
+    notificationBadge.textContent = open;
+    notificationBadge.style.display = open > 0 ? 'inline-block' : 'none';
+  }
+}
+
+function updateReports() {
+  const stats = AppState.dashboardStats;
+  if (!stats) return;
+
+  const total = stats.total || 0;
+  const resolved = (stats.byStatus?.resolved || 0) + (stats.byStatus?.closed || 0);
+
+  const resolutionRate = document.getElementById('resolutionRate');
+  if (resolutionRate) {
+    resolutionRate.textContent = total > 0 ? `${Math.round((resolved / total) * 100)}%` : '0%';
+  }
+
+  // Average resolution time would require additional API data
+  // For now, show a placeholder or can be added to stats API later
+  const avgResolutionTime = document.getElementById('avgResolutionTime');
+  if (avgResolutionTime) {
+    avgResolutionTime.textContent = '--';
+  }
 }
 
 function updatePriorityChart() {
-    const high = AppState.tickets.filter((t) => t.priority === 'high' || t.priority === 'urgent').length;
-    const medium = AppState.tickets.filter((t) => t.priority === 'medium').length;
-    const low = AppState.tickets.filter((t) => t.priority === 'low').length;
-    const total = AppState.tickets.length || 1;
+  const stats = AppState.dashboardStats;
+  if (!stats) return;
 
-    const highCount = document.getElementById('highCount');
-    const mediumCount = document.getElementById('mediumCount');
-    const lowCount = document.getElementById('lowCount');
-    const highBar = document.getElementById('highPriorityBar');
-    const mediumBar = document.getElementById('mediumPriorityBar');
-    const lowBar = document.getElementById('lowPriorityBar');
+  const total = stats.total || 1;
+  const priorities = {
+    high: (stats.byPriority?.high || 0) + (stats.byPriority?.urgent || 0),
+    medium: stats.byPriority?.medium || 0,
+    low: stats.byPriority?.low || 0,
+  };
 
-    if (highCount) highCount.textContent = high;
-    if (mediumCount) mediumCount.textContent = medium;
-    if (lowCount) lowCount.textContent = low;
-    if (highBar) highBar.style.width = `${(high / total) * 100}%`;
-    if (mediumBar) mediumBar.style.width = `${(medium / total) * 100}%`;
-    if (lowBar) lowBar.style.width = `${(low / total) * 100}%`;
+  ['high', 'medium', 'low'].forEach((p) => {
+    const count = document.getElementById(`${p}Count`);
+    const bar = document.getElementById(`${p}PriorityBar`);
+    if (count) count.textContent = priorities[p];
+    if (bar) bar.style.width = `${(priorities[p] / total) * 100}%`;
+  });
 }
 
-function renderRecentTickets() {
-    const tableBody = document.getElementById('recentTicketsTable');
-    if (!tableBody) return;
+function renderUserTickets() {
+  const tableBody = document.getElementById('userTicketsTable');
+  if (!tableBody) return;
 
-    const recentTickets = [...AppState.tickets]
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 5);
+  const userTickets = AppState.dashboardStats?.userTickets || [];
 
-    if (recentTickets.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="5" class="text-center py-4 text-muted">No tickets yet</td>
-            </tr>
-        `;
-        return;
-    }
+  if (userTickets.length === 0) {
+    tableBody.innerHTML =
+      '<tr><td colspan="5" class="text-center py-4 text-muted">No tickets assigned to you</td></tr>';
+    return;
+  }
 
-    tableBody.innerHTML = recentTickets
-        .map(
-            (ticket) => `
-        <tr onclick="viewTicket('${ticket._id || ticket.id}')" style="cursor: pointer;">
-            <td><strong>#${ticket.ticketId || ticket.id}</strong></td>
-            <td>${truncateText(ticket.subject, 30)}</td>
-            <td><span class="priority-badge ${ticket.priority}">${capitalize(ticket.priority)}</span></td>
-            <td><span class="status-badge ${ticket.status}">${formatStatus(ticket.status)}</span></td>
-            <td>${formatDate(ticket.createdAt)}</td>
-        </tr>
-    `
-        )
-        .join('');
+  tableBody.innerHTML = userTickets
+    .map(
+      (ticket) => `
+    <tr onclick="viewTicket('${ticket._id || ticket.id}')" style="cursor: pointer;">
+      <td><strong>#${ticket.ticketId || ticket.id}</strong></td>
+      <td>${truncateText(ticket.subject, 30)}</td>
+      <td><span class="priority-badge ${ticket.priority}">${capitalize(ticket.priority)}</span></td>
+      <td><span class="status-badge ${ticket.status}">${formatStatus(ticket.status)}</span></td>
+      <td>${formatDate(ticket.createdAt)}</td>
+    </tr>
+  `
+    )
+    .join('');
+}
+
+// ==========================================
+// PAGINATION HELPER
+// ==========================================
+function renderPagination(container, currentPage, totalPages, onPageChange) {
+  if (!container || totalPages <= 1) {
+    if (container) container.innerHTML = '';
+    return;
+  }
+
+  const maxVisible = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+  if (endPage - startPage + 1 < maxVisible) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+
+  let html = `
+    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+      <a class="page-link" href="#" onclick="event.preventDefault(); ${onPageChange}(${currentPage - 1})">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+    </li>
+  `;
+
+  if (startPage > 1) {
+    html += `<li class="page-item"><a class="page-link" href="#" onclick="event.preventDefault(); ${onPageChange}(1)">1</a></li>`;
+    if (startPage > 2)
+      html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    html += `
+      <li class="page-item ${i === currentPage ? 'active' : ''}">
+        <a class="page-link" href="#" onclick="event.preventDefault(); ${onPageChange}(${i})">${i}</a>
+      </li>
+    `;
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1)
+      html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+    html += `<li class="page-item"><a class="page-link" href="#" onclick="event.preventDefault(); ${onPageChange}(${totalPages})">${totalPages}</a></li>`;
+  }
+
+  html += `
+    <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+      <a class="page-link" href="#" onclick="event.preventDefault(); ${onPageChange}(${currentPage + 1})">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </li>
+  `;
+
+  container.innerHTML = html;
 }
 
 // ==========================================
 // TICKETS
 // ==========================================
 function renderTicketsTable(tickets = AppState.tickets) {
-    const tableBody = document.getElementById('ticketsTableBody');
-    if (!tableBody) return;
+  const tableBody = document.getElementById('ticketsTableBody');
+  const paginationContainer = document.getElementById('ticketsPagination');
+  if (!tableBody) return;
 
-    if (tickets.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="9" class="text-center py-4">
-                    <i class="bi bi-inbox text-muted" style="font-size: 48px;"></i>
-                    <p class="text-muted mt-2">No tickets found</p>
-                </td>
-            </tr>
-        `;
-        return;
-    }
+  if (tickets.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="9" class="text-center py-4">
+          <i class="bi bi-inbox text-muted" style="font-size: 48px;"></i>
+          <p class="text-muted mt-2">No tickets found</p>
+        </td>
+      </tr>
+    `;
+    if (paginationContainer) paginationContainer.innerHTML = '';
+    return;
+  }
 
-    tableBody.innerHTML = tickets
-        .map(
-            (ticket) => `
-        <tr>
-            <td><input type="checkbox" class="form-check-input" value="${ticket._id || ticket.id}"></td>
-            <td><strong>#${ticket.ticketId || ticket.id}</strong></td>
-            <td>${truncateText(ticket.subject, 25)}</td>
-            <td>
-                <div class="user-avatar">
-                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.customerName || ticket.customer)}&background=random" alt="${ticket.customerName || ticket.customer}">
-                    <div class="user-info">
-                        <div class="user-name">${ticket.customerName || ticket.customer}</div>
-                        <div class="user-email">${ticket.customerEmail || ticket.email}</div>
-                    </div>
-                </div>
-            </td>
-            <td>${capitalize(ticket.category)}</td>
-            <td><span class="priority-badge ${ticket.priority}">${capitalize(ticket.priority)}</span></td>
-            <td><span class="status-badge ${ticket.status}">${formatStatus(ticket.status)}</span></td>
-            <td>${formatDate(ticket.createdAt)}</td>
-            <td>
-                <div class="d-flex gap-1">
-                    <button class="action-btn view" onclick="viewTicket('${ticket._id || ticket.id}')" title="View">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                    ${AppState.currentUser?.role === 'admin' ? `
-                    <button class="action-btn edit" onclick="showAssignModal('${ticket._id || ticket.id}')" title="Assign">
-                        <i class="bi bi-person-plus"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteTicket('${ticket._id || ticket.id}')" title="Delete">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                    ` : ''}
-                </div>
-            </td>
-        </tr>
-    `
-        )
-        .join('');
+  const totalPages = Math.ceil(tickets.length / AppState.ticketsPerPage);
+  if (AppState.ticketsCurrentPage > totalPages) {
+    AppState.ticketsCurrentPage = totalPages || 1;
+  }
+
+  const startIndex = (AppState.ticketsCurrentPage - 1) * AppState.ticketsPerPage;
+  const paginatedTickets = tickets.slice(startIndex, startIndex + AppState.ticketsPerPage);
+
+  tableBody.innerHTML = paginatedTickets
+    .map(
+      (ticket) => `
+    <tr>
+      <td><input type="checkbox" class="form-check-input" value="${ticket._id}"></td>
+      <td><strong>#${ticket.ticketId}</strong></td>
+      <td>${truncateText(ticket.subject, 25)}</td>
+      <td>
+        <div class="user-avatar">
+          <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.customerName)}&background=random" alt="${ticket.customerName}">
+          <div class="user-info">
+            <div class="user-name">${ticket.customerName}</div>
+            <div class="user-email">${ticket.customerEmail}</div>
+          </div>
+        </div>
+      </td>
+      <td>${capitalize(ticket.category)}</td>
+      <td><span class="priority-badge ${ticket.priority}">${capitalize(ticket.priority)}</span></td>
+      <td><span class="status-badge ${ticket.status}">${formatStatus(ticket.status)}</span></td>
+      <td>${ticket.assignedToName || 'Unassigned'}</td>
+      <td>
+        <div class="d-flex gap-1">
+          <button class="action-btn view" onclick="viewTicket('${ticket._id}')" title="View">
+            <i class="bi bi-eye"></i>
+          </button>
+          <button class="action-btn edit" onclick="showAssignModal('${ticket._id}')" title="Assign">
+            <i class="bi bi-person-plus"></i>
+          </button>
+          ${
+            ticket.status !== 'resolved' && ticket.status !== 'closed'
+              ? `
+            <button class="action-btn success" onclick="quickResolve('${ticket._id}')" title="Resolve">
+              <i class="bi bi-check-circle"></i>
+            </button>
+          `
+              : ''
+          }
+        </div>
+      </td>
+    </tr>
+  `
+    )
+    .join('');
+
+  renderPagination(
+    paginationContainer,
+    AppState.ticketsCurrentPage,
+    totalPages,
+    'changeTicketsPage'
+  );
+}
+
+function changeTicketsPage(page) {
+  const totalPages = Math.ceil(AppState.tickets.length / AppState.ticketsPerPage);
+  if (page < 1 || page > totalPages) return;
+  AppState.ticketsCurrentPage = page;
+  renderTicketsTable();
 }
 
 function filterTickets() {
-    const status = document.getElementById('filterStatus')?.value;
-    const priority = document.getElementById('filterPriority')?.value;
-    const category = document.getElementById('filterCategory')?.value;
-    const search = document.getElementById('ticketSearch')?.value?.toLowerCase();
+  const status = document.getElementById('filterStatus')?.value;
+  const priority = document.getElementById('filterPriority')?.value;
+  const category = document.getElementById('filterCategory')?.value;
+  const search = document.getElementById('ticketSearch')?.value?.toLowerCase();
 
-    let filtered = [...AppState.tickets];
+  AppState.ticketsCurrentPage = 1;
 
-    if (status) {
-        filtered = filtered.filter((t) => t.status === status);
-    }
-    if (priority) {
-        filtered = filtered.filter((t) => t.priority === priority);
-    }
-    if (category) {
-        filtered = filtered.filter((t) => t.category === category);
-    }
-    if (search) {
-        filtered = filtered.filter(
-            (t) =>
-                t.subject?.toLowerCase().includes(search) ||
-                (t.customerName || t.customer)?.toLowerCase().includes(search) ||
-                (t.customerEmail || t.email)?.toLowerCase().includes(search) ||
-                (t.ticketId || t.id)?.toString().includes(search)
-        );
-    }
+  let filtered = [...AppState.tickets];
 
-    renderTicketsTable(filtered);
+  if (status) filtered = filtered.filter((t) => t.status === status);
+  if (priority) filtered = filtered.filter((t) => t.priority === priority);
+  if (category) filtered = filtered.filter((t) => t.category === category);
+  if (search) {
+    filtered = filtered.filter(
+      (t) =>
+        t.subject?.toLowerCase().includes(search) ||
+        t.customerName?.toLowerCase().includes(search) ||
+        t.customerEmail?.toLowerCase().includes(search) ||
+        t.ticketId?.toString().includes(search)
+    );
+  }
+
+  renderTicketsTable(filtered);
 }
 
 async function handleCreateTicket(e) {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-        const ticketData = {
-            customerName: document.getElementById('ticketCustomer').value,
-            customerEmail: document.getElementById('ticketEmail').value,
-            subject: document.getElementById('ticketSubject').value,
-            category: document.getElementById('ticketCategory').value,
-            priority: document.getElementById('ticketPriority').value,
-            description: document.getElementById('ticketDescription').value,
-        };
+  try {
+    const ticketData = {
+      customerName: document.getElementById('ticketCustomer').value,
+      customerEmail: document.getElementById('ticketEmail').value,
+      subject: document.getElementById('ticketSubject').value,
+      category: document.getElementById('ticketCategory').value,
+      priority: document.getElementById('ticketPriority').value,
+      description: document.getElementById('ticketDescription').value,
+    };
 
-        if (CONFIG.USE_API && window.TicketService) {
-            const response = await window.TicketService.createTicket(ticketData);
-            
-            if (response.success) {
-                AppState.tickets.unshift(response.data);
-                showToast(`Ticket ${response.data.ticketId} created successfully!`);
-                e.target.reset();
-                showPage('tickets');
-                updateActiveMenuItem('tickets');
-                updateDashboardStats();
-            }
-        } else {
-            // Mock create
-            const newTicket = {
-                id: AppState.ticketIdCounter++,
-                ...ticketData,
-                customer: ticketData.customerName,
-                email: ticketData.customerEmail,
-                status: 'open',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            };
+    const response = await apiRequest('/tickets', {
+      method: 'POST',
+      body: JSON.stringify(ticketData),
+    });
 
-            AppState.tickets.unshift(newTicket);
-            showToast(`Ticket #${newTicket.id} created successfully!`);
-            e.target.reset();
-            showPage('tickets');
-            updateActiveMenuItem('tickets');
-        }
-    } catch (error) {
-        console.error('Error creating ticket:', error);
-        showToast(error.message || 'Failed to create ticket', 'error');
-    } finally {
-        setLoading(false);
+    if (response.success) {
+      AppState.tickets.unshift(response.data);
+      // Invalidate stats cache so it reloads on dashboard
+      AppState.statsLoaded = false;
+      showToast(`Ticket ${response.data.ticketId} created successfully!`);
+      e.target.reset();
+      showPage('tickets');
+      updateActiveMenuItem('tickets');
     }
+  } catch (error) {
+    showToast(error.message || 'Failed to create ticket', 'error');
+  } finally {
+    setLoading(false);
+  }
 }
 
 async function viewTicket(ticketId) {
-    const ticket = AppState.tickets.find((t) => (t._id || t.id) === ticketId || t._id === ticketId);
-    if (!ticket) return;
+  const ticket = AppState.tickets.find((t) => t._id === ticketId);
+  if (!ticket) return;
 
-    AppState.selectedTicket = ticket;
-    const assignedUser = ticket.assignedTo?.name || 'Unassigned';
+  AppState.selectedTicket = ticket;
 
-    const modalBody = document.getElementById('ticketDetailBody');
-    modalBody.innerHTML = `
-        <div class="ticket-detail">
-            <div class="ticket-meta">
-                <div class="meta-item">
-                    <div class="meta-label">Ticket ID</div>
-                    <div class="meta-value">#${ticket.ticketId || ticket.id}</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Status</div>
-                    <div class="meta-value">
-                        <span class="status-badge ${ticket.status}">${formatStatus(ticket.status)}</span>
-                    </div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Priority</div>
-                    <div class="meta-value">
-                        <span class="priority-badge ${ticket.priority}">${capitalize(ticket.priority)}</span>
-                    </div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Customer</div>
-                    <div class="meta-value">${ticket.customerName || ticket.customer}</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Email</div>
-                    <div class="meta-value">${ticket.customerEmail || ticket.email}</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Category</div>
-                    <div class="meta-value">${capitalize(ticket.category)}</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Assigned To</div>
-                    <div class="meta-value">${assignedUser}</div>
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <h6 class="text-muted">SUBJECT</h6>
-                <p class="fw-bold">${ticket.subject}</p>
-            </div>
-            
-            <div class="ticket-description">
-                <h6>DESCRIPTION</h6>
-                <p>${ticket.description}</p>
-            </div>
-            
-            ${ticket.resolution ? `
-            <div class="ticket-resolution mt-3">
-                <h6>RESOLUTION</h6>
-                <p class="text-success">${ticket.resolution}</p>
-            </div>
-            ` : ''}
-            
-            ${ticket.comments && ticket.comments.length > 0 ? `
-            <div class="ticket-comments mt-3">
-                <h6>COMMENTS</h6>
-                ${ticket.comments.map(c => `
-                    <div class="comment-item ${c.isInternal ? 'internal' : ''}">
-                        <div class="comment-header">
-                            <strong>${c.userName}</strong>
-                            <small class="text-muted">${formatDateTime(c.createdAt)}</small>
-                            ${c.isInternal ? '<span class="badge bg-warning">Internal</span>' : ''}
-                        </div>
-                        <p>${c.message}</p>
-                    </div>
-                `).join('')}
-            </div>
-            ` : ''}
-            
-            <div class="row mb-3 mt-3">
-                <div class="col-6">
-                    <small class="text-muted">Created: ${formatDateTime(ticket.createdAt)}</small>
-                </div>
-                <div class="col-6 text-end">
-                    <small class="text-muted">Updated: ${formatDateTime(ticket.updatedAt)}</small>
-                </div>
-            </div>
-            
-            <div class="ticket-response">
-                <h6>ADD RESPONSE</h6>
-                <textarea placeholder="Type your response here..." id="ticketResponse" class="form-control mb-2"></textarea>
-                <div class="form-check mb-2">
-                    <input type="checkbox" class="form-check-input" id="internalNote">
-                    <label class="form-check-label" for="internalNote">Internal note (not visible to customer)</label>
-                </div>
-                <button class="btn btn-outline-primary btn-sm" onclick="addTicketComment()">
-                    <i class="bi bi-chat-dots me-1"></i>Add Comment
-                </button>
-            </div>
+  const modalBody = document.getElementById('ticketDetailBody');
+  const isResolved = ['resolved', 'closed'].includes(ticket.status);
+
+  modalBody.innerHTML = `
+    <div class="ticket-detail">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="text-muted small">Ticket ID</label>
+          <div><strong>#${ticket.ticketId}</strong></div>
         </div>
-    `;
+        <div class="col-md-6 mb-3">
+          <label class="text-muted small">Status</label>
+          <div><span class="status-badge ${ticket.status}">${formatStatus(ticket.status)}</span></div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="text-muted small">Priority</label>
+          <div><span class="priority-badge ${ticket.priority}">${capitalize(ticket.priority)}</span></div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="text-muted small">Category</label>
+          <div>${capitalize(ticket.category)}</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="text-muted small">Customer</label>
+          <div>${ticket.customerName}</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="text-muted small">Email</label>
+          <div>${ticket.customerEmail}</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="text-muted small">Assigned To</label>
+          <div>${ticket.assignedToName || 'Unassigned'}</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="text-muted small">Created</label>
+          <div>${formatDate(ticket.createdAt)}</div>
+        </div>
+      </div>
+      <hr>
+      <div class="mb-3">
+        <label class="text-muted small">Subject</label>
+        <div><strong>${ticket.subject}</strong></div>
+      </div>
+      <div class="mb-3">
+        <label class="text-muted small">Description</label>
+        <div class="p-3 bg-light rounded">${ticket.description}</div>
+      </div>
+      ${
+        ticket.resolution
+          ? `
+        <div class="mb-3">
+          <label class="text-muted small">Resolution</label>
+          <div class="p-3 bg-success bg-opacity-10 rounded text-success">${ticket.resolution}</div>
+        </div>
+      `
+          : ''
+      }
+      ${
+        !isResolved
+          ? `
+        <hr>
+        <div class="mb-3">
+          <label class="form-label">Resolution Notes</label>
+          <textarea class="form-control" id="resolutionNotes" rows="3" placeholder="Enter resolution details..."></textarea>
+        </div>
+      `
+          : ''
+      }
+    </div>
+  `;
 
-    // Store current ticket ID for resolve action
-    document.getElementById('resolveTicketBtn').dataset.ticketId = ticketId;
+  const resolveBtn = document.getElementById('resolveTicketBtn');
+  if (resolveBtn) {
+    resolveBtn.style.display = isResolved ? 'none' : 'inline-block';
+  }
 
-    // Update resolve button visibility
-    const resolveBtn = document.getElementById('resolveTicketBtn');
-    if (ticket.status === 'resolved' || ticket.status === 'closed') {
-        resolveBtn.style.display = 'none';
-    } else {
-        resolveBtn.style.display = 'block';
-    }
-
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('ticketDetailModal'));
-    modal.show();
-}
-
-async function addTicketComment() {
-    const response = document.getElementById('ticketResponse')?.value;
-    const isInternal = document.getElementById('internalNote')?.checked || false;
-
-    if (!response || !AppState.selectedTicket) return;
-
-    try {
-        if (CONFIG.USE_API && window.TicketService) {
-            const result = await window.TicketService.addComment(
-                AppState.selectedTicket._id,
-                response,
-                isInternal
-            );
-            
-            if (result.success) {
-                showToast('Comment added successfully!');
-                await loadTickets();
-                viewTicket(AppState.selectedTicket._id);
-            }
-        }
-    } catch (error) {
-        console.error('Error adding comment:', error);
-        showToast('Failed to add comment', 'error');
-    }
+  new bootstrap.Modal(document.getElementById('ticketDetailModal')).show();
 }
 
 async function handleResolveTicket() {
-    const ticketId = document.getElementById('resolveTicketBtn').dataset.ticketId;
-    const response = document.getElementById('ticketResponse')?.value || 'Ticket resolved';
+  if (!AppState.selectedTicket) return;
 
-    try {
-        if (CONFIG.USE_API && window.TicketService) {
-            const result = await window.TicketService.resolveTicket(ticketId, response);
-            
-            if (result.success) {
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('ticketDetailModal'));
-                modal.hide();
+  const resolution = document.getElementById('resolutionNotes')?.value;
+  if (!resolution) {
+    showToast('Please enter resolution notes', 'error');
+    return;
+  }
 
-                showToast(`Ticket resolved successfully!`);
+  setLoading(true);
 
-                // Refresh data
-                await loadTickets();
-                updateDashboardStats();
-                renderRecentTickets();
-                updatePriorityChart();
-                
-                if (AppState.currentPage === 'tickets') {
-                    renderTicketsTable();
-                }
-            }
-        } else {
-            // Mock resolve
-            const ticketIndex = AppState.tickets.findIndex((t) => (t._id || t.id) === ticketId);
-            if (ticketIndex !== -1) {
-                AppState.tickets[ticketIndex].status = 'resolved';
-                AppState.tickets[ticketIndex].updatedAt = new Date();
+  try {
+    const response = await apiRequest(`/tickets/${AppState.selectedTicket._id}/resolve`, {
+      method: 'PATCH',
+      body: JSON.stringify({ resolution }),
+    });
 
-                const modal = bootstrap.Modal.getInstance(document.getElementById('ticketDetailModal'));
-                modal.hide();
+    if (response.success) {
+      const index = AppState.tickets.findIndex((t) => t._id === AppState.selectedTicket._id);
+      if (index !== -1) AppState.tickets[index] = response.data;
 
-                showToast(`Ticket resolved!`);
-                updateDashboardStats();
-                renderRecentTickets();
-                updatePriorityChart();
-                
-                if (AppState.currentPage === 'tickets') {
-                    renderTicketsTable();
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Error resolving ticket:', error);
-        showToast('Failed to resolve ticket', 'error');
+      // Invalidate stats cache
+      AppState.statsLoaded = false;
+      showToast('Ticket resolved successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('ticketDetailModal')).hide();
+      renderTicketsTable();
     }
+  } catch (error) {
+    showToast(error.message || 'Failed to resolve ticket', 'error');
+  } finally {
+    setLoading(false);
+  }
 }
 
-function showAssignModal(ticketId) {
-    const ticket = AppState.tickets.find((t) => (t._id || t.id) === ticketId);
-    if (!ticket) return;
+async function quickResolve(ticketId) {
+  const resolution = prompt('Enter resolution notes:');
+  if (!resolution) return;
 
-    const assignOptions = AppState.supportUsers
-        .filter(u => u.status === 'active')
-        .map(u => `<option value="${u._id}">${u.name} (${u.email})</option>`)
-        .join('');
+  setLoading(true);
 
-    const modalHtml = `
-        <div class="modal fade" id="assignModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Assign Ticket #${ticket.ticketId || ticket.id}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Assign to Support Agent</label>
-                            <select class="form-select" id="assignToUser">
-                                <option value="">Select Agent</option>
-                                ${assignOptions}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="assignTicket('${ticketId}')">
-                            <i class="bi bi-person-check me-1"></i>Assign
-                        </button>
-                    </div>
-                </div>
+  try {
+    const response = await apiRequest(`/tickets/${ticketId}/resolve`, {
+      method: 'PATCH',
+      body: JSON.stringify({ resolution }),
+    });
+
+    if (response.success) {
+      const index = AppState.tickets.findIndex((t) => t._id === ticketId);
+      if (index !== -1) AppState.tickets[index] = response.data;
+
+      // Invalidate stats cache
+      AppState.statsLoaded = false;
+      showToast('Ticket resolved successfully!');
+      renderTicketsTable();
+    }
+  } catch (error) {
+    showToast(error.message || 'Failed to resolve ticket', 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function showAssignModal(ticketId) {
+  const ticket = AppState.tickets.find((t) => t._id === ticketId);
+  if (!ticket) return;
+
+  AppState.selectedTicket = ticket;
+
+  // Load users if not already loaded
+  if (!AppState.usersLoaded) {
+    await loadSupportUsers();
+  }
+
+  const activeUsers = AppState.supportUsers.filter((u) => u.isActive !== false);
+
+  if (activeUsers.length === 0) {
+    showToast('No support agents available.', 'error');
+    return;
+  }
+
+  const assignOptions = activeUsers
+    .map(
+      (u) => `
+    <option value="${u._id}" data-name="${u.name}" ${ticket.assignedTo === u._id ? 'selected' : ''}>
+      ${u.name} (${u.email})
+    </option>
+  `
+    )
+    .join('');
+
+  // Remove existing modal
+  document.getElementById('assignModal')?.remove();
+
+  document.body.insertAdjacentHTML(
+    'beforeend',
+    `
+    <div class="modal fade" id="assignModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Assign Ticket #${ticket.ticketId}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Assign to Support Agent</label>
+              <select class="form-select" id="assignToUser">
+                <option value="">Select Agent</option>
+                ${assignOptions}
+              </select>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="handleAssignTicket()">
+              <i class="bi bi-person-check me-1"></i>Assign
+            </button>
+          </div>
         </div>
-    `;
+      </div>
+    </div>
+  `
+  );
 
-    // Remove existing modal if any
-    const existingModal = document.getElementById('assignModal');
-    if (existingModal) existingModal.remove();
-
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    const modal = new bootstrap.Modal(document.getElementById('assignModal'));
-    modal.show();
+  new bootstrap.Modal(document.getElementById('assignModal')).show();
 }
 
-async function assignTicket(ticketId) {
-    const userId = document.getElementById('assignToUser')?.value;
-    if (!userId) {
-        showToast('Please select an agent', 'error');
-        return;
+async function handleAssignTicket() {
+  if (!AppState.selectedTicket) return;
+
+  const select = document.getElementById('assignToUser');
+  const assignedTo = select.value;
+  const assignedToName = select.options[select.selectedIndex]?.dataset?.name || '';
+
+  if (!assignedTo) {
+    showToast('Please select a user', 'error');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const response = await apiRequest(`/tickets/${AppState.selectedTicket._id}/assign`, {
+      method: 'PATCH',
+      body: JSON.stringify({ assignedTo, assignedToName }),
+    });
+
+    if (response.success) {
+      const index = AppState.tickets.findIndex((t) => t._id === AppState.selectedTicket._id);
+      if (index !== -1) AppState.tickets[index] = response.data;
+
+      showToast('Ticket assigned successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('assignModal')).hide();
+      renderTicketsTable();
     }
-
-    try {
-        if (CONFIG.USE_API && window.TicketService) {
-            const result = await window.TicketService.assignTicket(ticketId, userId);
-            
-            if (result.success) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('assignModal'));
-                modal.hide();
-
-                showToast(result.message || 'Ticket assigned successfully');
-                await loadTickets();
-                renderTicketsTable();
-            }
-        }
-    } catch (error) {
-        console.error('Error assigning ticket:', error);
-        showToast('Failed to assign ticket', 'error');
-    }
-}
-
-async function deleteTicket(ticketId) {
-    if (!confirm(`Are you sure you want to delete this ticket?`)) return;
-
-    try {
-        if (CONFIG.USE_API && window.TicketService) {
-            const result = await window.TicketService.deleteTicket(ticketId);
-            
-            if (result.success) {
-                showToast('Ticket deleted successfully');
-                await loadTickets();
-                renderTicketsTable();
-                updateDashboardStats();
-            }
-        } else {
-            AppState.tickets = AppState.tickets.filter((t) => (t._id || t.id) !== ticketId);
-            showToast('Ticket deleted');
-            renderTicketsTable();
-            updateDashboardStats();
-        }
-    } catch (error) {
-        console.error('Error deleting ticket:', error);
-        showToast('Failed to delete ticket', 'error');
-    }
+  } catch (error) {
+    showToast(error.message || 'Failed to assign ticket', 'error');
+  } finally {
+    setLoading(false);
+  }
 }
 
 // ==========================================
-// SUPPORT USERS
+// USERS
 // ==========================================
 function renderUsersTable() {
-    const tableBody = document.getElementById('usersTableBody');
-    if (!tableBody) return;
+  const tableBody = document.getElementById('usersTableBody');
+  const paginationContainer = document.getElementById('usersPagination');
+  if (!tableBody) return;
 
-    // Show admin-only content
-    if (AppState.currentUser?.role !== 'admin') {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center py-4 text-muted">
-                    <i class="bi bi-lock" style="font-size: 48px;"></i>
-                    <p class="mt-2">Admin access required</p>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-
-    if (AppState.supportUsers.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center py-4 text-muted">No support users found</td>
-            </tr>
-        `;
-        return;
-    }
-
-    tableBody.innerHTML = AppState.supportUsers
-        .map((user) => {
-            return `
-            <tr>
-                <td>
-                    <div class="user-avatar">
-                        <img src="${user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`}" alt="${user.name}">
-                        <div class="user-info">
-                            <div class="user-name">${user.name}</div>
-                        </div>
-                    </div>
-                </td>
-                <td>${user.email}</td>
-                <td><span class="badge ${user.role === 'admin' ? 'bg-primary' : 'bg-secondary'}">${capitalize(user.role)}</span></td>
-                <td><span class="badge ${user.status === 'active' ? 'bg-success' : 'bg-danger'}">${capitalize(user.status)}</span></td>
-                <td>
-                    <span class="badge bg-info">${user.assignedTickets || 0} assigned</span>
-                    <span class="badge bg-success">${user.resolvedTickets || 0} resolved</span>
-                </td>
-                <td>
-                    <div class="d-flex gap-1">
-                        <button class="action-btn view" onclick="viewSupportUser('${user._id}')" title="View">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                        <button class="action-btn edit" onclick="editSupportUser('${user._id}')" title="Edit">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="action-btn delete" onclick="deleteSupportUser('${user._id}')" title="Delete">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-        })
-        .join('');
-}
-
-function viewSupportUser(userId) {
-    const user = AppState.supportUsers.find((u) => u._id === userId);
-    if (!user) return;
-
-    const modalHtml = `
-        <div class="modal fade" id="viewUserModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Support User Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="text-center mb-3">
-                            <img src="${user.avatar}" alt="${user.name}" class="rounded-circle" style="width: 80px; height: 80px;">
-                            <h5 class="mt-2">${user.name}</h5>
-                            <span class="badge ${user.role === 'admin' ? 'bg-primary' : 'bg-secondary'}">${capitalize(user.role)}</span>
-                        </div>
-                        <table class="table table-sm">
-                            <tr><td><strong>Email:</strong></td><td>${user.email}</td></tr>
-                            <tr><td><strong>Status:</strong></td><td><span class="badge ${user.status === 'active' ? 'bg-success' : 'bg-danger'}">${user.status}</span></td></tr>
-                            <tr><td><strong>Department:</strong></td><td>${user.department || 'N/A'}</td></tr>
-                            <tr><td><strong>Assigned Tickets:</strong></td><td>${user.assignedTickets || 0}</td></tr>
-                            <tr><td><strong>Resolved Tickets:</strong></td><td>${user.resolvedTickets || 0}</td></tr>
-                            <tr><td><strong>Last Login:</strong></td><td>${user.lastLogin ? formatDateTime(user.lastLogin) : 'Never'}</td></tr>
-                            <tr><td><strong>Created:</strong></td><td>${formatDateTime(user.createdAt)}</td></tr>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  if (AppState.supportUsers.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center py-4">
+          <i class="bi bi-people text-muted" style="font-size: 48px;"></i>
+          <p class="text-muted mt-2">No support users found</p>
+        </td>
+      </tr>
     `;
+    if (paginationContainer) paginationContainer.innerHTML = '';
+    return;
+  }
 
-    const existingModal = document.getElementById('viewUserModal');
-    if (existingModal) existingModal.remove();
+  // Calculate counts and sort
+  const usersWithCounts = AppState.supportUsers
+    .map((user) => ({
+      ...user,
+      assignedCount: AppState.tickets.filter((t) => t.assignedTo === user._id).length,
+      resolvedCount: AppState.tickets.filter(
+        (t) => t.assignedTo === user._id && ['resolved', 'closed'].includes(t.status)
+      ).length,
+    }))
+    .sort((a, b) => b.assignedCount - a.assignedCount);
 
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    const modal = new bootstrap.Modal(document.getElementById('viewUserModal'));
-    modal.show();
-}
+  const totalPages = Math.ceil(usersWithCounts.length / AppState.usersPerPage);
+  if (AppState.usersCurrentPage > totalPages) {
+    AppState.usersCurrentPage = totalPages || 1;
+  }
 
-function editSupportUser(userId) {
-    const user = AppState.supportUsers.find((u) => u._id === userId);
-    if (!user) return;
+  const startIndex = (AppState.usersCurrentPage - 1) * AppState.usersPerPage;
+  const paginatedUsers = usersWithCounts.slice(startIndex, startIndex + AppState.usersPerPage);
 
-    const modalHtml = `
-        <div class="modal fade" id="editUserModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Support User</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="editUserForm">
-                            <div class="mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" name="name" value="${user.name}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" value="${user.email}" disabled>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Role</label>
-                                <select class="form-select" name="role">
-                                    <option value="agent" ${user.role === 'agent' ? 'selected' : ''}>Support Agent</option>
-                                    <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" name="status">
-                                    <option value="active" ${user.status === 'active' ? 'selected' : ''}>Active</option>
-                                    <option value="inactive" ${user.status === 'inactive' ? 'selected' : ''}>Inactive</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Department</label>
-                                <input type="text" class="form-control" name="department" value="${user.department || ''}">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="updateSupportUser('${userId}')">
-                            <i class="bi bi-check-lg me-1"></i>Save Changes
-                        </button>
-                    </div>
-                </div>
-            </div>
+  tableBody.innerHTML = paginatedUsers
+    .map(
+      (user) => `
+    <tr>
+      <td>
+        <div class="user-avatar">
+          <img src="${user.avatar || getUserAvatarUrl(user.name)}" alt="${user.name}">
+          <div class="user-info">
+            <div class="user-name">${user.name}</div>
+            <div class="user-email">${user.email}</div>
+          </div>
         </div>
-    `;
+      </td>
+      <td><span class="badge bg-primary">${capitalize(user.role)}</span></td>
+      <td>${user.assignedCount}</td>
+      <td>${user.resolvedCount}</td>
+      <td><span class="badge ${user.isActive !== false ? 'bg-success' : 'bg-secondary'}">${user.isActive !== false ? 'Active' : 'Inactive'}</span></td>
+    </tr>
+  `
+    )
+    .join('');
 
-    const existingModal = document.getElementById('editUserModal');
-    if (existingModal) existingModal.remove();
-
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
-    modal.show();
+  renderPagination(paginationContainer, AppState.usersCurrentPage, totalPages, 'changeUsersPage');
 }
 
-async function updateSupportUser(userId) {
-    const form = document.getElementById('editUserForm');
-    const formData = new FormData(form);
-    
-    const updates = {
-        name: formData.get('name'),
-        role: formData.get('role'),
-        status: formData.get('status'),
-        department: formData.get('department'),
-    };
-
-    try {
-        if (CONFIG.USE_API && window.TicketService) {
-            const result = await window.TicketService.updateSupportUser(userId, updates);
-            
-            if (result.success) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-                modal.hide();
-
-                showToast('User updated successfully');
-                await loadSupportUsers();
-                renderUsersTable();
-            }
-        }
-    } catch (error) {
-        console.error('Error updating user:', error);
-        showToast('Failed to update user', 'error');
-    }
-}
-
-async function deleteSupportUser(userId) {
-    const user = AppState.supportUsers.find((u) => u._id === userId);
-    if (!user) return;
-
-    if (!confirm(`Are you sure you want to delete ${user.name}?`)) return;
-
-    try {
-        if (CONFIG.USE_API && window.TicketService) {
-            const result = await window.TicketService.deleteSupportUser(userId);
-            
-            if (result.success) {
-                showToast('User deleted successfully');
-                await loadSupportUsers();
-                renderUsersTable();
-            }
-        }
-    } catch (error) {
-        console.error('Error deleting user:', error);
-        showToast('Failed to delete user', 'error');
-    }
-}
-
-async function handleAddUser() {
-    const form = document.getElementById('addUserForm');
-    const formData = new FormData(form);
-    
-    const userData = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        password: formData.get('password'),
-        role: formData.get('role'),
-        department: formData.get('department') || '',
-    };
-
-    if (!userData.name || !userData.email || !userData.password) {
-        showToast('Please fill in all required fields', 'error');
-        return;
-    }
-
-    try {
-        if (CONFIG.USE_API && window.TicketService) {
-            const result = await window.TicketService.createSupportUser(userData);
-            
-            if (result.success) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
-                modal.hide();
-                form.reset();
-
-                showToast('User created successfully');
-                await loadSupportUsers();
-                renderUsersTable();
-            }
-        }
-    } catch (error) {
-        console.error('Error creating user:', error);
-        showToast(error.message || 'Failed to create user', 'error');
-    }
+function changeUsersPage(page) {
+  const totalPages = Math.ceil(AppState.supportUsers.length / AppState.usersPerPage);
+  if (page < 1 || page > totalPages) return;
+  AppState.usersCurrentPage = page;
+  renderUsersTable();
 }
 
 function populateAssigneeDropdown() {
-    const dropdown = document.getElementById('ticketAssignee');
-    if (!dropdown || AppState.supportUsers.length === 0) return;
+  const dropdown = document.getElementById('ticketAssignee');
+  if (!dropdown) return;
 
-    const options = AppState.supportUsers
-        .filter(u => u.status === 'active')
-        .map(u => `<option value="${u._id}">${u.name}</option>`)
-        .join('');
+  const activeUsers = AppState.supportUsers.filter((u) => u.isActive !== false);
 
-    dropdown.innerHTML = `<option value="">Unassigned</option>${options}`;
+  if (activeUsers.length === 0) {
+    dropdown.innerHTML = '<option value="">No agents available</option>';
+    return;
+  }
+
+  dropdown.innerHTML = `
+    <option value="">Unassigned</option>
+    ${activeUsers.map((u) => `<option value="${u._id}">${u.name}</option>`).join('')}
+  `;
 }
 
 // ==========================================
 // SEARCH
 // ==========================================
-function handleGlobalSearch(e) {
-    const query = e.target.value.toLowerCase();
+async function handleGlobalSearch(e) {
+  const query = e.target.value.toLowerCase();
+  if (query.length < 2) return;
 
-    if (query.length < 2) return;
+  // Load tickets if not already loaded
+  if (!AppState.ticketsLoaded) {
+    await loadTickets();
+  }
 
-    const results = AppState.tickets.filter(
-        (t) =>
-            t.subject?.toLowerCase().includes(query) ||
-            (t.customerName || t.customer)?.toLowerCase().includes(query) ||
-            (t.ticketId || t.id)?.toString().includes(query)
-    );
+  const results = AppState.tickets.filter(
+    (t) =>
+      t.subject?.toLowerCase().includes(query) ||
+      t.customerName?.toLowerCase().includes(query) ||
+      t.ticketId?.toString().includes(query)
+  );
 
-    if (results.length > 0) {
-        showPage('tickets');
-        updateActiveMenuItem('tickets');
-        renderTicketsTable(results);
-    }
+  if (results.length > 0) {
+    showPage('tickets');
+    updateActiveMenuItem('tickets');
+    renderTicketsTable(results);
+  }
 }
 
 // ==========================================
-// UTILITY FUNCTIONS
+// GLOBAL EXPORTS
 // ==========================================
-function capitalize(str) {
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function truncateText(text, maxLength) {
-    if (!text) return '';
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-}
-
-function formatStatus(status) {
-    if (!status) return '';
-    return status.split('-').map(capitalize).join(' ');
-}
-
-function formatDate(date) {
-    if (!date) return '';
-    const d = new Date(date);
-    const now = new Date();
-    const diff = now - d;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-    if (days === 0) return 'Today';
-    if (days === 1) return 'Yesterday';
-    if (days < 7) return `${days} days ago`;
-
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function formatDateTime(date) {
-    if (!date) return '';
-    const d = new Date(date);
-    return d.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-}
-
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-function updateActiveMenuItem(pageName) {
-    const menuItems = document.querySelectorAll('.sidebar-menu li');
-    menuItems.forEach((item) => {
-        item.classList.remove('active');
-        if (item.dataset.page === pageName) {
-            item.classList.add('active');
-        }
-    });
-}
-
-function setLoading(isLoading) {
-    AppState.isLoading = isLoading;
-    const buttons = document.querySelectorAll('button[type="submit"]');
-    buttons.forEach((btn) => {
-        if (isLoading) {
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
-        } else {
-            btn.disabled = false;
-        }
-    });
-}
-
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('successToast');
-    const toastMessage = document.getElementById('toastMessage');
-    const toastHeader = toast?.querySelector('.toast-header');
-
-    if (!toast || !toastMessage || !toastHeader) return;
-
-    toastMessage.textContent = message;
-
-    if (type === 'error') {
-        toastHeader.classList.remove('bg-success');
-        toastHeader.classList.add('bg-danger');
-    } else {
-        toastHeader.classList.remove('bg-danger');
-        toastHeader.classList.add('bg-success');
-    }
-
-    const bsToast = new bootstrap.Toast(toast);
-    bsToast.show();
-}
-
-// Make functions globally accessible
 window.showPage = showPage;
 window.viewTicket = viewTicket;
-window.deleteTicket = deleteTicket;
 window.showAssignModal = showAssignModal;
-window.assignTicket = assignTicket;
-window.addTicketComment = addTicketComment;
-window.viewSupportUser = viewSupportUser;
-window.editSupportUser = editSupportUser;
-window.updateSupportUser = updateSupportUser;
-window.deleteSupportUser = deleteSupportUser;
-window.handleAddUser = handleAddUser;
+window.handleAssignTicket = handleAssignTicket;
+window.quickResolve = quickResolve;
+window.handleResolveTicket = handleResolveTicket;
+window.goToShellApp = goToShellApp;
+window.redirectToShellLogin = redirectToShellLogin;
+window.updateActiveMenuItem = updateActiveMenuItem;
+window.changeUsersPage = changeUsersPage;
+window.changeTicketsPage = changeTicketsPage;
+
+// ==========================================
+// INITIALIZATION
+// ==========================================
+document.addEventListener('DOMContentLoaded', initializeApp);

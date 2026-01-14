@@ -3,9 +3,10 @@ import { clearAuth, getCurrentUser } from '@3asoftwares/utils/client';
 import { Modal, Header, ToasterBox } from '@3asoftwares/ui';
 import { useUIStore } from './store/uiStore';
 import { useTokenValidator } from './store/useTokenValidator';
-import { changeTheme, renderApp } from './utils';
+import { changeTheme, renderApp, MFE_CONFIG, ActiveApp } from './utils';
 import { I18nProvider, useTranslation } from './i18n/I18nContext';
 import { LanguageSelector } from './components/LanguageSelector';
+import { IframeContainer } from './components/IframeContainer';
 
 const Footer = React.lazy(() =>
   import('./components/Footer').then((m) => ({ default: (m as any).Footer ?? (m as any).default }))
@@ -38,6 +39,7 @@ const AppContent: React.FC = () => {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showToaster, setShowToaster] = useState(false);
   const [user, setUser] = useState<{ name: string } | undefined>(undefined);
+  const [activeApp, setActiveApp] = useState<ActiveApp>(null);
 
   // Periodically validate token to implement sliding expiration
   useTokenValidator((updatedUser) => {
@@ -59,7 +61,7 @@ const AppContent: React.FC = () => {
   const verifyLogin = () => {
     const currentUser = getCurrentUser();
     if (currentUser && currentUser.role) {
-      renderApp(currentUser.role);
+      renderApp(currentUser.role, setActiveApp);
       return true;
     }
     return false;
@@ -84,6 +86,7 @@ const AppContent: React.FC = () => {
   const handleLogout = () => {
     clearAuth();
     setUser(undefined);
+    setActiveApp(null);
     window.location.reload();
   };
 
@@ -103,39 +106,63 @@ const AppContent: React.FC = () => {
       setAuthMode('login');
       setShowAuthModal(true);
     }
+    // Open auth modal for external app login request (e.g., support-app)
+    const returnTo = params.get('returnTo');
+    const appType = params.get('app');
+    if (returnTo && appType) {
+      // Store returnTo URL in sessionStorage for use after login
+      sessionStorage.setItem('auth_returnTo', returnTo);
+      sessionStorage.setItem('auth_app', appType);
+      setAuthMode('login');
+      setShowAuthModal(true);
+    }
   }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-200">
-      <div className="flex items-center justify-end px-4 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <LanguageSelector compact />
-      </div>
-      <Header
-        user={user}
-        onLogin={login}
-        onLogout={handleLogout}
-        onCreateAccount={signup}
-        theme={theme}
-        onToggleTheme={toggleTheme}
-        showThemeToggle={true}
-        showLanguageSelector={false}
-      />
-      <div className="flex flex-1">
-        <main className="flex-1">
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
-              </div>
-            }
-          >
-            <WelcomePage onSignupClick={signup} />
+      {/* Embedded Apps via Iframe */}
+      {activeApp === 'support' && (
+        <IframeContainer
+          src={MFE_CONFIG.supportAppUrl}
+          title="Support Portal"
+          onClose={() => setActiveApp(null)}
+        />
+      )}
+
+      {/* Main Shell UI - hidden when embedded app is active */}
+      {!activeApp && (
+        <>
+          <div className="flex items-center justify-end px-4 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <LanguageSelector compact />
+          </div>
+          <Header
+            user={user}
+            onLogin={login}
+            onLogout={handleLogout}
+            onCreateAccount={signup}
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            showThemeToggle={true}
+            showLanguageSelector={false}
+          />
+          <div className="flex flex-1">
+            <main className="flex-1">
+              <Suspense
+                fallback={
+                  <div className="flex items-center justify-center min-h-screen">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+                  </div>
+                }
+              >
+                <WelcomePage onSignupClick={signup} />
+              </Suspense>
+            </main>
+          </div>
+          <Suspense fallback={<div />}>
+            <Footer />
           </Suspense>
-        </main>
-      </div>
-      <Suspense fallback={<div />}>
-        <Footer />
-      </Suspense>
+        </>
+      )}
 
       <Modal
         isOpen={showAuthModal}
