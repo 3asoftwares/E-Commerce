@@ -1,9 +1,8 @@
 name: Deploy Backend (Railway)
 
 on:
-  workflow_run:
-    workflows: ['CI Pipeline']
-    types: [completed]
+  workflow_dispatch:  # Manual trigger only
+  push:
     branches: [main]
 
 concurrency:
@@ -12,53 +11,23 @@ concurrency:
 
 env:
   NODE_VERSION: '20'
-  # Set to 'true' to enable Railway deployments
   RAILWAY_ENABLED: 'true'
 
 # ============================================================
 # TEMPORARY: Only Auth Service deployment for testing
-# TODO: Revert to full deployment after testing
 # ============================================================
 
 jobs:
-  # ===========================================
-  # VERIFY CI PASSED
-  # ===========================================
-  verify-ci:
-    name: Verify CI Passed
-    runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
-    outputs:
-      should-deploy: ${{ steps.check.outputs.should-deploy }}
-    steps:
-      - name: CI Verification
-        id: check
-        run: |
-          echo "## CI Pipeline Passed" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ env.RAILWAY_ENABLED }}" == "true" ]; then
-            echo "Railway deployments are ENABLED" >> $GITHUB_STEP_SUMMARY
-            echo "should-deploy=true" >> $GITHUB_OUTPUT
-          else
-            echo "Railway deployments are DISABLED (skipped)" >> $GITHUB_STEP_SUMMARY
-            echo "To enable, set RAILWAY_ENABLED to 'true' in the workflow" >> $GITHUB_STEP_SUMMARY
-            echo "should-deploy=false" >> $GITHUB_OUTPUT
-          fi
-
   # ===========================================
   # DEPLOY AUTH SERVICE
   # ===========================================
   deploy-auth:
     name: Deploy Auth Service
     runs-on: ubuntu-latest
-    needs: verify-ci
-    if: needs.verify-ci.outputs.should-deploy == 'true'
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli@latest
@@ -84,31 +53,22 @@ jobs:
   summary:
     name: Deployment Summary
     runs-on: ubuntu-latest
-    needs: [verify-ci, deploy-auth]
+    needs: [deploy-auth]
     if: always()
     steps:
       - name: Generate Summary
         run: |
           echo "## Railway Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Note: Only Auth Service deployment is enabled for testing**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
           
-          if [ "${{ needs.verify-ci.outputs.should-deploy }}" != "true" ]; then
-            echo "### Railway Deployments Disabled" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Railway deployments are currently disabled." >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.deploy-auth.result }}" == "success" ]; then
+            echo "| Auth | ✅ deployed |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.deploy-auth.result }}" == "failure" ]; then
+            echo "| Auth | ❌ failed |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Service | Status |" >> $GITHUB_STEP_SUMMARY
-            echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
-            
-            if [ "${{ needs.deploy-auth.result }}" == "success" ]; then
-              echo "| Auth | ✅ deployed |" >> $GITHUB_STEP_SUMMARY
-            elif [ "${{ needs.deploy-auth.result }}" == "failure" ]; then
-              echo "| Auth | ❌ failed |" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "| Auth | ⏭️ skipped |" >> $GITHUB_STEP_SUMMARY
-            fi
+            echo "| Auth | ⏭️ skipped |" >> $GITHUB_STEP_SUMMARY
           fi
 
 # ============================================================
