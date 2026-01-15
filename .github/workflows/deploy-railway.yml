@@ -63,7 +63,6 @@ jobs:
     name: Detect Changes
     runs-on: ubuntu-latest
     needs: verify-ci
-    if: needs.verify-ci.outputs.should-deploy == 'true'
     outputs:
       services-auth: ${{ steps.filter.outputs.services-auth }}
       services-category: ${{ steps.filter.outputs.services-category }}
@@ -107,7 +106,6 @@ jobs:
     name: Deploy Auth Service
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.services-auth == 'true'
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
@@ -135,7 +133,6 @@ jobs:
     name: Deploy Category Service
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.services-category == 'true'
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
@@ -163,7 +160,6 @@ jobs:
     name: Deploy Coupon Service
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.services-coupon == 'true'
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
@@ -191,7 +187,6 @@ jobs:
     name: Deploy GraphQL Gateway
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.services-gateway == 'true'
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
@@ -219,7 +214,6 @@ jobs:
     name: Deploy Order Service
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.services-order == 'true'
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
@@ -247,7 +241,6 @@ jobs:
     name: Deploy Product Service
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.services-product == 'true'
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:

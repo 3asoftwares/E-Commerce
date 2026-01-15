@@ -178,7 +178,6 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.any-changed == 'true'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -254,7 +253,6 @@ jobs:
     name: Publish @3asoftwares/types
     runs-on: ubuntu-latest
     needs: [detect-changes, build]
-    if: needs.detect-changes.outputs.types-changed == 'true'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -314,7 +312,6 @@ jobs:
     name: Publish @3asoftwares/utils
     runs-on: ubuntu-latest
     needs: [detect-changes, build, publish-types]
-    if: always() && needs.detect-changes.outputs.utils-changed == 'true' && needs.build.result == 'success'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -374,7 +371,6 @@ jobs:
     name: Publish @3asoftwares/ui
     runs-on: ubuntu-latest
     needs: [detect-changes, build, publish-utils]
-    if: always() && needs.detect-changes.outputs.ui-changed == 'true' && needs.build.result == 'success'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -427,21 +423,7 @@ jobs:
         if: needs.detect-changes.outputs.dry-run != 'true'
         run: echo "### @3asoftwares/ui published successfully" >> $GITHUB_STEP_SUMMARY
 
-  # ===========================================
-  # NO CHANGES - SKIP
-  # ===========================================
-  no-changes:
-    name: No Changes
-    runs-on: ubuntu-latest
-    needs: detect-changes
-    if: needs.detect-changes.outputs.any-changed != 'true'
-    steps:
-      - name: Skip Summary
-        run: |
-          echo "## No Package Changes Detected" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "No packages were modified in this commit." >> $GITHUB_STEP_SUMMARY
-          echo "NPM publish skipped." >> $GITHUB_STEP_SUMMARY
+  # no-changes job removed - all packages publish now
 
   # ===========================================
   # SUMMARY
@@ -449,7 +431,7 @@ jobs:
   summary:
     name: Publish Summary
     runs-on: ubuntu-latest
-    needs: [detect-changes, build, publish-types, publish-utils, publish-ui, no-changes]
+    needs: [detect-changes, build, publish-types, publish-utils, publish-ui]
     if: always()
     steps:
       - name: Generate Summary
