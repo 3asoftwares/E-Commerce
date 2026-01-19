@@ -25,6 +25,8 @@ import { getUserById } from './api/client';
 import { useAppDispatch } from './store/store';
 import { useTokenValidator } from './store/useTokenValidator';
 
+console.log('VITE_ENV:', process.env.VITE_ENV);
+
 const AppContent: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();

@@ -9,6 +9,8 @@ import { LanguageSelector } from './components/LanguageSelector';
 import { IframeContainer } from './components/IframeContainer';
 import { Header } from './components/Header';
 
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
 const Footer = React.lazy(() =>
   import('./components/Footer').then((m) => ({ default: (m as any).Footer ?? (m as any).default }))
 );
