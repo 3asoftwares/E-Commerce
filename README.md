@@ -16,16 +16,14 @@ A modern, scalable, and feature-rich e-commerce platform built with cutting-edge
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
 │  │                         FRONTEND APPLICATIONS                          │ │
 │  ├────────────────────────────────────────────────────────────────────────┤ │
-│  │                                                                        │ │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │ │
-│  │  │  Web App    │  │ Mobile App  │  │  Admin App  │  │ Seller App  │  │ │
-│  │  │─────────────│  │─────────────│  │─────────────│  │─────────────│  │ │
-│  │  │ Next.js 16  │  │React Native │  │    Vite     │  │    Vite     │  │ │
-│  │  │ Tailwind    │  │  Expo 51    │  │  React 18   │  │  React 18   │  │ │
-│  │  │ DaisyUI     │  │Expo Router  │  │ Redux TK    │  │ Redux TK    │  │ │
-│  │  │ Zustand     │  │  Zustand    │  │ RTK Query   │  │ RTK Query   │  │ │
-│  │  │ Apollo      │  │  Apollo     │  │ Tailwind    │  │ Tailwind    │  │ │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  │ │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐     │ │
+│  │  │ Web App  │ │Mobile App│ │Admin App │ │Seller App│ │ Support  │     │ │
+│  │  │──────────│ │──────────│ │──────────│ │──────────│ │   App    │     │ │
+│  │  │ Next.js  │ │  React   │ │   Vite   │ │   Vite   │ │──────────│     │ │
+│  │  │ Tailwind │ │  Native  │ │ React 18 │ │ React 18 │ │Bootstrap │     │ │
+│  │  │ DaisyUI  │ │ Expo 51  │ │ Redux TK │ │ Redux TK │ │  SCSS    │     │ │
+│  │  │ Zustand  │ │ Zustand  │ │RTK Query │ │RTK Query │ │Vanilla JS│     │ │
+│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘     │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
 │                                      │                                       │
 │                                      ▼                                       │
@@ -35,15 +33,15 @@ A modern, scalable, and feature-rich e-commerce platform built with cutting-edge
 │  │                         Node.js + Express                              │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
 │                                      │                                       │
-│         ┌───────────────┬────────────┼────────────┬───────────────┐         │
-│         ▼               ▼            ▼            ▼               ▼         │
-│  ┌───────────┐  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐    │
-│  │   Auth    │  │  Product  │ │   Order   │ │ Category  │ │  Coupon   │    │
-│  │  Service  │  │  Service  │ │  Service  │ │  Service  │ │  Service  │    │
-│  │───────────│  │───────────│ │───────────│ │───────────│ │───────────│    │
-│  │ Express   │  │ Express   │ │ Express   │ │ Express   │ │ Express   │    │
-│  │ JWT/OAuth │  │ Mongoose  │ │ Mongoose  │ │ Mongoose  │ │ Mongoose  │    │
-│  └───────────┘  └───────────┘ └───────────┘ └───────────┘ └───────────┘    │
+│      ┌─────────┬─────────┬─────────┼─────────┬─────────┬─────────┐        │
+│      ▼         ▼         ▼         ▼         ▼         ▼         ▼        │
+│  ┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐┌────────┐   │
+│  │  Auth  ││Product ││ Order  ││Category││ Coupon ││ Ticket │           │   │
+│  │ Service││Service ││Service ││Service ││Service ││Service │           │   │
+│  │────────││────────││────────││────────││────────││────────│           │   │
+│  │Express ││Express ││Express ││Express ││Express ││Express │           │   │
+│  │JWT/OAuth│Mongoose││Mongoose││Mongoose││Mongoose││Mongoose│           │   │
+│  └────────┘└────────┘└────────┘└────────┘└────────┘└────────┘           │   │
 │                                      │                                       │
 │                          ┌───────────┴───────────┐                          │
 │                          ▼                       ▼                          │
@@ -54,12 +52,7 @@ A modern, scalable, and feature-rich e-commerce platform built with cutting-edge
 │                                                                              │
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
 │  │                              DevOps                                    │ │
-│  │  Docker │ Kubernetes │ GitHub Actions │ NGINX │ SonarCloud │ Vercel   │ │
-│  └────────────────────────────────────────────────────────────────────────┘ │
-│                                                                              │
-│  ┌────────────────────────────────────────────────────────────────────────┐ │
-│  │                          Support Site                                  │ │
-│  │              Bootstrap 5 │ SCSS │ Vanilla JS │ Vercel                 │ │
+│  │     Docker │ GitHub Actions │ SonarCloud │ Vercel │ Railway            │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -78,7 +71,7 @@ This is a monorepo managed with Yarn Workspaces containing:
 - `admin-app` - Admin dashboard for platform management
 - `seller-app` - Seller portal for product and order management
 - `shell-app` - Main shell application and authentication
-- `support-app` - Customer support interface
+- `support-app` - Customer support interface (E-Storefront-Support)
 
 ### ⚙️ Backend Services
 - `auth-service` - Authentication and user management
@@ -150,24 +143,69 @@ The project uses GitHub Actions for continuous integration and deployment:
 - **Deploy Railway** - Deploys backend services to Railway
 - **Publish Packages** - Publishes packages to npm
 
-## � Documentation
+## 📚 Documentation
 
 Comprehensive documentation is available in the [`docs/`](docs/) folder:
 
-| Category | Documents |
-|----------|-----------|
-| **Getting Started** | [Quick Start](docs/guides/GETTING-STARTED.md), [Troubleshooting](docs/guides/TROUBLESHOOTING.md) |
-| **Architecture** | [Overview](docs/architecture/ARCHITECTURE.md), [HLD](docs/architecture/HLD.md), [LLD](docs/architecture/LLD.md) |
-| **Technology Stack** | [TECHNOLOGY-STACK.md](docs/TECHNOLOGY-STACK.md), [Technologies Index](docs/technologies/README.md) |
-| **API** | [GraphQL API](docs/api/API.md) |
-| **Development** | [Coding Standards](docs/development/CODING-STANDARDS.md), [Testing](docs/development/TESTING.md), [Packages](docs/development/PACKAGES.md) |
-| **Publishing** | [NPM Publishing Guide](docs/development/PUBLISHING.md) |
-| **Operations** | [CI/CD](docs/operations/CI-CD.md), [Deployment](docs/operations/DEPLOYMENT.md), [Environment](docs/operations/ENVIRONMENT.md) |
-| **Additional** | [CONTRIBUTING.md](docs/CONTRIBUTING.md), [CHANGELOG.md](docs/CHANGELOG.md), [SECURITY.md](docs/SECURITY.md) |
+### Core Documentation
 
-📖 See [docs/README.md](docs/README.md) for full documentation index.
+| Document                                          | Description                             |
+| ------------------------------------------------- | --------------------------------------- |
+| [Documentation Index](docs/README.md)             | Complete docs index                     |
+| [Getting Started](docs/project/GETTING-STARTED.md)| Setup your development environment      |
+| [Architecture](docs/project/ARCHITECTURE.md)      | System architecture and design patterns |
+| [High-Level Design](docs/project/HIGH_LEVEL_DESIGN.md)| C4 diagrams, container architecture |
+| [Low-Level Design](docs/project/LOW_LEVEL_DESIGN.md)  | Database schemas, service internals |
+| [Tech Stack](docs/project/TECH_STACK.md)          | Complete technology stack               |
+| [API Reference](docs/project/API.md)              | GraphQL API documentation               |
+| [Environment](docs/project/ENVIRONMENT.md)        | Environment variables configuration     |
 
-## �📄 License
+### Development Guides
+
+| Document                                            | Description                           |
+| --------------------------------------------------- | ------------------------------------- |
+| [Coding Standards](docs/project/CODING-STANDARDS.md)| TypeScript, React, Node.js practices  |
+| [Testing Guide](docs/project/TESTING.md)            | Unit, integration, E2E testing        |
+| [Packages Guide](docs/project/PACKAGES.md)          | @3asoftwares shared packages          |
+| [Publishing Guide](docs/project/PUBLISHING.md)      | NPM publishing guide                  |
+| [Contributing](docs/project/CONTRIBUTING.md)        | Contribution guidelines               |
+
+### Operations
+
+| Document                                       | Description                        |
+| ---------------------------------------------- | ---------------------------------- |
+| [CI/CD Pipeline](docs/project/CI-CD.md)        | GitHub Actions workflows           |
+| [Deployment Guide](docs/project/DEPLOYMENT.md) | Vercel, Railway, Docker deployment |
+| [Docker Guide](docs/project/DOCKER.md)         | Docker Compose & Kubernetes        |
+| [Security](docs/project/SECURITY.md)           | Security practices & guidelines    |
+| [Runbook](docs/project/RUNBOOK.md)             | Operations & incident response     |
+| [Troubleshooting](docs/project/TROUBLESHOOTING.md)| Common issues and solutions      |
+
+### Technology Guides
+
+| Document                                                 | Description                    |
+| -------------------------------------------------------- | ------------------------------ |
+| [Technologies Overview](docs/technologies/)              | Full tech stack documentation  |
+| [Node.js](docs/technologies/NODEJS.md)                   | Node.js runtime                |
+| [GraphQL](docs/technologies/GRAPHQL.md)                  | GraphQL API, Apollo            |
+| [TypeScript](docs/technologies/TYPESCRIPT.md)            | TypeScript patterns            |
+| [React](docs/technologies/REACT.md)                      | React components               |
+| [Next.js](docs/technologies/NEXTJS.md)                   | Next.js 16 App Router          |
+| [Express](docs/technologies/EXPRESS.md)                  | Express.js microservices       |
+| [MongoDB](docs/technologies/MONGODB.md)                  | MongoDB & Mongoose             |
+| [Redis](docs/technologies/REDIS.md)                      | Caching & sessions             |
+| [JWT](docs/technologies/JWT.md)                          | Authentication                 |
+| [State Management](docs/technologies/STATE_MANAGEMENT.md)| Zustand & Redux Toolkit        |
+| [React Query](docs/technologies/REACT_QUERY.md)          | TanStack Query                 |
+| [Vite](docs/technologies/VITE.md)                        | Vite bundler                   |
+| [Docker](docs/technologies/DOCKER.md)                    | Containerization               |
+| [Microservices](docs/technologies/MICROSERVICES.md)      | Microservices architecture     |
+| [Jest](docs/technologies/JEST.md)                        | Unit testing                   |
+| [Cypress](docs/technologies/CYPRESS.md)                  | E2E testing                    |
+
+📖 See [docs/README.md](docs/README.md) for complete documentation index with 50+ technology guides.
+
+## 📄 License
 
 This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
 

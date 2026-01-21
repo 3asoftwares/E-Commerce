@@ -131,8 +131,6 @@ E-Storefront/
 │   ├── ticket-service/           # Support (Port 4006)
 │   └── graphql-gateway/          # GraphQL API (Port 4000)
 ├── devops/                        # DevOps configurations
-│   ├── k8s/                      # Kubernetes manifests
-│   ├── nginx/                    # Nginx configs
 │   └── mongo-init/               # MongoDB init scripts
 ├── setup/                         # Setup utilities
 │   ├── scripts/                  # Shell scripts

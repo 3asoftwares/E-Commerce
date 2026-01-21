@@ -124,7 +124,7 @@ See [../technologies/README.md](../technologies/README.md) for detailed technolo
 
 - React, Next.js, TypeScript
 - GraphQL, Express, MongoDB
-- Docker, Kubernetes, CI/CD
+- Docker, CI/CD, Vercel, Railway
 - Testing with Jest, Vitest, Cypress
 
 ### Service-Specific Documentation

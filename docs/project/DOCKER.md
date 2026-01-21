@@ -6,16 +6,16 @@
 - [Local Development](#local-development)
 - [Services Architecture](#services-architecture)
 - [Docker Compose](#docker-compose)
-- [Kubernetes Deployment](#kubernetes-deployment)
 
 ## 🌐 Overview
 
-E-Storefront uses Docker for local development and Kubernetes for production deployment.
+E-Storefront uses Docker for local development with Docker Compose for running databases and services.
 
-| Environment | Tool           | Purpose              |
-| ----------- | -------------- | -------------------- |
-| Local Dev   | Docker Compose | Run MongoDB, Redis   |
-| Production  | Kubernetes     | Orchestrate services |
+| Environment | Tool           | Purpose                   |
+| ----------- | -------------- | ------------------------- |
+| Local Dev   | Docker Compose | Run MongoDB, Redis        |
+| Production  | Railway        | Managed service hosting   |
+| Frontend    | Vercel         | Static site hosting       |
 
 ## 🚀 Local Development
 
@@ -163,97 +163,6 @@ networks:
 # To reset data:
 docker-compose down -v
 docker-compose up -d
-```
-
-## ☸️ Kubernetes Deployment
-
-### Directory Structure
-
-```
-devops/k8s/
-├── base/
-│   ├── namespace.yaml
-│   ├── configmap.yaml
-│   └── secrets.yaml
-├── databases/
-│   ├── mongodb-deployment.yaml
-│   └── redis-deployment.yaml
-├── services/
-│   ├── auth-service.yaml
-│   ├── product-service.yaml
-│   ├── order-service.yaml
-│   └── graphql-gateway.yaml
-└── ingress/
-    └── ingress.yaml
-```
-
-### Sample Deployment
-
-```yaml
-# devops/k8s/services/auth-service.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: auth-service
-  namespace: ecommerce
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: auth-service
-  template:
-    metadata:
-      labels:
-        app: auth-service
-    spec:
-      containers:
-        - name: auth-service
-          image: 3asoftwares/auth-service:latest
-          ports:
-            - containerPort: 4001
-          env:
-            - name: NODE_ENV
-              value: production
-            - name: MONGODB_URI
-              valueFrom:
-                secretKeyRef:
-                  name: db-secrets
-                  key: mongodb-uri
-          resources:
-            requests:
-              memory: '128Mi'
-              cpu: '100m'
-            limits:
-              memory: '256Mi'
-              cpu: '200m'
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: auth-service
-  namespace: ecommerce
-spec:
-  selector:
-    app: auth-service
-  ports:
-    - port: 4001
-      targetPort: 4001
-```
-
-### Deploy to Kubernetes
-
-```bash
-# Apply all configurations
-kubectl apply -f devops/k8s/
-
-# Check deployments
-kubectl get deployments -n ecommerce
-
-# Check pods
-kubectl get pods -n ecommerce
-
-# View logs
-kubectl logs -f deployment/auth-service -n ecommerce
 ```
 
 ## 🔧 Troubleshooting

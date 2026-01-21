@@ -62,7 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Infrastructure
 
 - Docker Compose setup for development
-- Kubernetes manifests for production
+- Railway deployment for production
+- Vercel deployment for frontends
 - GitHub Actions CI/CD pipelines
 - SonarCloud integration
 

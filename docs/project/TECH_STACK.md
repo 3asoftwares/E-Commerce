@@ -34,9 +34,9 @@ E-Storefront is a full-stack e-commerce platform built with modern technologies 
 │  MOBILE                             INFRASTRUCTURE                          │
 │  ┌───────────────────────┐         ┌───────────────────────┐               │
 │  │ React Native / Expo  │         │ Docker + Compose      │               │
-│  │ TypeScript           │         │ Kubernetes            │               │
-│  │ NativeWind           │         │ GitHub Actions        │               │
-│  │ Zustand              │         │ Vercel / AWS          │               │
+│  │ TypeScript           │         │ GitHub Actions        │               │
+│  │ NativeWind           │         │ Vercel / Railway      │               │
+│  │ Zustand              │         │ SonarCloud            │               │
 │  └───────────────────────┘         └───────────────────────┘               │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -149,19 +149,17 @@ E-Storefront is a full-stack e-commerce platform built with modern technologies 
 
 ### Containerization
 
-| Technology     | Version | Purpose                 |
-| -------------- | ------- | ----------------------- |
-| Docker         | 24.x    | Containerization        |
-| Docker Compose | 2.x     | Multi-container setup   |
-| Kubernetes     | 1.28+   | Container orchestration |
+| Technology     | Version | Purpose               |
+| -------------- | ------- | --------------------- |
+| Docker         | 24.x    | Containerization      |
+| Docker Compose | 2.x     | Multi-container setup |
 
 ### Cloud & Hosting
 
 | Service       | Purpose            |
 | ------------- | ------------------ |
 | Vercel        | Web app hosting    |
-| AWS EKS       | Kubernetes hosting |
-| AWS ECR       | Docker registry    |
+| Railway       | Backend hosting    |
 | MongoDB Atlas | Managed MongoDB    |
 | Redis Cloud   | Managed Redis      |
 

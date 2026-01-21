@@ -11,35 +11,30 @@ Comprehensive technology documentation for all E-Storefront projects.
 │                          E-Storefront Platform                          │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │
-│  │   Web App   │  │ Mobile App  │  │  Admin App  │  │ Seller App  │   │
-│  │   Next.js   │  │ React Native│  │    Vite     │  │    Vite     │   │
-│  │  Tailwind   │  │    Expo     │  │   Redux TK  │  │   Redux TK  │   │
-│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘   │
-│         │                │                │                │           │
-│         └────────────────┴────────────────┴────────────────┘           │
-│                                   │                                     │
-│                         ┌─────────▼─────────┐                          │
-│                         │  GraphQL Gateway  │                          │
-│                         │   Apollo Server   │                          │
-│                         └─────────┬─────────┘                          │
-│                                   │                                     │
-│         ┌────────────┬────────────┼────────────┬────────────┐          │
-│         ▼            ▼            ▼            ▼            ▼          │
-│    ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐        │
-│    │  Auth   │ │ Product │ │  Order  │ │Category │ │ Coupon  │        │
-│    │ Service │ │ Service │ │ Service │ │ Service │ │ Service │        │
-│    └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘        │
-│         └───────────┴───────────┴───────────┴───────────┘              │
-│                              │       │                                  │
-│                        ┌─────▼─┐ ┌───▼───┐                             │
-│                        │MongoDB│ │ Redis │                             │
-│                        └───────┘ └───────┘                             │
-│                                                                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                     E-Storefront-Support                          │  │
-│  │                    Bootstrap + SCSS + JS                          │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │
+│  │ Web App  │ │Mobile App│ │Admin App │ │Seller App│ │ Support  │   │
+│  │ Next.js  │ │React Nat.│ │   Vite   │ │   Vite   │ │   App    │   │
+│  │ Tailwind │ │  Expo    │ │ Redux TK │ │ Redux TK │ │Bootstrap │   │
+│  └─────┬────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘   │
+│        │           │           │           │           │             │
+│        └───────────┴───────────┴───────────┴───────────┘             │
+│                                  │                                     │
+│                        ┌─────────▼─────────┐                          │
+│                        │  GraphQL Gateway  │                          │
+│                        │   Apollo Server   │                          │
+│                        └─────────┬─────────┘                          │
+│                                  │                                     │
+│    ┌────────┬────────┬────────┼────────┬────────┬────────┐          │
+│    ▼        ▼        ▼        ▼        ▼        ▼        ▼          │
+│ ┌───────┐┌───────┐┌───────┐┌───────┐┌───────┐┌───────┐           │
+│ │ Auth  ││Product││ Order ││Categry││Coupon ││Ticket │           │
+│ │Service││Service││Service││Service││Service││Service│           │
+│ └───┬───┘└───┬───┘└───┬───┘└───┬───┘└───┬───┘└───┬───┘           │
+│      └───────┴───────┴───────┴───────┴───────┘                    │
+│                             │       │                                  │
+│                       ┌─────▼─┐ ┌───▼───┐                             │
+│                       │MongoDB│ │ Redis │                             │
+│                       └───────┘ └───────┘                             │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -93,7 +88,6 @@ Comprehensive technology documentation for all E-Storefront projects.
 | [WEBPACK.md](WEBPACK.md)       | Webpack Module Federation     |
 | [TSUP.md](TSUP.md)             | TypeScript package bundler    |
 | [DOCKER.md](DOCKER.md)         | Containerization & deployment |
-| [KUBERNETES.md](KUBERNETES.md) | Container orchestration       |
 
 ### Testing & Quality
 
@@ -114,7 +108,6 @@ Comprehensive technology documentation for all E-Storefront projects.
 | Document                         | Description               |
 | -------------------------------- | ------------------------- |
 | [CI_CD.md](CI_CD.md)             | GitHub Actions pipelines  |
-| [NGINX.md](NGINX.md)             | Web server & reverse proxy|
 | [PERFORMANCE.md](PERFORMANCE.md) | Optimization techniques   |
 
 ### Security & APIs

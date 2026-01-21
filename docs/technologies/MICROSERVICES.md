@@ -269,26 +269,6 @@ services:
       - AUTH_SERVICE_URL=http://auth-service:3011
 ```
 
-### Kubernetes (Production)
-
-```yaml
-# k8s/services/product-service/service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: product-service
-  namespace: e-storefront
-spec:
-  selector:
-    app: product-service
-  ports:
-    - port: 3012
-      targetPort: 3012
-  type: ClusterIP
-
-# Access via: http://product-service:3012
-```
-
 ---
 
 ## Data Management
@@ -353,5 +333,4 @@ async function createOrderSaga(orderData: CreateOrderInput) {
 
 - [GRAPHQL.md](GRAPHQL.md) - API Gateway
 - [DOCKER.md](DOCKER.md) - Containerization
-- [KUBERNETES.md](KUBERNETES.md) - Orchestration
 - [REDIS.md](REDIS.md) - Pub/Sub messaging
