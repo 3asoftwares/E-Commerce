@@ -49,24 +49,29 @@ function Get-CurrentMode {
 function Switch-ToLocal {
     Write-Header -text "Switching to LOCAL mode"
     
-    # Copy root .env.local to .env
+    # Ensure root .env.local exists (do NOT create root .env)
     if (Test-Path ".env.local") {
-        Copy-Item ".env.local" ".env" -Force
-        Write-Success -text "Created root .env from .env.local"
+        Write-Success -text "Root .env.local exists"
+    } elseif (Test-Path ".env.example") {
+        Copy-Item ".env.example" ".env.local" -Force
+        Write-Success -text "Created root .env.local from .env.example"
     } else {
-        Write-Warn -text "Missing root .env.local"
+        Write-Warn -text "Missing root .env.local and .env.example"
     }
     
     # Copy .env.local to .env for each app
     $apps = @("admin-app", "seller-app", "shell-app")
     foreach ($app in $apps) {
         $envLocal = "apps/$app/.env.local"
+        $envExample = "apps/$app/.env.example"
         $envTarget = "apps/$app/.env"
         if (Test-Path $envLocal) {
-            Copy-Item $envLocal $envTarget -Force
-            Write-Success -text "Created $envTarget"
+            Write-Success -text "$envLocal exists"
+        } elseif (Test-Path $envExample) {
+            Copy-Item $envExample $envLocal -Force
+            Write-Success -text "Created $envLocal from .env.example"
         } else {
-            Write-Warn -text "Missing $envLocal"
+            Write-Warn -text "Missing $envLocal and $envExample"
         }
     }
     
@@ -74,12 +79,15 @@ function Switch-ToLocal {
     $services = @("auth-service", "category-service", "coupon-service", "product-service", "order-service", "ticket-service", "graphql-gateway")
     foreach ($service in $services) {
         $envLocal = "services/$service/.env.local"
+        $envExample = "services/$service/.env.example"
         $envTarget = "services/$service/.env"
         if (Test-Path $envLocal) {
-            Copy-Item $envLocal $envTarget -Force
-            Write-Success -text "Created $envTarget"
+            Write-Success -text "$envLocal exists"
+        } elseif (Test-Path $envExample) {
+            Copy-Item $envExample $envLocal -Force
+            Write-Success -text "Created $envLocal from .env.example"
         } else {
-            Write-Warn -text "Missing $envLocal"
+            Write-Warn -text "Missing $envLocal and $envExample"
         }
     }
     
@@ -90,40 +98,48 @@ function Switch-ToLocal {
 function Switch-ToProduction {
     Write-Header -text "Switching to PRODUCTION mode"
     
-    # Copy root .env.production to .env
+    # Ensure root .env.production exists (do NOT create root .env)
     if (Test-Path ".env.production") {
-        Copy-Item ".env.production" ".env" -Force
-        Write-Success -text "Created root .env from .env.production"
+        Write-Success -text "Root .env.production exists"
+    } elseif (Test-Path ".env.example") {
+        Copy-Item ".env.example" ".env.production" -Force
+        Write-Success -text "Created root .env.production from .env.example"
     } else {
-        Write-Warn -text "Missing root .env.production"
+        Write-Warn -text "Missing root .env.production and .env.example"
     }
-    
-    # Copy .env.production to .env for each app
+
+    # Copy .env.production to .env for each app (or create .env.production from .env.example)
     $apps = @("admin-app", "seller-app", "shell-app")
     foreach ($app in $apps) {
         $envProd = "apps/$app/.env.production"
+        $envExample = "apps/$app/.env.example"
         $envTarget = "apps/$app/.env"
         if (Test-Path $envProd) {
-            Copy-Item $envProd $envTarget -Force
-            Write-Success -text "Created $envTarget"
+            Write-Success -text "$envProd exists"
+        } elseif (Test-Path $envExample) {
+            Copy-Item $envExample $envProd -Force
+            Write-Success -text "Created $envProd from .env.example"
         } else {
-            Write-Warn -text "Missing $envProd"
+            Write-Warn -text "Missing $envProd and $envExample"
         }
     }
-    
-    # Copy .env.production to .env for each service
+
+    # Copy .env.production to .env for each service (or create .env.production from .env.example)
     $services = @("auth-service", "category-service", "coupon-service", "product-service", "order-service", "ticket-service", "graphql-gateway")
     foreach ($service in $services) {
         $envProd = "services/$service/.env.production"
+        $envExample = "services/$service/.env.example"
         $envTarget = "services/$service/.env"
         if (Test-Path $envProd) {
-            Copy-Item $envProd $envTarget -Force
-            Write-Success -text "Created $envTarget"
+            Write-Success -text "$envProd exists"
+        } elseif (Test-Path $envExample) {
+            Copy-Item $envExample $envProd -Force
+            Write-Success -text "Created $envProd from .env.example"
         } else {
-            Write-Warn -text "Missing $envProd"
+            Write-Warn -text "Missing $envProd and $envExample"
         }
     }
-    
+
     Write-Success -text "Switched to PRODUCTION mode"
 }
 
@@ -131,27 +147,27 @@ function Switch-ToProduction {
 function Show-Status {
     Write-Header -text "Environment Status"
     
-    if (Test-Path ".env") {
-        Write-Host "Root .env: EXISTS" -ForegroundColor Green
+    if (Test-Path ".env.local") {
+        Write-Host "Root .env.local: EXISTS" -ForegroundColor Green
     } else {
-        Write-Host "Root .env: MISSING" -ForegroundColor Red
+        Write-Host "Root .env.local: MISSING" -ForegroundColor Red
     }
-    
+
     $apps = @("admin-app", "seller-app", "shell-app")
     foreach ($app in $apps) {
-        if (Test-Path "apps/$app/.env") {
-            Write-Host "apps/$app/.env: EXISTS" -ForegroundColor Green
+        if (Test-Path "apps/$app/.env.local") {
+            Write-Host "apps/$app/.env.local: EXISTS" -ForegroundColor Green
         } else {
-            Write-Host "apps/$app/.env: MISSING" -ForegroundColor Yellow
+            Write-Host "apps/$app/.env.local: MISSING" -ForegroundColor Yellow
         }
     }
-    
+
     $services = @("auth-service", "category-service", "coupon-service", "product-service", "order-service", "ticket-service", "graphql-gateway")
     foreach ($service in $services) {
-        if (Test-Path "services/$service/.env") {
-            Write-Host "services/$service/.env: EXISTS" -ForegroundColor Green
+        if (Test-Path "services/$service/.env.local") {
+            Write-Host "services/$service/.env.local: EXISTS" -ForegroundColor Green
         } else {
-            Write-Host "services/$service/.env: MISSING" -ForegroundColor Yellow
+            Write-Host "services/$service/.env.local: MISSING" -ForegroundColor Yellow
         }
     }
 }

@@ -14,10 +14,12 @@ export const redisClient = new Redis(REDIS_URL, {
 });
 
 redisClient.on('connect', () => {
-  
+  console.log('Connected to Redis server');
 });
 
-redisClient.on('error', () => {});
+redisClient.on('error', (error) => {
+  console.error('Redis error:', error);
+});
 
 export class CacheService {
   static async get<T>(key: string): Promise<T | null> {
@@ -26,7 +28,7 @@ export class CacheService {
       if (!data) return null;
       return JSON.parse(data) as T;
     } catch (error) {
-      
+      console.error('CacheService get error:', error);
       return null;
     }
   }
@@ -36,7 +38,6 @@ export class CacheService {
       await redisClient.setex(key, ttl, JSON.stringify(value));
       return true;
     } catch (error) {
-      
       return false;
     }
   }
@@ -46,7 +47,6 @@ export class CacheService {
       await redisClient.del(key);
       return true;
     } catch (error) {
-      
       return false;
     }
   }
@@ -57,7 +57,6 @@ export class CacheService {
       if (keys.length === 0) return 0;
       return await redisClient.del(...keys);
     } catch (error) {
-      
       return 0;
     }
   }
@@ -67,7 +66,6 @@ export class CacheService {
       const result = await redisClient.exists(key);
       return result === 1;
     } catch (error) {
-      
       return false;
     }
   }
@@ -76,7 +74,6 @@ export class CacheService {
     try {
       return await redisClient.ttl(key);
     } catch (error) {
-      
       return -1;
     }
   }
@@ -85,7 +82,6 @@ export class CacheService {
     try {
       return await redisClient.incrby(key, amount);
     } catch (error) {
-      
       return 0;
     }
   }

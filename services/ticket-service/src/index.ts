@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 // Load environment variables
-const envPath = path.resolve(__dirname, '../.env');
+const envPath = path.resolve(__dirname, '../.env.local');
 dotenv.config({ path: envPath });
 
 import express, { Application, Request, Response, NextFunction } from 'express';
