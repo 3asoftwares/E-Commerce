@@ -81,8 +81,7 @@
     "health": "powershell -ExecutionPolicy Bypass -File ./scripts/health-check.ps1",
     "health:backend": "powershell -ExecutionPolicy Bypass -File ./scripts/health-check.ps1 -Services",
     "health:frontend": "powershell -ExecutionPolicy Bypass -File ./scripts/health-check.ps1 -Frontend",
-    "health:verbose": "powershell -ExecutionPolicy Bypass -File ./scripts/health-check.ps1 -Verbose",
-    "vercel-build": "yarn install --frozen-lockfile && yarn build:packages && yarn build:category"
+    "health:verbose": "powershell -ExecutionPolicy Bypass -File ./scripts/health-check.ps1 -Verbose"
   },
   "dependencies": {
     "autoprefixer": "^10.4.23",
@@ -93,10 +92,6 @@
     "vite": "^5.4.11"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/morgan": "^1.9.10",
-    "@types/swagger-jsdoc": "^6.0.4",
-    "@types/swagger-ui-express": "^4.1.8",
     "concurrently": "^8.2.2"
   },
   "resolutions": {
